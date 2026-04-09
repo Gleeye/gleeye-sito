@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
         }
 
         // Save to Supabase
-        await supabase.from('copy_generations').insert({
+        await getSupabase().from('copy_generations').insert({
           page_slug: page_slug || null,
           section_key: section_key || null,
           user_prompt: prompt,

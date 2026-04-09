@@ -1,9 +1,21 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const url  = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const key  = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+let _client: SupabaseClient | null = null;
 
-export const supabase = createClient(url, key);
+export function getSupabase() {
+  if (!_client) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || !key) throw new Error('Supabase env vars missing');
+    _client = createClient(url, key);
+  }
+  return _client;
+}
+
+// Alias per retrocompatibilità nei componenti client
+export const supabase = typeof window !== 'undefined'
+  ? getSupabase()
+  : null as unknown as SupabaseClient;
 
 export type SiteContent = {
   id: string;

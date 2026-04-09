@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 export async function GET(req: NextRequest) {
+  const supabase = getSupabase();
   const { searchParams } = new URL(req.url);
   const page_slug = searchParams.get('page');
 
@@ -14,6 +15,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const supabase = getSupabase();
   const body = await req.json();
   const { page_slug, section_key, field_key, content } = body;
 
@@ -28,6 +30,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  const supabase = getSupabase();
   const { id } = await req.json();
   const { error } = await supabase.from('site_content').delete().eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
