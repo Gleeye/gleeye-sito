@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gleeye Identity — AI Prompts</title>
+<style>
+  :root {
+    --blue: #4e92d8;
+    --purple: #614aa2;
+    --dark: #0a0a14;
+    --bg: #f4f6fa;
+    --white: #ffffff;
+    --text: #1a1a2e;
+    --muted: #666;
+    --border: #dde3f0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    background: var(--dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 40px;
+    page-break-after: always;
+  }
+
+  .cover-logo {
+    font-size: 72px;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    color: var(--blue);
+    margin-bottom: 12px;
+  }
+
+  .cover-sub {
+    font-size: 13px;
+    letter-spacing: 0.22em;
+    color: var(--purple);
+    text-transform: uppercase;
+    margin-bottom: 48px;
+  }
+
+  .cover-line {
+    width: 240px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #ffffff30, transparent);
+    margin: 0 auto 48px;
+  }
+
+  .cover-flow {
+    font-size: 15px;
+    color: #888;
+    margin-bottom: 48px;
+    font-style: italic;
+  }
+
+  .cover-panels {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 48px;
+  }
+
+  .cover-panel-tag {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+
+  .cover-panel-tag.blue { color: var(--blue); border-color: var(--blue); }
+  .cover-panel-tag.purple { color: var(--purple); border-color: var(--purple); }
+
+  .cover-palette {
+    font-size: 12px;
+    color: #555;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── HOWTO ── */
+  .howto {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .howto h2 {
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 24px;
+    color: var(--text);
+  }
+
+  .step-list {
+    list-style: none;
+    margin-bottom: 32px;
+  }
+
+  .step-list li {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 15px;
+    color: #444;
+  }
+
+  .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .tip {
+    background: #f0ebfa;
+    border-left: 3px solid var(--purple);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    font-size: 14px;
+    color: #3d2b6e;
+    font-style: italic;
+    margin-bottom: 24px;
+  }
+
+  .params-box {
+    background: #e8f1fb;
+    border: 1px solid var(--blue);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    color: var(--dark);
+    margin-bottom: 16px;
+  }
+
+  .layout-note {
+    font-size: 14px;
+    color: #555;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+  }
+
+  /* ── PANEL SECTION ── */
+  .panel-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+
+  .panel-num {
+    font-size: 56px;
+    font-weight: 900;
+    color: #ddd;
+    line-height: 1;
+  }
+
+  .panel-title {
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .panel-style {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+
+  .panel-layout {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .panel-divider {
+    height: 1px;
+    background: linear-gradient(to right, var(--border), transparent);
+    margin-bottom: 20px;
+  }
+
+  .panel-concept {
+    font-size: 16px;
+    color: #444;
+    margin-bottom: 36px;
+    padding-left: 16px;
+    border-left: 3px solid var(--border);
+    line-height: 1.8;
+  }
+
+  /* ── PROMPT BLOCK ── */
+  .prompt-block {
+    margin-bottom: 36px;
+  }
+
+  .prompt-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .prompt-label-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .tag-img { background: var(--blue); }
+  .tag-video { background: var(--purple); }
+
+  .prompt-label-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .prompt-desc {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    padding-left: 4px;
+  }
+
+  .prompt-box {
+    background: #f8faff;
+    border: 1.5px solid var(--blue);
+    border-radius: 10px;
+    padding: 18px 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: var(--dark);
+    line-height: 1.75;
+    white-space: pre-wrap;
+    word-break: break-word;
+    position: relative;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .prompt-box.video {
+    border-color: var(--purple);
+    background: #f8f4ff;
+  }
+
+  .prompt-box:hover {
+    box-shadow: 0 0 0 3px rgba(78, 146, 216, 0.15);
+  }
+
+  .prompt-box.video:hover {
+    box-shadow: 0 0 0 3px rgba(97, 74, 162, 0.15);
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-family: 'Arial', sans-serif;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .copy-btn:hover { background: var(--blue); color: white; border-color: var(--blue); }
+  .copy-btn.video-btn:hover { background: var(--purple); border-color: var(--purple); }
+  .copy-btn.copied { background: #22c55e; color: white; border-color: #22c55e; }
+
+  .prompt-params {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .prompt-params code {
+    background: #eef3fa;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--blue);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 48px 40px;
+    font-size: 12px;
+    color: #aaa;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    .cover { min-height: auto; padding: 80px 60px; }
+    .copy-btn { display: none; }
+    .panel-section, .howto { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-logo">GLEEYE</div>
+  <div class="cover-sub">Identity Area — Visual AI Prompts</div>
+  <div class="cover-line"></div>
+  <div class="cover-flow">Midjourney (Frame A + Frame B) → Google Flow (Transizione video)</div>
+  <div class="cover-panels">
+    <span class="cover-panel-tag blue">01 — Brand Discovery</span>
+    <span class="cover-panel-tag purple">02 — Naming</span>
+    <span class="cover-panel-tag blue">03 — Visual Identity</span>
+    <span class="cover-panel-tag purple">04 — Brand Guidelines</span>
+  </div>
+  <div class="cover-palette">Palette: #4e92d8 (blu) · #614aa2 (viola) · #0a0a14 (sfondo)</div>
+</div>
+
+<!-- HOW TO -->
+<div class="howto">
+  <h2>Come usare questo documento</h2>
+  <ul class="step-list">
+    <li><span class="step-num">1</span><span><strong>FRAME A</strong> → Genera in Midjourney. È lo stato iniziale, prima della trasformazione.</span></li>
+    <li><span class="step-num">2</span><span><strong>FRAME B</strong> → Genera in Midjourney. Stessa composizione, stato trasformato. Scegli la coppia A+B più coerente.</span></li>
+    <li><span class="step-num">3</span><span><strong>VIDEO</strong> → Carica Frame A + Frame B su Google Flow come immagini di inizio/fine. Usa il prompt video per descrivere la transizione.</span></li>
+  </ul>
+
+  <div class="tip">💡 Genera sempre 3–4 varianti per ogni frame prima di scegliere. La coppia A+B deve avere la stessa composizione, stessa luce, stesso punto di vista — solo lo stato cambia.</div>
+
+  <p style="font-size:14px;color:#444;margin-bottom:12px;">Aggiungi sempre questi parametri alla fine di ogni prompt Midjourney:</p>
+  <div class="params-box">--ar 16:9  --style raw  --no text, letters, words, logos, watermark, signature</div>
+
+  <div class="layout-note">
+    <strong>Layout a scacchiera:</strong> Pannelli 01 e 03 → testo a sinistra, visual a destra. Pannelli 02 e 04 → testo a destra, visual a sinistra. I prompt rispettano questa regola: ogni composizione lascia libero il lato del testo.
+  </div>
+</div>
+
+<!-- PANEL 01 — BRAND DISCOVERY -->
+<div class="panel-section">
+  <div class="panel-header">
+    <span class="panel-num">01</span>
+    <span class="panel-title" style="color:#4e92d8">BRAND DISCOVERY</span>
+  </div>
+  <div class="panel-style">Stile: 3D macro sculptural, fotorealistico, atmosfera cinematica blu</div>
+  <div class="panel-layout" style="color:#4e92d8">↳ Visual a destra · spazio testo a sinistra</div>
+  <div class="panel-divider"></div>
+  <div class="panel-concept">Il DNA nascosto che viene alla luce. Il discovery è trovare la verità che esiste già ma nessuno ha ancora illuminato. Non si crea — si rivela.</div>
+
+  <!-- Frame A -->
+  <div class="prompt-block">
+    <div class="prompt-label">
+      <span class="prompt-label-tag tag-img">📷 Midjourney</span>
+      <span class="prompt-label-title">FRAME A — Stato chiuso (prima)</span>
+    </div>
+    <div class="prompt-desc">L'oggetto è completamente opaco. La scoperta non è ancora avvenuta.</div>
+    <div class="prompt-box" id="d01a">A perfectly smooth matte white sphere floating in infinite darkness, cold electric blue side-lighting from the left casting a sharp shadow, the sphere is completely opaque and unrevealing with no visible internal structure, cinematic studio macro photography aesthetic, deep indigo background (#0a0a14), subject positioned right-center of frame, left third of frame in near-darkness intentionally empty for text overlay, minimalist premium composition, 3D render photorealistic --ar 16:9 --style raw --no text, letters, words, logos, cracks, floor reflections<button class="copy-btn" onclick="copyPrompt('d01a', this)">COPIA</button></div>
+    <div class="prompt-params">Aggiungi al fondo: <code>--ar 16:9 --style raw --no text, letters, words, logos</code></div>
+  </div>
+
+  <!-- Frame B -->
+  <div class="prompt-block">
+    <div class="prompt-label">
+      <span class="prompt-label-tag tag-img">📷 Midjourney</span>
+      <span class="prompt-label-title">FRAME B — Rivelato (dopo)</span>
+    </div>
+    <div class="prompt-desc">La stessa sfera, stessa posizione, stessa luce — ma ora translucente. Dentro c'è qualcosa di straordinario.</div>
+    <div class="prompt-box" id="d01b">The same smooth white sphere in the exact same position and lighting, but now completely translucent, its interior revealing an impossibly intricate glowing inner architecture: nodes, geometric lattice structures, branching connections pulsing in electric blue (#4e92d8), the internal complexity radiates through the translucent shell casting soft blue light outward, deep indigo background (#0a0a14), same cold electric blue side-lighting, subject right-center, left third of frame dark and empty for text overlay, 3D render photorealistic cinematic --ar 16:9 --style raw --no text, letters, words, logos<button class="copy-btn" onclick="copyPrompt('d01b', this)">COPIA</button></div>
+  </div>
+
+  <!-- Video -->
+  <div class="prompt-block">
+    <div class="prompt-label">
+      <span class="prompt-label-tag tag-video">🎬 Google Flow</span>
+      <span class="prompt-label-title">VIDEO — Transizione</span>
+    </div>
+    <div class="prompt-desc">Carica Frame A + Frame B. Flow anima la rivelazione.</div>
+    <div class="prompt-box video" id="v01">Starting from a smooth opaque white sphere resting in complete darkness, camera holds completely still. Over 4 seconds the sphere slowly becomes translucent, its interior revealing a complex glowing network of electric blue nodes and geometric connections that pulse gently. The revelation is slow and inevitable, almost geological. Cold blue light grows from within. Hold the revealed state for 2 seconds. Seamless loop. Camera: completely static throughout. Style: cinematic 3D photorealistic.<button class="copy-btn video-btn" onclick="copyPrompt('v01', this)">COPIA</button></div>
+  </div>
+</div>
+
+<!-- PANEL 02 — NAMING -->
+<div class="panel-section">
+  <div class="panel-header">
+    <span class="panel-num">02</span>
+    <span class="panel-title" style="color:#614aa2">NAMING</span>
+  </div>
+  <div class="panel-style">Stile: flat graphic editorial illustration. Malika Favre, paper-cut, palette blu monomatica</div>
+  <div class="panel-layout" style="color:#614aa2">↳ Visual a sinistra · spazio testo a destra</div>
+  <div class="panel-divider"></div>
+  <div class="panel-concept">Il momento in cui qualcosa riceve il suo nome. Prima esiste ma è indefinito — senza bordi, senza peso. Dopo: è. Il nome è l'atto che trasforma il potenziale in realtà.</div>
+
+  <!-- Frame A -->
+  <div class="prompt-block">
+    <div class="prompt-label">
+      <span class="prompt-label-tag tag-img">📷 Midjourney</span>
+      <span class="prompt-label-title">FRAME A — Figura indefinita (prima)</span>
+    </div>
+    <div class="prompt-desc">La figura destra esiste ma non ha ancora forma precisa. I suoi bordi si dissolvono nell'indaco.</div>
+    <div class="prompt-box" id="d02a">Two simplified geometric human silhouettes in deep indigo space (#0a0a14), flat graphic editorial illustration style, paper-cut aesthetic with bold clean shapes, left figure solid and clearly defined facing right, right figure same posture but semi-transparent with softly dissolving blurred edges melting into the background as if not yet fully born, both figures in tones of electric blue (#4e92d8) and deep violet (#614aa2), no textures no grain, subtle inner gradient shading within shapes, Malika Favre bold poster art style, left-center composition, right third of frame intentionally empty deep indigo for text overlay --ar 16:9 --style raw --no text, letters, words, logos, photorealism, skin texture, realistic hair<button class="copy-btn" onclick="copyPrompt('d02a', this)">COPIA</button></div>
+  </div>
+
+  <!-- Frame B -->
+  <div class="prompt-block">
+    <div class="prompt-label">
+      <span class="prompt-label-tag tag-img">📷 Midjourney</span>
+      <span class="prompt-label-title">FRAME B — Figura cristallizzata (dopo)</span>
+    </div>
+    <div class="prompt-desc">Stessa scena, stessa posizione. La figura destra ora ha bordi netti, presenza piena — un alone di luce segna il momento.</div>
+    <div class="prompt-box" id="d02b">Two simplified geometric human silhouettes in deep indigo space (#0a0a14), flat graphic editorial illustration style, paper-cut aesthetic, left figure bold and defined facing right, right figure now equally sharp and solid with perfectly crisp clean edges, a subtle luminous electric blue halo (#4e92d8) radiating softly from the right figure's outline marking the moment of crystallization, both figures have equal visual weight and presence, deep violet (#614aa2) accents, Malika Favre bold poster art style, left-center composition, right third of frame intentionally empty deep indigo for text overlay --ar 16:9 --style raw --no text, letters, words, logos, photorealism, skin texture<button class="copy-btn" onclick="copyPrompt('d02b', this)">COPIA</button></div>
+  </div>
+
+  <!-- Video -->
+  <div class="prompt-block">
+    <div class="prompt-label">
+      <span class="prompt-label-tag tag-video">🎬 Google Flow</span>
+      <span class="prompt-label-title">VIDEO — Transizione</span>
+    </div>
+    <div class="prompt-desc">La figura destra si cristallizza lentamente. La sinistra non si muove.</div>
+    <div class="prompt-box video" id="v02">Two flat illustrated figures in deep indigo space. The right figure slowly crystallizes from undefined and dissolving to sharp, solid and fully present over 3 seconds. Its edges firm up from soft and blurred to clean and precise. At the moment of full crystallization a subtle pulse of electric blue light emanates from the right figure's outline then fades to a gentle steady glow. The left figure remains completely still and unchanged throughout. Camera: completely static. Style: flat graphic illustration, not photorealistic. Duration: 6-7 seconds.<button class="copy-btn video-btn" onclick="copyPrompt('v02', this)">COPIA</button></div>
+  </div>
+</div>
+
+<!-- PANEL 03 — VISUAL IDENTITY -->
+<div class="panel-section">
+  <div class="panel-header">
+    <span class="panel-num">03</span>
+    <span class="panel-title" style="color:#4e92d8">VISUAL IDENTITY</span>
+  </div>
+  <div class="panel-style">Stile: pittorico semi-astratto, qualità artistica. Non fotorealistico, non vettoriale.</div>
+  <div class="panel-layout" style="color:#4e92d8">↳ Visual a destra · spazio testo a sinistra</div>
+  <div class="panel-divider"></div>
+  <div class="panel-concept">Il primo segno che trasforma il vuoto in identità. L'identità visiva è il momento in cui qualcosa acquista un volto riconoscibile — e tutto inizia con un gesto.</div>
+
+  <!-- Frame A -->
+  <div class="prompt-block">
+    <div class="prompt-label">
+      <span class="prompt-label-tag tag-img">📷 Midjourney</span>
+      <span class="prompt-label-title">FRAME A — Prima del primo segno</span>
+    </div>
+    <div class="prompt-desc">Una tela bianca infinita. Una mano entra da destra con il pennello carico — in pausa, il gesto non è ancora avvenuto.</div>
+    <div class="prompt-box" id="d03a">A vast pure white canvas filling the entire frame, absolute emptiness and silence, a single human hand entering from the right edge holding a wide flat paintbrush loaded with electric blue paint (#4e92d8), the hand is paused in anticipation with the brush not yet touching the canvas, moment of tension before the first mark, painterly semi-abstract artistic style, soft even natural studio lighting, hand and brush positioned right-center of frame, the entire left two-thirds of frame is uninterrupted pure white canvas for text overlay, no other elements whatsoever --ar 16:9 --style raw --no text, letters, words, logos, second hand, multiple brushes, drips<button class="copy-btn" onclick="copyPrompt('d03a', this)">COPIA</button></div>
+  </div>
+
+  <!-- Frame B -->
+  <div class="prompt-block">
+    <div class="prompt-label">
+      <span class="prompt-label-tag tag-img">📷 Midjourney</span>
+      <span class="prompt-label-title">FRAME B — I segni fondatori</span>
+    </div>
+    <div class="prompt-desc">La stessa tela. La mano si è ritirata. Due tratti decisi — il vuoto è diventato qualcosa.</div>
+    <div class="prompt-box" id="d03b">The same vast pure white canvas, same lighting, hand has withdrawn and is no longer visible, two bold confident brushstrokes cross the canvas: one sweeping horizontal stroke of electric blue (#4e92d8) and one decisive diagonal stroke of deep violet (#614aa2), the marks are clean and intentional not accidental, these are the only elements on the white canvas, the two marks transform the white void into a space with character tension and presence, painterly semi-abstract artistic style, brushstrokes occupy right-center area, left third of canvas mostly white and open for text overlay --ar 16:9 --style raw --no text, letters, words, logos, additional marks, splatter, drips<button class="copy-btn" onclick="copyPrompt('d03b', this)">COPIA</button></div>
+  </div>
+
+  <!-- Video -->
+  <div class="prompt-block">
+    <div class="prompt-label">
+      <span class="prompt-label-tag tag-video">🎬 Google Flow</span>
+      <span class="prompt-label-title">VIDEO — Transizione</span>
+    </div>
+    <div class="prompt-desc">La mano dipinge i due tratti lentamente, si ritira. Come una firma.</div>
+    <div class="prompt-box video" id="v03">A vast white canvas. A hand enters slowly from the right holding a wide paintbrush. The hand makes one slow deliberate horizontal stroke of electric blue across the canvas taking 2 seconds. A pause of 1 second. Then one confident diagonal stroke of deep violet taking 2 seconds. The hand withdraws. The two marks remain, transforming the empty canvas into something with character. The entire sequence is unhurried, almost calligraphic. Camera: completely static throughout. Style: painterly, semi-abstract. Duration: 7-8 seconds.<button class="copy-btn video-btn" onclick="copyPrompt('v03', this)">COPIA</button></div>
+  </div>
+</div>
+
+<!-- PANEL 04 — BRAND GUIDELINES -->
+<div class="panel-section">
+  <div class="panel-header">
+    <span class="panel-num">04</span>
+    <span class="panel-title" style="color:#614aa2">BRAND GUIDELINES</span>
+  </div>
+  <div class="panel-style">Stile: fotografia editoriale aerea, architetturale, ultra-precisa. Design museum quality.</div>
+  <div class="panel-layout" style="color:#614aa2">↳ Visual a sinistra · spazio testo a destra</div>
+  <div class="panel-divider"></div>
+  <div class="panel-concept">Il caos che trova il suo ordine. Le guidelines non limitano la creatività — la rendono possibile. Sono la partitura che permette alla musica di esistere.</div>
+
+  <!-- Frame A -->
+  <div class="prompt-block">
+    <div class="prompt-label">
+      <span class="prompt-label-tag tag-img">📷 Midjourney</span>
+      <span class="prompt-label-title">FRAME A — Potenziale sparso</span>
+    </div>
+    <div class="prompt-desc">Elementi di un sistema visivo non ancora connessi. Bello nel suo caos — tutto c'è già, manca solo l'ordine.</div>
+    <div class="prompt-box" id="d04a">Aerial top-down view of a dark navy work surface (#0d1020), scattered across it are disconnected geometric elements: partial electric blue shapes (#4e92d8), deep violet color swatches (#614aa2), fragments of grid lines, isolated geometric primitives — all unconnected and floating without order but beautiful in their potential, dramatic cold blue atmospheric lighting from directly above, elements occupy the left-center two-thirds of frame, right third is darker and intentionally empty for text overlay, editorial product photography style, ultra-precise razor-sharp focus, premium design studio aesthetic --ar 16:9 --style raw --no text, letters, words, logos, hands, external shadows<button class="copy-btn" onclick="copyPrompt('d04a', this)">COPIA</button></div>
+  </div>
+
+  <!-- Frame B -->
+  <div class="prompt-block">
+    <div class="prompt-label">
+      <span class="prompt-label-tag tag-img">📷 Midjourney</span>
+      <span class="prompt-label-title">FRAME B — Il sistema</span>
+    </div>
+    <div class="prompt-desc">Stessa inquadratura, stessa luce. Gli stessi elementi, ora perfettamente ordinati — un sistema visivo completo.</div>
+    <div class="prompt-box" id="d04b">Aerial top-down view of the same dark navy work surface (#0d1020), same dramatic cold blue overhead lighting, the exact same geometric elements — electric blue shapes (#4e92d8), deep violet swatches (#614aa2), grid fragments — but now perfectly arranged: precisely aligned along invisible grid lines, proportioned in deliberate relationships, forming a coherent complete visual system, calm and authoritative, same shapes that were scattered now read as an intentional design language, elements occupy left-center two-thirds of frame, right third darker and empty for text overlay, editorial product photography style, ultra-precise focus --ar 16:9 --style raw --no text, letters, words, logos, hands<button class="copy-btn" onclick="copyPrompt('d04b', this)">COPIA</button></div>
+  </div>
+
+  <!-- Video -->
+  <div class="prompt-block">
+    <div class="prompt-label">
+      <span class="prompt-label-tag tag-video">🎬 Google Flow</span>
+      <span class="prompt-label-title">VIDEO — Transizione</span>
+    </div>
+    <div class="prompt-desc">Gli elementi sparsi trovano il loro posto — lentamente, inevitabilmente.</div>
+    <div class="prompt-box video" id="v04">Aerial view of scattered geometric design elements — electric blue and deep violet shapes, partial forms, disconnected fragments — slowly and deliberately sliding, rotating and settling into perfect alignment. The movement is not mechanical or rushed, it is inevitable like a puzzle that knows its own solution. Each element finds its place with precision. Camera descends very slightly (5%) as elements align. Cold blue dramatic overhead lighting throughout. Duration: 8 seconds. Final 2 seconds hold the perfectly ordered state.<button class="copy-btn video-btn" onclick="copyPrompt('v04', this)">COPIA</button></div>
+  </div>
+</div>
+
+<footer>Gleeye · Identity Area · AI Visual Prompts · 2026</footer>
+
+<script>
+function copyPrompt(id, btn) {
+  const el = document.getElementById(id);
+  const buttons = el.querySelectorAll('.copy-btn');
+  // Get text without button text
+  let text = el.innerText;
+  buttons.forEach(b => { text = text.replace(b.innerText, ''); });
+  text = text.trim();
+
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ COPIATO';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'COPIA';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>
