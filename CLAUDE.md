@@ -1,4 +1,12 @@
-# Gleeye — Sito Istituzionale
+# Gleeye — Sito Istituzionale (gleeye.eu)
+
+## Modello di collaborazione
+
+**Davide non è un developer.** Esprime cosa vuole visivamente e in termini di contenuto, Claude gestisce tutto il codice autonomamente.
+- Non coinvolgerlo in decisioni tecniche — prendile tu
+- Per nuove sezioni o componenti: usa le skill `component-builder`, `gsap-motion`, `site-copy` (documentate in fondo al file)
+- **Prima di iniziare**: chiedi se c'è già un'altra sessione Claude aperta su questo repo
+- Ogni nuova pagina costruita: aggiorna la sezione "Stato attuale" in questo file
 
 Progetto: sito vetrina di Gleeye (gleeye.eu), agenzia di comunicazione a Genova.
 Stack: Next.js (App Router, TypeScript), Tailwind CSS v4, GSAP + ScrollTrigger, Lucide React.
