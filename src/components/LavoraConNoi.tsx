@@ -259,17 +259,58 @@ export default function LavoraConNoi() {
                                         '0 0 80px -20px rgba(78,146,216,0.08)',
                                 }}
                             >
-                                <iframe
-                                    id="gleeye-form-ac6b6b0d-29a0-464c-997a-a704da2fdeca"
-                                    src="http://localhost:8080/form.html?id=ac6b6b0d-29a0-464c-997a-a704da2fdeca"
-                                    className="w-full min-h-[800px]"
-                                    frameBorder="0"
-                                    style={{
-                                        border: 'none',
-                                        borderRadius: '12px',
-                                        background: 'transparent',
+                                <form
+                                    className="flex flex-col gap-4 p-5 md:p-7"
+                                    onSubmit={(e) => {
+                                        e.preventDefault();
+                                        const fd = new FormData(e.currentTarget);
+                                        const subject = encodeURIComponent(`Candidatura — ${fd.get('nome') || ''}`);
+                                        const body = encodeURIComponent(
+                                            `${fd.get('messaggio') || ''}\n\nPortfolio: ${fd.get('portfolio') || '—'}\n\n—\n${fd.get('nome') || ''}\n${fd.get('email') || ''}`
+                                        );
+                                        window.location.href = `mailto:info@gleeye.eu?subject=${subject}&body=${body}`;
                                     }}
-                                />
+                                >
+                                    <p className="font-mono text-[10px] tracking-[0.22em] uppercase text-white/40">
+                                        Candidatura spontanea
+                                    </p>
+                                    <input
+                                        name="nome"
+                                        type="text"
+                                        required
+                                        placeholder="Nome e cognome"
+                                        className="w-full rounded-xl border border-white/12 bg-white/[0.04] px-5 py-4 font-jakarta text-sm text-white placeholder:text-white/30 outline-none transition-colors duration-300 focus:border-[#6db5ff]"
+                                    />
+                                    <input
+                                        name="email"
+                                        type="email"
+                                        required
+                                        placeholder="Email"
+                                        className="w-full rounded-xl border border-white/12 bg-white/[0.04] px-5 py-4 font-jakarta text-sm text-white placeholder:text-white/30 outline-none transition-colors duration-300 focus:border-[#6db5ff]"
+                                    />
+                                    <input
+                                        name="portfolio"
+                                        type="url"
+                                        placeholder="Link al portfolio (opzionale)"
+                                        className="w-full rounded-xl border border-white/12 bg-white/[0.04] px-5 py-4 font-jakarta text-sm text-white placeholder:text-white/30 outline-none transition-colors duration-300 focus:border-[#6db5ff]"
+                                    />
+                                    <textarea
+                                        name="messaggio"
+                                        required
+                                        rows={5}
+                                        placeholder="Chi sei, cosa sai fare, perché Gleeye…"
+                                        className="w-full resize-none rounded-xl border border-white/12 bg-white/[0.04] px-5 py-4 font-jakarta text-sm text-white placeholder:text-white/30 outline-none transition-colors duration-300 focus:border-[#6db5ff]"
+                                    />
+                                    <button
+                                        type="submit"
+                                        className="group relative mt-1 overflow-hidden rounded-full bg-gradient-to-r from-[#4e92d8] to-[#614aa2] px-8 py-4 font-satoshi text-sm font-black uppercase tracking-wide text-white"
+                                    >
+                                        <span className="absolute inset-0 translate-y-full bg-[#f8f9fa] transition-transform duration-500 ease-out group-hover:translate-y-0" />
+                                        <span className="relative transition-colors duration-500 group-hover:text-[#0a0a10]">
+                                            Invia la candidatura
+                                        </span>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>

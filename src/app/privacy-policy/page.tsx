@@ -1,4 +1,6 @@
 import { Metadata } from "next";
+import Header from "@/components/v2/Header";
+import Footer from "@/components/v2/Footer";
 
 export const metadata: Metadata = {
     title: "Privacy Policy | GLEEYE",
@@ -7,14 +9,16 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicy() {
     return (
-        <main className="min-h-screen bg-[#F5F3EE] text-[#111111] pt-32 pb-24 px-6 md:px-12">
+        <>
+        <Header />
+        <main className="min-h-screen bg-[#F8F9FA] text-[#111111] pt-32 pb-24 px-6 md:px-12">
             <div className="max-w-4xl mx-auto space-y-12">
                 <header className="space-y-6">
                     <h1 className="text-4xl md:text-6xl font-satoshi font-black tracking-tighter uppercase">
                         Privacy Policy
                     </h1>
                     <p className="text-xl md:text-2xl font-cormorant italic text-black/60">
-                        Ultimo aggiornamento: Ottobre 2023
+                        Ultimo aggiornamento: Luglio 2026
                     </p>
                 </header>
 
@@ -23,9 +27,9 @@ export default function PrivacyPolicy() {
                         <h2 className="text-2xl font-bold font-satoshi tracking-tight">1. Titolare del Trattamento</h2>
                         <p>
                             I dati personali raccolti attraverso questo sito web sono trattati da <strong>GLEEYE S.R.L.</strong>,
-                            con sede legale in Via Roma 1, 00100 Roma (RM), P.IVA 01234567890 (di seguito "Titolare").<br />
+                            con sede in Piazza Brignole 2/3, 16122 Genova (GE), P.IVA 02944020995 (di seguito "Titolare").<br />
                             Per qualsiasi informazione o richiesta relativa alla privacy, è possibile contattare il Titolare
-                            all'indirizzo email: <a href="mailto:privacy@gleeye.it" className="underline font-bold">privacy@gleeye.it</a>.
+                            all'indirizzo email: <a href="mailto:info@gleeye.eu" className="underline font-bold">info@gleeye.eu</a>.
                         </p>
                     </section>
 
@@ -79,5 +83,7 @@ export default function PrivacyPolicy() {
                 </article>
             </div>
         </main>
+        <Footer />
+        </>
     );
 }

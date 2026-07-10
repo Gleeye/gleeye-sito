@@ -539,7 +539,7 @@ export default function ServicesAccordion() {
                           {svc.link.label}<ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1.5" />
                         </Link>
                       ) : (
-                        <a href="/#contatti" className="sc group inline-flex items-center gap-2.5 text-[11px] font-black uppercase tracking-[0.2em] transition-opacity duration-300 hover:opacity-60"
+                        <a href="/contatti" className="sc group inline-flex items-center gap-2.5 text-[11px] font-black uppercase tracking-[0.2em] transition-opacity duration-300 hover:opacity-60"
                           style={{ color: gradAccent }}>
                           Parliamo del tuo progetto<ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1.5" />
                         </a>

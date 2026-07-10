@@ -96,7 +96,7 @@ export default function IdentityContactCTA() {
                         <div className="flex flex-col sm:flex-row gap-4">
                             {/* Primary CTA */}
                             <Link
-                                href="/#contatti"
+                                href="/contatti"
                                 className="cta-button group relative px-9 py-5 rounded-full overflow-hidden flex items-center justify-center gap-3 font-satoshi"
                                 style={{ backgroundImage: 'linear-gradient(130deg, #4e92d8, #614aa2)' }}
                             >
@@ -110,7 +110,7 @@ export default function IdentityContactCTA() {
 
                             {/* Secondary CTA */}
                             <Link
-                                href="/#contatti"
+                                href="/contatti"
                                 className="cta-button group px-9 py-5 rounded-full border border-white/15 flex items-center justify-center gap-3 hover:border-white/35 transition-colors duration-400 font-satoshi"
                             >
                                 <span className="text-[10px] font-black uppercase tracking-[0.22em] text-white/60 group-hover:text-white/90 transition-colors duration-400">

@@ -608,7 +608,7 @@ export default function DigitalServicesAccordion() {
                         ))}
                       </ul>
                       <a
-                        href="/#contatti"
+                        href="/contatti"
                         className="svc-cta group inline-flex items-center gap-2.5 text-[11px] font-black uppercase tracking-[0.2em] transition-opacity duration-300 hover:opacity-60"
                         style={{ color: svc.accent }}
                       >

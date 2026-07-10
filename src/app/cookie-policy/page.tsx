@@ -1,12 +1,16 @@
 "use client";
 
 import { useConsent } from "@/hooks/useConsent";
+import Header from "@/components/v2/Header";
+import Footer from "@/components/v2/Footer";
 
 export default function CookiePolicy() {
     const { consents, acceptAll, rejectAll, updateConsent } = useConsent();
 
     return (
-        <main className="min-h-screen bg-[#F5F3EE] text-[#111111] pt-32 pb-24 px-6 md:px-12">
+        <>
+        <Header />
+        <main className="min-h-screen bg-[#F8F9FA] text-[#111111] pt-32 pb-24 px-6 md:px-12">
             <div className="max-w-4xl mx-auto space-y-12">
                 <header className="space-y-6">
                     <h1 className="text-4xl md:text-6xl font-satoshi font-black tracking-tighter uppercase">
@@ -104,5 +108,7 @@ export default function CookiePolicy() {
                 </article>
             </div>
         </main>
+        <Footer />
+        </>
     );
 }

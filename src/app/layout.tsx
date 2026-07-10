@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, IBM_Plex_Mono } from "next/font/google";
+import { Cormorant_Garamond, IBM_Plex_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
+import SmoothScroll from "@/components/v2/SmoothScroll";
+import Cursor from "@/components/v2/Cursor";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -16,9 +18,27 @@ const plexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600", "700"],
 });
 
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta-next",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+});
+
 export const metadata: Metadata = {
-  title: "GLEEYE | Digital Instrument",
-  description: "Glee to eye - Boutique & Factory for Visual Excellence",
+  metadataBase: new URL("https://gleeye.eu"),
+  title: {
+    default: "Gleeye — Agenzia di Comunicazione | Genova",
+    template: "%s — Gleeye",
+  },
+  description:
+    "Architetti di percezioni. Boutique strategica e Factory creativa: identità di marca, ecosistemi digitali e produzione di contenuti d'élite. Genova.",
+  openGraph: {
+    title: "Gleeye — Glee to Eye",
+    description:
+      "Boutique strategica e Factory creativa. Identità, digital, produzione.",
+    locale: "it_IT",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -29,24 +49,19 @@ export default function RootLayout({
   return (
     <html lang="it">
       <head>
-        <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://cdn.fontshare.com" crossOrigin="anonymous" />
+        <link
+          href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400,1,2&display=swap"
+          rel="stylesheet"
+        />
       </head>
-      <body className={`${cormorant.variable} ${plexMono.variable} antialiased bg-[#F5F3EE] text-[#111111]`}>
-        {/* Global Noise Overlay */}
-        <div className="fixed inset-0 z-[9999] pointer-events-none opacity-[0.05] contrast-150 brightness-100 mix-blend-overlay">
-          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
-            <filter id="noiseFilter">
-              <feTurbulence
-                type="fractalNoise"
-                baseFrequency="0.65"
-                numOctaves="3"
-                stitchTiles="stitch"
-              />
-            </filter>
-            <rect width="100%" height="100%" filter="url(#noiseFilter)" />
-          </svg>
-        </div>
-        {children}
+      <body
+        className={`${cormorant.variable} ${plexMono.variable} ${jakarta.variable} antialiased`}
+      >
+        <SmoothScroll>
+          {children}
+        </SmoothScroll>
+        <Cursor />
         <CookieBanner />
       </body>
     </html>

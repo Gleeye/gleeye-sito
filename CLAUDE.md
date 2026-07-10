@@ -13,30 +13,41 @@ Stack: Next.js (App Router, TypeScript), Tailwind CSS v4, GSAP + ScrollTrigger, 
 Font: Satoshi (display) + Plus Jakarta Sans (body).
 Colori: primary `#4e92d8` (sky blue), secondary `#614aa2` (deep purple), bg chiaro `#F8F9FA` (bianco ghiaccio).
 
-## Stato attuale
+## Stato attuale — SITO V2 (redesign completo, luglio 2026)
 
-### Pagine completate
-- `/` — Homepage con 7 sezioni (Hero, LogoTicker, CoreAreas, Manifesto, Identity, SpecialUnits, Contact)
-- `/factory` — Hero dark + ServicesAccordion sticky scroll (5 servizi: Video, Photo, Copy, Podcast, Graphic Design)
-- `/podcast` — Landing page completa (Hero, Value, Essence, Process, FAQ, Contact)
-- `/video-explainer` — Landing page completa
-- `/lavora-con-noi` — Pagina
-- `/cookie-policy`, `/privacy-policy` — Pagine legali
+Il sito è stato ricostruito da zero con un nuovo design system ("Optical Precision").
+Tutti i componenti v2 vivono in `src/components/v2/`. I vecchi componenti in
+`src/components/` (Hero, CoreAreas, ecc.) sono legacy: usati solo dalle sottopagine
+servizio non ancora rifatte. `Header.tsx` e `Footer.tsx` legacy sono re-export della v2.
 
-### Da costruire
-- `/identity` — Area page (Brand Discovery, Naming, Visual Identity, Brand Guidelines)
-- `/digital` — Area page (Web, Social, SEO, Advertising)
-- `/events` — Da copiare dal sito vecchio
-- `/video` — Vertical landing page Video Production (come /podcast ma per video)
-- Pagine legali da rivedere
+### Design system v2
+- Palette: ink `#0a0a10` (dark), ice `#F8F9FA` (light), anchor blue `#4e92d8`, purple `#614aa2`, fluo `#6db5ff` / `#9b7bff`
+- Voci tipografiche (classi in globals.css): `.voice-display` (Satoshi Black uppercase), `.voice-serif` (Cormorant italic), `.voice-mono` (Plex Mono labels tecniche)
+- Texture: `.grain` (noise), `.blueprint` / `.blueprint-ink` (griglia fine)
+- Smooth scroll Lenis (`v2/SmoothScroll.tsx`), cursore custom (`v2/Cursor.tsx`), magnetic buttons (`v2/Magnetic.tsx`)
+- Hero WebGL "iride liquida": `v2/home/HeroIris.tsx` (home) e `v2/IrisCanvas.tsx` (riusabile, tinta per area)
 
-### Pattern da seguire
-Le pagine area (`/identity`, `/digital`) usano lo **stesso pattern della pagina `/factory`**:
-- `src/app/[slug]/page.tsx` — solo imports + composizione
-- `src/components/[slug]/HeroSection.tsx` — hero dark con canvas waves GSAP
-- `src/components/[slug]/ServicesAccordion.tsx` — sticky accordion scroll-driven
+### Pagine v2 completate
+- `/` — HeroIris WebGL, Ticker (servizi + loghi clienti), Areas (pin orizzontale), Manifesto (reveal parola-per-parola), Duality (dittico Boutique/Factory interattivo), Method, SpecialUnits (tilt 3D), Contact
+- `/identity`, `/digital`, `/factory` — sistema area parametrico (`v2/area/`): AreaHero (iride tinta), AreaChapters (accordion capitoli), AreaEssence (principi), AreaCTA (marquee)
+- `/contatti` — pagina contatti dedicata (form mailto → info@gleeye.eu)
+- `/lavora-con-noi` — form candidature (era iframe rotto verso localhost:8080)
+- `/cookie-policy`, `/privacy-policy` — chrome v2 + dati reali (Piazza Brignole 2/3, P.IVA corretta)
+- 404 custom (`not-found.tsx`), page transitions (`template.tsx`), sitemap.ts, robots.ts
+- Sottopagine servizio (identity/digital/factory/*, /podcast, /video-explainer, /events): design v1, chrome v2
 
-Vedere `src/components/factory/` come riferimento canonico.
+### Lezioni tecniche apprese (NON ripetere questi errori)
+- Turbopack (Next 16) NON emette `@import url()` remoti nel CSS: font via `next/font` o `<link>` nel layout
+- MAI `::-webkit-scrollbar` custom sul root: forza scrolling main-thread e desincronizza il paint
+- MAI transform su wrapper di elementi `position:fixed` (template.tsx usa solo opacity)
+- MAI `loseContext()` nel cleanup WebGL: in dev StrictMode il canvas viene rimontato col contesto perso
+- Reveal robusti: `gsap.set` + `ScrollTrigger.create({onEnter})`, NON `gsap.from(..., {scrollTrigger})` (può non scattare)
+- Niente CSS `transition-all` su elementi animati da GSAP (conflitto sulle stesse proprietà)
+- Anchor cross-page (`/#sezione`) inaffidabili con sezioni pinnate: usare pagine dedicate (es. `/contatti`)
+
+### Da fare (eventuale)
+- Redesign v2 delle sottopagine servizio e delle landing `/podcast`, `/video-explainer`, `/events`
+- `/video` — landing verticale Video Production
 
 ## Skill da usare (plugin web-builder)
 
