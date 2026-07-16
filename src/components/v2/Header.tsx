@@ -103,11 +103,11 @@ export default function Header() {
           <Link
             href="/"
             aria-label="Gleeye — home"
-            className="pointer-events-auto mix-blend-difference"
+            className="pointer-events-auto"
             onClick={() => open && toggle(false)}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand/logo bianco.png" alt="Gleeye" className="h-7 w-auto md:h-8" />
+            <img src="/brand/logo.png" alt="Gleeye" className="h-14 w-auto md:h-20" />
           </Link>
 
           <Magnetic className="pointer-events-auto">
@@ -117,10 +117,7 @@ export default function Header() {
               aria-label={open ? 'Chiudi menu' : 'Apri menu'}
               className="group flex items-center gap-3 mix-blend-difference"
             >
-              <span className="voice-mono hidden text-[10px] text-white sm:block">
-                {open ? 'CHIUDI' : 'MENU'}
-              </span>
-              <span className="relative flex h-11 w-11 items-center justify-center rounded-full border border-white/40 transition-colors duration-300 group-hover:border-white">
+              <span className="relative flex h-12 w-12 items-center justify-center rounded-full border border-white/40 transition-colors duration-300 group-hover:border-white">
                 <span
                   className={`absolute h-px w-4 bg-white transition-all duration-300 ${
                     open ? 'rotate-45' : '-translate-y-[3.5px]'
@@ -143,7 +140,6 @@ export default function Header() {
         className="fixed inset-0 z-[90] bg-[#0a0a10] text-[#f8f9fa] invisible"
         aria-hidden={!open}
       >
-        <div className="blueprint absolute inset-0" />
         <div className="grain absolute inset-0" />
         {/* fluo aura */}
         <div className="absolute -right-40 top-1/4 h-[60vh] w-[60vh] rounded-full bg-[#614aa2]/25 blur-[140px]" />
@@ -164,7 +160,7 @@ export default function Header() {
                       <span className="voice-display text-[13vw] leading-[1.02] text-transparent transition-colors duration-500 [-webkit-text-stroke:1.5px_rgba(248,249,250,0.6)] group-hover:text-[#f8f9fa] group-hover:[-webkit-text-stroke:1.5px_transparent] md:text-[6.5vw]">
                         {item.label}
                       </span>
-                      <span className="voice-serif hidden text-lg text-white/0 transition-all duration-500 group-hover:text-white/60 md:block">
+                      <span className="voice-mono hidden text-white/0 transition-all duration-500 group-hover:text-[#6db5ff] md:block">
                         {item.note}
                       </span>
                     </Link>

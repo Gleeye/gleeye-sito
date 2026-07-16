@@ -14,6 +14,7 @@ export interface AreaConfig {
   soul: string;
   claim: { plain: string; serif: string };
   intro: string;
+  bgImage?: string;
   accent1: string;
   accent2: string;
   services: AreaService[];

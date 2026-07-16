@@ -10,7 +10,6 @@ export default function AreaCTA({ area }: { area: AreaConfig }) {
 
   return (
     <section className="relative overflow-hidden border-y border-[#0a0a10]/10 bg-[#f8f9fa] py-20 md:py-28">
-      <div className="blueprint-ink absolute inset-0" />
 
       <div className="animate-marquee pointer-events-none flex w-max select-none items-center [--marquee-speed:34s]" aria-hidden="true">
         {words.map((w, i) => (
@@ -24,7 +23,7 @@ export default function AreaCTA({ area }: { area: AreaConfig }) {
       </div>
 
       <div className="relative mt-14 flex flex-col items-center gap-6 px-5 text-center">
-        <p className="voice-serif text-2xl text-[#0a0a10]/60 md:text-3xl">
+        <p className="font-satoshi text-xl font-black uppercase tracking-tight text-[#0a0a10]/70 md:text-2xl">
           Un solo interlocutore, tutta la catena del valore.
         </p>
         <Magnetic strength={0.25}>

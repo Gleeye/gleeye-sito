@@ -7,7 +7,6 @@ export default function NotFound() {
     <>
       <Header />
       <main className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-[#0a0a10] px-5 text-center text-[#f8f9fa]">
-        <div className="blueprint absolute inset-0" />
         <div className="grain absolute inset-0" />
         <div className="absolute left-1/2 top-1/2 h-[60vh] w-[60vh] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#614aa2]/20 blur-[140px]" />
 
@@ -15,7 +14,7 @@ export default function NotFound() {
         <h1 className="voice-display relative text-[26vw] leading-none text-transparent [-webkit-text-stroke:2px_rgba(248,249,250,0.5)] md:text-[16vw]">
           404
         </h1>
-        <p className="voice-serif relative mt-4 text-2xl text-white/70 md:text-3xl">
+        <p className="relative mt-4 font-satoshi text-2xl font-bold text-white/70 md:text-3xl">
           Questa pagina è sfuggita al nostro sguardo.
         </p>
         <Link

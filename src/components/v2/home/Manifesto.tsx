@@ -8,10 +8,12 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const SENTENCE =
-  "In un mercato saturo di rumore, la bellezza non è decorazione: è cortesia verso chi guarda. Riduciamo l'attrito, restituiamo ordine, e trasformiamo la comunicazione da voce di spesa ad asset patrimoniale.";
-
-const HIGHLIGHTS = ['bellezza', 'cortesia', 'ordine,', 'asset', 'patrimoniale.'];
+const TABS = [
+  { label: 'Chi siamo', href: '/chi-siamo' },
+  { label: 'Mission e Vision', href: '/mission-e-vision' },
+  { label: 'Manifesto', href: '/manifesto' },
+  { label: 'Metodo', href: '/metodo' },
+];
 
 export default function Manifesto() {
   const rootRef = useRef<HTMLElement>(null);
@@ -21,29 +23,23 @@ export default function Manifesto() {
     if (!root) return;
 
     const ctx = gsap.context(() => {
-      const words = gsap.utils.toArray<HTMLElement>('.mf-word', root);
-      gsap.fromTo(
-        words,
-        { opacity: 0.13 },
-        {
-          opacity: 1,
-          stagger: 0.4,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: '.mf-text',
-            start: 'top 78%',
-            end: 'bottom 45%',
-            scrub: 0.6,
-          },
-        }
-      );
+      gsap.utils.toArray<HTMLElement>('.mf-title-line', root).forEach((line, i) => {
+        gsap.from(line, {
+          x: i % 2 === 0 ? 80 : -80,
+          opacity: 0,
+          duration: 1.3,
+          ease: 'power4.out',
+          scrollTrigger: { trigger: root, start: 'top 78%' },
+        });
+      });
 
-      gsap.from('.mf-sig', {
-        opacity: 0,
+      gsap.from('.mf-reveal', {
         y: 30,
+        opacity: 0,
         duration: 1,
+        stagger: 0.1,
         ease: 'power3.out',
-        scrollTrigger: { trigger: '.mf-sig', start: 'top 88%', once: true },
+        scrollTrigger: { trigger: '.mf-grid', start: 'top 85%' },
       });
     }, root);
 
@@ -51,46 +47,61 @@ export default function Manifesto() {
   }, []);
 
   return (
-    <section ref={rootRef} className="relative overflow-hidden bg-[#0a0a10] py-24 text-[#f8f9fa] md:py-32">
+    <section
+      ref={rootRef}
+      id="manifesto"
+      className="relative overflow-hidden bg-[#0a0a10] py-28 text-[#f8f9fa] md:py-40"
+    >
       <div className="grain absolute inset-0" />
       <div className="absolute right-0 top-0 h-[45vh] w-[45vh] translate-x-1/3 -translate-y-1/3 rounded-full bg-[#614aa2]/25 blur-[130px]" />
       <div className="absolute bottom-0 left-0 h-[40vh] w-[40vh] -translate-x-1/3 translate-y-1/3 rounded-full bg-[#4e92d8]/20 blur-[130px]" />
 
-      {/* rotating seal */}
-      <div className="pointer-events-none absolute right-8 top-16 hidden h-36 w-36 md:block" aria-hidden="true">
-        <svg viewBox="0 0 100 100" className="animate-spin-slow h-full w-full">
-          <defs>
-            <path id="mf-circle" d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0" />
-          </defs>
-          <text className="fill-white/35" style={{ fontSize: '8.2px', fontFamily: 'var(--font-plex-mono)', letterSpacing: '0.18em' }}>
-            <textPath href="#mf-circle">GLEE TO EYE · GLEE TO EYE ·</textPath>
-          </text>
-        </svg>
-        <span className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#6db5ff] animate-pulse-dot" />
-      </div>
+      <div className="relative mx-auto max-w-7xl px-5 md:px-10">
+        {/* Titolo */}
+        <h2 className="voice-display mb-16 text-[13vw] leading-[0.9] md:mb-24 md:text-[min(7vw,7rem)]">
+          <span className="mf-title-line block md:pl-[8%]">Dall&apos;intenzione</span>
+          <span className="mf-title-line block text-gradient">alla sostanza.</span>
+        </h2>
 
-      <div className="relative mx-auto max-w-6xl px-5 md:px-10">
-        <div className="mb-14 flex items-center justify-between">
-          <p className="voice-mono text-[#6db5ff]">[ 02 — Manifesto ]</p>
-          <p className="voice-mono hidden text-white/30 md:block">Glee to eye — ontologia</p>
-        </div>
+        {/* Nav + due colonne di testo */}
+        <div className="mf-grid grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
+          {/* Nav (pagine da costruire — per ora non cliccabili) */}
+          <nav className="mf-reveal md:col-span-3">
+            <div className="flex flex-col">
+              {TABS.map((tab) => (
+                <div key={tab.href} className="border-b border-white/10 py-5">
+                  <span className="voice-mono text-white/50">{tab.label}</span>
+                </div>
+              ))}
+            </div>
+          </nav>
 
-        <p className="mf-text voice-display text-[7.5vw] leading-[1.04] md:text-[3.4vw]">
-          {SENTENCE.split(' ').map((word, i) => {
-            const hot = HIGHLIGHTS.includes(word.toLowerCase());
-            return (
-              <span key={i} className={`mf-word mr-[0.28em] inline-block ${hot ? 'text-gradient' : ''}`}>
-                {word}
-              </span>
-            );
-          })}
-        </p>
+          {/* Colonna 1 — affermazioni */}
+          <div className="space-y-10 md:col-span-4">
+            <p className="mf-reveal font-jakarta text-xl font-semibold leading-[1.35] tracking-tight text-white md:text-2xl">
+              Ogni necessità richiede una struttura capace di sostenerla. In Gleeye
+              presidiamo lo spazio che separa l&apos;intenzione dal risultato.
+            </p>
+            <p className="mf-reveal font-jakarta text-xl font-semibold leading-[1.35] tracking-tight text-white/90 md:text-2xl">
+              Perché un progetto ha valore solo quando smette di essere un discorso
+              e diventa sostanza.
+            </p>
+          </div>
 
-        <div className="mf-sig mt-16 flex items-center gap-5">
-          <span className="h-px w-16 bg-gradient-to-r from-[#4e92d8] to-[#9b7bff]" />
-          <p className="voice-serif text-2xl text-white/70 md:text-3xl">
-            Questo è il <span className="text-white">Glee to eye</span>.
-          </p>
+          {/* Colonna 2 — approfondimento */}
+          <div className="space-y-8 md:col-span-5">
+            <p className="mf-reveal font-jakarta text-base font-medium leading-relaxed text-white/45 md:text-lg">
+              La creatività non è un&apos;ispirazione estemporanea, ma
+              un&apos;intelligenza che risolve. Non separiamo mai la strategia
+              dall&apos;esecuzione: semplifichiamo i processi, diamo stabilità alla
+              comunicazione e costruiamo asset che abbiano un peso reale.
+            </p>
+            <p className="mf-reveal font-jakarta text-base font-medium leading-relaxed text-white/45 md:text-lg">
+              Assorbiamo l&apos;urto e l&apos;imprevedibilità del percorso per
+              lasciarti solo la solidità dei risultati, trasformando
+              l&apos;intuizione in un vantaggio competitivo concreto.
+            </p>
+          </div>
         </div>
       </div>
     </section>

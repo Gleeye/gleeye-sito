@@ -48,17 +48,10 @@ export default function AreaChapters({ area }: { area: AreaConfig }) {
 
   return (
     <section ref={rootRef} className="relative overflow-hidden bg-[#f8f9fa] py-28 md:py-36">
-      <div className="blueprint-ink absolute inset-0" />
       <div className="relative mx-auto max-w-7xl px-5 md:px-10">
         <div className="ch-head mb-16 md:mb-24">
-          <p className="voice-mono mb-4" style={{ color: area.accent2 }}>
-            [ I capitoli ]
-          </p>
           <h2 className="voice-display max-w-4xl text-4xl text-[#0a0a10] md:text-6xl">
-            Cosa facciamo,{' '}
-            <span className="voice-serif normal-case" style={{ color: area.accent2 }}>
-              capitolo per capitolo.
-            </span>
+            Cosa facciamo, <span className="text-gradient">capitolo</span> per capitolo.
           </h2>
         </div>
 
@@ -70,7 +63,6 @@ export default function AreaChapters({ area }: { area: AreaConfig }) {
                 <button
                   onClick={() => setOpen(isOpen ? -1 : i)}
                   aria-expanded={isOpen}
-                  data-cursor={isOpen ? 'CHIUDI' : 'APRI'}
                   className="group flex w-full items-baseline gap-5 py-8 text-left md:gap-10 md:py-10"
                 >
                   <span
@@ -83,7 +75,7 @@ export default function AreaChapters({ area }: { area: AreaConfig }) {
                     <span className="voice-display block text-2xl text-[#0a0a10] transition-transform duration-500 group-hover:translate-x-2 md:text-5xl">
                       {s.title}
                     </span>
-                    <span className="voice-serif mt-1 block text-lg text-[#0a0a10]/50 md:text-2xl">
+                    <span className="voice-mono mt-2 block text-[#0a0a10]/45">
                       {s.tag}
                     </span>
                   </span>
@@ -114,7 +106,6 @@ export default function AreaChapters({ area }: { area: AreaConfig }) {
                           <Link
                             href={s.href}
                             className="mt-6 inline-flex items-center gap-2 font-satoshi text-sm font-black uppercase tracking-wide text-[#0a0a10] transition-colors duration-300"
-                            style={{ ['--hov' as string]: area.accent2 }}
                           >
                             <span className="relative">
                               Approfondisci

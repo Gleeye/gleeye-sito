@@ -76,14 +76,12 @@ export default function Method() {
 
   return (
     <section ref={rootRef} className="relative overflow-hidden bg-[#0a0a10] py-28 text-[#f8f9fa] md:py-40">
-      <div className="blueprint absolute inset-0" />
       <div className="grain absolute inset-0" />
       <div className="absolute left-1/2 top-1/2 h-[70vh] w-[70vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#614aa2]/10 blur-[160px]" />
 
       <div className="relative mx-auto max-w-7xl px-5 md:px-10">
         <div className="method-head mb-16 flex flex-col justify-between gap-6 md:mb-24 md:flex-row md:items-end">
           <div>
-            <p className="voice-mono mb-4 text-[#6db5ff]">[ 04 — Il metodo ]</p>
             <h2 className="voice-display text-4xl md:text-6xl">
               Dall&apos;idea
               <br />

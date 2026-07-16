@@ -9,12 +9,13 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const inputCls =
-  'w-full rounded-xl border border-white/12 bg-white/[0.04] px-5 py-4 font-jakarta text-sm text-white placeholder:text-white/30 outline-none transition-colors duration-300 focus:border-[#6db5ff] focus:bg-white/[0.07]';
+/* Form Gleeye embeddato. NB: src su localhost — sostituire col dominio reale in produzione. */
+const FORM_ID = '517d363a-dea8-47d1-ba6e-1acf22498b99';
+const FORM_SRC = `http://localhost:5188/form/${FORM_ID}?embed=true`;
 
 export default function Contact() {
   const rootRef = useRef<HTMLElement>(null);
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [formHeight, setFormHeight] = useState(600);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -40,14 +41,15 @@ export default function Contact() {
     return () => ctx.revert();
   }, []);
 
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const subject = encodeURIComponent(`Nuovo progetto — ${form.name || 'richiesta dal sito'}`);
-    const body = encodeURIComponent(
-      `${form.message}\n\n—\n${form.name}\n${form.email}`
-    );
-    window.location.href = `mailto:info@gleeye.eu?subject=${subject}&body=${body}`;
-  };
+  useEffect(() => {
+    const onMessage = (e: MessageEvent) => {
+      if (e.data && e.data.type === 'gleeye-form-resize' && e.data.height) {
+        setFormHeight(e.data.height);
+      }
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, []);
 
   return (
     <section
@@ -59,20 +61,18 @@ export default function Contact() {
       <div className="absolute -left-32 top-0 h-[55vh] w-[55vh] rounded-full bg-[#4e92d8]/20 blur-[150px]" />
       <div className="absolute -right-32 bottom-0 h-[55vh] w-[55vh] rounded-full bg-[#614aa2]/25 blur-[150px]" />
 
-      <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-16 px-5 md:grid-cols-[1.2fr_1fr] md:gap-20 md:px-10">
+      <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-16 px-5 md:grid-cols-[1fr_1fr] md:gap-20 md:px-10">
         {/* left */}
         <div className="ct-left">
-          <p className="voice-mono mb-6 text-[#6db5ff]">[ 06 — Contatti ]</p>
           <h2 className="voice-display text-5xl leading-[0.95] md:text-7xl">
-            Il tuo brand
+            Hai un progetto
             <br />
-            merita di essere
+            da realizzare<span className="text-[#6db5ff]">?</span>
             <br />
-            <span className="voice-serif normal-case text-gradient">guardato.</span>
+            <span className="text-gradient">Contattaci.</span>
           </h2>
-          <p className="mt-8 max-w-md font-jakarta font-medium leading-relaxed text-white/55">
-            Raccontaci dove sei e dove vuoi arrivare. Rispondiamo con un&apos;analisi
-            onesta — senza fuffa, senza promesse eccessive.
+          <p className="mt-8 max-w-md font-jakarta text-lg font-medium leading-relaxed text-white/70">
+            Fissiamo un appuntamento oppure organizza una video call.
           </p>
 
           <div className="mt-12 space-y-6">
@@ -99,61 +99,17 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* form card */}
-        <form
-          onSubmit={submit}
-          className="ct-card relative flex flex-col gap-4 self-start rounded-[2rem] border border-white/10 bg-white/[0.03] p-7 backdrop-blur-md md:p-9"
-        >
-          <span className="voice-mono absolute -top-3 left-8 bg-[#0a0a10] px-3 text-[#9b7bff]">
-            Brief rapido
-          </span>
-          <label className="block">
-            <span className="voice-mono mb-2 block text-white/40">Nome</span>
-            <input
-              type="text"
-              required
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder="Come ti chiami?"
-              className={inputCls}
-            />
-          </label>
-          <label className="block">
-            <span className="voice-mono mb-2 block text-white/40">Email</span>
-            <input
-              type="email"
-              required
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              placeholder="dove@risponderti.it"
-              className={inputCls}
-            />
-          </label>
-          <label className="block">
-            <span className="voice-mono mb-2 block text-white/40">Progetto</span>
-            <textarea
-              required
-              rows={5}
-              value={form.message}
-              onChange={(e) => setForm({ ...form, message: e.target.value })}
-              placeholder="Raccontaci in due righe cosa ti serve…"
-              className={`${inputCls} resize-none`}
-            />
-          </label>
-          <button
-            type="submit"
-            data-cursor="INVIA"
-            className="group relative mt-2 overflow-hidden rounded-full bg-gradient-to-r from-[#4e92d8] to-[#614aa2] px-8 py-4 font-satoshi text-sm font-black uppercase tracking-wide text-white"
-          >
-            <span className="absolute inset-0 translate-y-full bg-[#f8f9fa] transition-transform duration-500 ease-out group-hover:translate-y-0" />
-            <span className="relative transition-colors duration-500 group-hover:text-[#0a0a10]">
-              Parliamo del tuo progetto
-            </span>
-          </button>
-          <p className="voice-mono mt-1 text-center text-[9px] text-white/30">
-            Nessuna newsletter. Solo una risposta vera.
-          </p>
-        </form>
+        {/* form embed */}
+        <div className="ct-card self-start overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-3 backdrop-blur-md md:p-4">
+          <iframe
+            id={`gleeye-form-${FORM_ID}`}
+            title="Modulo di contatto Gleeye"
+            src={FORM_SRC}
+            width="100%"
+            height={formHeight}
+            style={{ width: '100%', border: 0, background: 'transparent' }}
+          />
+        </div>
       </div>
     </section>
   );

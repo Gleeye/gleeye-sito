@@ -150,19 +150,15 @@ h1, h2, h3, h4, h5, h6 {
   background-size: 240px 240px;
 }
 
-/* Fine blueprint grid for dark sections */
-.blueprint {
-  background-image:
-    linear-gradient(rgba(248, 249, 250, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(248, 249, 250, 0.045) 1px, transparent 1px);
-  background-size: 72px 72px;
-}
-
-.blueprint-ink {
-  background-image:
-    linear-gradient(rgba(10, 10, 16, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(10, 10, 16, 0.05) 1px, transparent 1px);
-  background-size: 72px 72px;
+/* Word-pill: la parola chiave su pillola in gradiente, leggermente ruotata */
+.pill-word {
+  display: inline-block;
+  padding: 0 0.22em 0.06em;
+  border-radius: 0.28em;
+  background: linear-gradient(100deg, var(--color-blue), var(--color-purple));
+  color: #fff;
+  transform: rotate(-2deg);
+  -webkit-text-stroke: 0 !important;
 }
 
 /* NOTE: no ::-webkit-scrollbar styling — it forces main-thread (non-composited)

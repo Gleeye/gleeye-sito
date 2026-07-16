@@ -14,38 +14,41 @@ const AREAS = [
   {
     n: '01',
     name: 'Identity',
-    tag: 'Boutique — strategia e genesi',
-    claim: 'Chi sei, reso visibile.',
+    tag: 'Branding e Strategia',
+    claim: "Chi sei, a colpo d'occhio.",
     desc:
-      "La fase in cui si risponde alla domanda: chi siamo e come vogliamo essere percepiti? Senza questa base, ogni investimento in marketing è un potenziale spreco di budget.",
+      'Prima di farti notare, decidiamo per cosa. DNA, nome, volto: senza questa base, ogni euro di marketing è un euro a rischio.',
     services: ['Brand Discovery', 'Naming & Verbal Identity', 'Visual Identity System', 'Brand Guidelines & Rebranding'],
     href: '/identity',
-    accent: '#9b7bff',
-    accentSoft: 'rgba(155,123,255,0.12)',
+    accent: '#8257e6',
+    accentSoft: 'rgba(130,87,230,0.14)',
+    world: 'linear-gradient(135deg, #ffffff 0%, #f1eafc 100%)',
   },
   {
     n: '02',
     name: 'Digital',
-    tag: 'Infrastruttura — presenza e conversione',
-    claim: 'Il posto dove il tuo brand vive.',
+    tag: 'Web e Social Marketing',
+    claim: 'Il posto dove ti trovano.',
     desc:
-      "Qui la strategia diventa infrastruttura: siti ad architettura piuma, ecosistemi social, autorità sui motori di ricerca e advertising monitorato senza fuffa.",
+      'Siti velocissimi, social presidiati, autorità su Google, advertising con numeri veri. La strategia che diventa infrastruttura.',
     services: ['Web Design & Development', 'Social Strategy', 'SEO & Positioning', 'Performance Marketing'],
     href: '/digital',
-    accent: '#6db5ff',
-    accentSoft: 'rgba(109,181,255,0.12)',
+    accent: '#4e92d8',
+    accentSoft: 'rgba(78,146,216,0.14)',
+    world: 'linear-gradient(135deg, #ffffff 0%, #e9f2fc 100%)',
   },
   {
     n: '03',
     name: 'Factory',
-    tag: 'Produzione — artigianato scalabile',
-    claim: "L'eccellenza come output prevedibile.",
+    tag: 'Content Creation',
+    claim: 'Fatto bene. Ogni volta.',
     desc:
-      "Il braccio produttivo che trasforma la strategia in oggetti tangibili. Qualità d'agenzia, efficienza di processo industriale: ogni frame risponde alla promessa del piacere per gli occhi.",
+      'Video, foto, parole, grafica: qualità da boutique, tempi da factory. Ogni frame risponde alla promessa del piacere per gli occhi.',
     services: ['Video Production', 'Photography', 'Strategic Copywriting', 'Podcast & Audio', 'Graphic & Motion Design'],
     href: '/factory',
-    accent: '#4e92d8',
-    accentSoft: 'rgba(78,146,216,0.12)',
+    accent: '#4757c4',
+    accentSoft: 'rgba(71,87,196,0.14)',
+    world: 'linear-gradient(135deg, #ffffff 0%, #e8eafb 100%)',
   },
 ];
 
@@ -88,6 +91,18 @@ export default function Areas() {
         },
       });
 
+      /* i numerali giganti scorrono più lenti del track: parallasse */
+      gsap.to('.area-ghost', {
+        x: 180,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: root,
+          start: 'top top',
+          end: () => `+=${getDistance()}`,
+          scrub: 1,
+        },
+      });
+
       return () => {
         tween.scrollTrigger?.kill();
         tween.kill();
@@ -112,16 +127,12 @@ export default function Areas() {
 
   return (
     <section ref={rootRef} id="aree" className="relative overflow-hidden bg-[#f8f9fa]">
-      <div className="blueprint-ink absolute inset-0" />
 
       <div className="relative flex min-h-svh flex-col justify-center py-20 md:h-svh md:py-0">
         {/* header */}
         <div className="px-5 pb-10 md:px-10 md:pb-8">
-          <p className="voice-mono mb-4 text-[#614aa2]">[ 01 — Le aree ]</p>
-          <h2 className="voice-display text-4xl text-[#0a0a10] md:text-6xl">
-            Tre anime.{' '}
-            <span className="voice-serif normal-case text-[#614aa2]">un solo</span>{' '}
-            metodo.
+          <h2 className="voice-display text-4xl md:text-6xl">
+            <span className="text-gradient">Tre anime in un solo colpo d&apos;occhio.</span>
           </h2>
         </div>
 
@@ -130,17 +141,18 @@ export default function Areas() {
           {AREAS.map((area) => (
             <article
               key={area.n}
-              className="area-panel group relative flex shrink-0 flex-col justify-between overflow-hidden rounded-[2rem] border border-[#0a0a10]/10 bg-white/70 p-7 backdrop-blur-sm transition-colors duration-500 md:w-[68vw] md:p-12 lg:w-[56vw]"
-              style={{ boxShadow: '0 24px 60px -30px rgba(10,10,16,0.18)' }}
+              className="area-panel group relative flex shrink-0 flex-col justify-between overflow-hidden rounded-[2rem] p-7 md:w-[68vw] md:p-12 lg:w-[56vw]"
+              style={{ boxShadow: '0 30px 70px -35px rgba(10,10,16,0.3)', background: area.world }}
             >
-              {/* accent wash on hover */}
+              {/* blob d'accento */}
               <div
-                className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
-                style={{ background: `radial-gradient(80% 90% at 80% 10%, ${area.accentSoft}, transparent 70%)` }}
+                className="pointer-events-none absolute -right-24 -top-28 h-96 w-96 opacity-80 transition-transform duration-700 group-hover:scale-110"
+                style={{ background: `radial-gradient(closest-side, ${area.accentSoft}, transparent)`, borderRadius: '58% 42% 55% 45% / 55% 48% 52% 45%' }}
               />
-              {/* ghost index */}
+              {/* numerale gigante */}
               <span
-                className="voice-display pointer-events-none absolute -right-4 -top-10 select-none text-[11rem] leading-none opacity-[0.07] md:-top-16 md:text-[19rem]"
+                className="area-ghost voice-display pointer-events-none absolute -right-6 top-1/2 -translate-y-1/2 select-none text-[16rem] leading-none md:text-[26rem]"
+                style={{ color: area.accent, opacity: 0.1 }}
                 aria-hidden="true"
               >
                 {area.n}
@@ -151,9 +163,14 @@ export default function Areas() {
                   <span className="h-2 w-2 rounded-full animate-pulse-dot" style={{ backgroundColor: area.accent }} />
                   <p className="voice-mono text-[#0a0a10]/50">{area.tag}</p>
                 </div>
-                <h3 className="voice-display text-6xl text-[#0a0a10] md:text-8xl">{area.name}</h3>
-                <p className="voice-serif mt-3 text-2xl text-[#0a0a10]/70 md:text-3xl">{area.claim}</p>
-                <p className="mt-6 max-w-lg font-jakarta text-sm font-medium leading-relaxed text-black/55 md:text-base">
+                <h3 className="voice-display text-6xl text-[#0a0a10] md:text-8xl">
+                  {area.name}
+                  <span style={{ color: area.accent }}>.</span>
+                </h3>
+                <p className="mt-4 font-satoshi text-xl font-black uppercase tracking-tight md:text-2xl" style={{ color: area.accent }}>
+                  {area.claim}
+                </p>
+                <p className="mt-5 max-w-lg font-jakarta text-sm font-medium leading-relaxed text-black/55 md:text-base">
                   {area.desc}
                 </p>
               </div>
@@ -171,7 +188,6 @@ export default function Areas() {
                 </ul>
                 <Link
                   href={area.href}
-                  data-cursor="ESPLORA"
                   className="inline-flex items-center gap-2 font-satoshi text-sm font-black uppercase tracking-wide text-[#0a0a10]"
                 >
                   <span className="relative">
@@ -189,8 +205,9 @@ export default function Areas() {
 
           {/* end card */}
           <div className="hidden shrink-0 items-center pr-10 md:flex md:w-[30vw]">
-            <p className="voice-display text-5xl leading-tight text-transparent [-webkit-text-stroke:1.5px_rgba(10,10,16,0.35)]">
-              Un solo interlocutore. Tutta la catena del valore.
+            <p className="voice-display text-5xl leading-tight text-[#0a0a10]">
+              Un solo interlocutore.<br />
+              <span className="text-gradient">Tutta la catena del valore.</span>
             </p>
           </div>
         </div>

@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Landmark, Sparkles } from 'lucide-react';
+import { Landmark, Sparkles, ArrowUpRight } from 'lucide-react';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -12,15 +13,23 @@ if (typeof window !== 'undefined') {
 const UNITS = [
   {
     icon: Landmark,
-    name: 'Gleeye Politics',
+    name: 'Spicco',
+    logo: '/brand/spicco-white.png',
     desc: 'Consulenza strategica per candidati e istituzioni: sintesi visiva, chiarezza del messaggio, gestione della reputazione in contesti elettorali.',
-    accent: '#9b7bff',
+    accent: '#57b8ad',
+    href: 'https://spicco.studio',
+    external: true,
+    cta: 'Visita spicco.studio',
   },
   {
     icon: Sparkles,
     name: 'Gleeye Events',
+    logo: null,
     desc: "Presidio visivo degli eventi live: fiere, convention, lanci di prodotto. La messa a terra coerente con l'immagine boutique del brand.",
     accent: '#6db5ff',
+    href: '/events',
+    external: false,
+    cta: 'Scopri gli eventi',
   },
 ];
 
@@ -68,12 +77,10 @@ export default function SpecialUnits() {
 
   return (
     <section ref={rootRef} className="relative overflow-hidden bg-[#f8f9fa] py-28 md:py-36">
-      <div className="blueprint-ink absolute inset-0" />
       <div className="relative mx-auto max-w-7xl px-5 md:px-10">
         <div className="mb-14 md:mb-20">
-          <p className="voice-mono mb-4 text-[#614aa2]">[ 05 — Special units ]</p>
           <h2 className="voice-display max-w-3xl text-4xl text-[#0a0a10] md:text-6xl">
-            Divisioni <span className="voice-serif normal-case text-[#4e92d8]">verticali</span>
+            Divisioni <span className="text-gradient">verticali</span>
           </h2>
         </div>
 
@@ -84,7 +91,6 @@ export default function SpecialUnits() {
               className="su-item group relative overflow-hidden rounded-[2rem] bg-[#0a0a10] p-8 text-[#f8f9fa] md:p-12"
               style={{ transformStyle: 'preserve-3d' }}
             >
-              <div className="blueprint pointer-events-none absolute inset-0" />
               <div
                 className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full opacity-40 blur-[90px] transition-opacity duration-700 group-hover:opacity-80"
                 style={{ backgroundColor: unit.accent }}
@@ -96,13 +102,41 @@ export default function SpecialUnits() {
               />
 
               <div style={{ transform: 'translateZ(40px)' }}>
-                <div className="mb-8 flex h-12 w-12 items-center justify-center rounded-full border border-white/15">
-                  <unit.icon className="h-5 w-5" style={{ color: unit.accent }} strokeWidth={1.6} />
-                </div>
-                <h3 className="voice-display mb-4 text-3xl md:text-4xl">{unit.name}</h3>
+                {unit.logo ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={unit.logo} alt={unit.name} className="mb-6 h-9 w-auto md:h-11" />
+                ) : (
+                  <>
+                    <div className="mb-8 flex h-12 w-12 items-center justify-center rounded-full border border-white/15">
+                      <unit.icon className="h-5 w-5" style={{ color: unit.accent }} strokeWidth={1.6} />
+                    </div>
+                    <h3 className="voice-display mb-4 text-3xl md:text-4xl">{unit.name}</h3>
+                  </>
+                )}
                 <p className="max-w-md font-jakarta text-sm font-medium leading-relaxed text-white/55 md:text-base">
                   {unit.desc}
                 </p>
+                {unit.external ? (
+                  <a
+                    href={unit.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-7 inline-flex items-center gap-2 font-satoshi text-sm font-black uppercase tracking-wide transition-colors duration-300"
+                    style={{ color: unit.accent }}
+                  >
+                    {unit.cta}
+                    <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  </a>
+                ) : (
+                  <Link
+                    href={unit.href}
+                    className="mt-7 inline-flex items-center gap-2 font-satoshi text-sm font-black uppercase tracking-wide transition-colors duration-300"
+                    style={{ color: unit.accent }}
+                  >
+                    {unit.cta}
+                    <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  </Link>
+                )}
               </div>
             </article>
           ))}

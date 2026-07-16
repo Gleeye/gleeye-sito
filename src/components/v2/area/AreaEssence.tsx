@@ -32,7 +32,6 @@ export default function AreaEssence({ area }: { area: AreaConfig }) {
 
   return (
     <section ref={rootRef} className="relative overflow-hidden bg-[#0a0a10] py-28 text-[#f8f9fa] md:py-36">
-      <div className="blueprint absolute inset-0" />
       <div className="grain absolute inset-0" />
       <div
         className="absolute -right-40 top-0 h-[55vh] w-[55vh] rounded-full opacity-25 blur-[150px]"

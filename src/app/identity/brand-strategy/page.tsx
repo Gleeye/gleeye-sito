@@ -1,36 +1,19 @@
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import HeroSection from '@/components/identity/brand-strategy/HeroSection';
-import MarqueeSection from '@/components/identity/brand-strategy/MarqueeSection';
-import PositioningSection from '@/components/identity/brand-strategy/PositioningSection';
-import ServicesSection from '@/components/identity/brand-strategy/ServicesSection';
-import StatsSection from '@/components/identity/brand-strategy/StatsSection';
-import ProcessSection from '@/components/identity/brand-strategy/ProcessSection';
-import ForWhoSection from '@/components/identity/brand-strategy/ForWhoSection';
-import WhySection from '@/components/identity/brand-strategy/WhySection';
-import FaqSection from '@/components/identity/brand-strategy/FaqSection';
-import CtaSection from '@/components/identity/brand-strategy/CtaSection';
+import Header from '@/components/v2/Header';
+import Footer from '@/components/v2/Footer';
+import BrandDiscovery from '@/components/v2/identity/BrandDiscovery';
 
 export const metadata = {
-  title: 'Brand Strategy — Gleeye Identity',
-  description: 'Brand strategy per aziende che vogliono posizionarsi con chiarezza. Positioning, architettura di brand, framework valoriale. La strategia che precede tutto il resto.',
+  title: 'Brand Discovery — Gleeye Identity',
+  description:
+    "Brand discovery e strategic audit: analizziamo il DNA aziendale e i punti di sabotaggio d'immagine. Prima di costruire, capiamo cosa c'è. A Genova, operativi ovunque.",
 };
 
-export default function BrandStrategyPage() {
+export default function BrandDiscoveryPage() {
   return (
     <>
       <Header />
       <main>
-        <HeroSection />
-        <MarqueeSection />
-        <PositioningSection />
-        <ServicesSection />
-        <StatsSection />
-        <ProcessSection />
-        <ForWhoSection />
-        <WhySection />
-        <FaqSection />
-        <CtaSection />
+        <BrandDiscovery />
       </main>
       <Footer />
     </>

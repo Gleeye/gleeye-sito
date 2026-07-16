@@ -29,7 +29,7 @@ export default function Ticker({ logos = [] }: { logos?: string[] }) {
       <div className="animate-marquee flex w-max items-center [--marquee-speed:46s]">
         {words.map((w, i) => (
           <span key={i} className="flex items-center whitespace-nowrap">
-            <span className="voice-display px-6 text-4xl text-transparent [-webkit-text-stroke:1px_rgba(248,249,250,0.4)] md:px-10 md:text-6xl">
+            <span className="voice-display px-6 text-4xl text-white/25 md:px-10 md:text-6xl">
               {w}
             </span>
             <svg width="18" height="18" viewBox="0 0 18 18" className="shrink-0 text-[#6db5ff]" aria-hidden="true">

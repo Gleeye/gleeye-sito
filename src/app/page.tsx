@@ -3,12 +3,11 @@ import path from 'path';
 
 import Header from '@/components/v2/Header';
 import Footer from '@/components/v2/Footer';
+import Intro from '@/components/v2/Intro';
 import HeroIris from '@/components/v2/home/HeroIris';
 import Ticker from '@/components/v2/home/Ticker';
 import Areas from '@/components/v2/home/Areas';
 import Manifesto from '@/components/v2/home/Manifesto';
-import Duality from '@/components/v2/home/Duality';
-import Method from '@/components/v2/home/Method';
 import SpecialUnits from '@/components/v2/home/SpecialUnits';
 import Contact from '@/components/v2/home/Contact';
 
@@ -27,14 +26,13 @@ export default function Home() {
 
   return (
     <>
+      <Intro />
       <Header />
       <main>
         <HeroIris />
         <Ticker logos={loghiFiles} />
         <Areas />
         <Manifesto />
-        <Duality />
-        <Method />
         <SpecialUnits />
         <Contact />
       </main>

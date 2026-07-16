@@ -3,7 +3,6 @@ import { Cormorant_Garamond, IBM_Plex_Mono, Plus_Jakarta_Sans } from "next/font/
 import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
 import SmoothScroll from "@/components/v2/SmoothScroll";
-import Cursor from "@/components/v2/Cursor";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -61,7 +60,6 @@ export default function RootLayout({
         <SmoothScroll>
           {children}
         </SmoothScroll>
-        <Cursor />
         <CookieBanner />
       </body>
     </html>

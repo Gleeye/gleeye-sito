@@ -3,7 +3,11 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import Link from 'next/link';
 import gsap from 'gsap';
-import Magnetic from '../Magnetic';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const VERT = `
 attribute vec2 a_pos;
@@ -16,6 +20,7 @@ uniform vec2 u_res;
 uniform float u_time;
 uniform vec2 u_mouse;
 uniform float u_intro;
+uniform float u_zoom;
 
 float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123); }
 
@@ -43,17 +48,20 @@ float fbm(vec2 p){
 void main(){
   vec2 uv = (gl_FragCoord.xy - 0.5 * u_res) / min(u_res.x, u_res.y);
 
-  /* the iris drifts toward the cursor — it looks back at you */
-  vec2 look = u_mouse * 0.10;
+  /* l'iride segue il cursore — e cresce quando scrolli: entri nella pupilla */
+  vec2 look = u_mouse * 0.10 / u_zoom;
   vec2 p = uv - look;
-  float r = length(p) / (0.9 + 0.35 * u_intro);
+  float r = length(p) / ((0.9 + 0.35 * u_intro) * u_zoom);
   float ang = atan(p.y, p.x);
 
   float t = u_time * 0.1;
 
-  /* organic fibers */
-  float fib  = fbm(vec2(ang * 3.0,  r * 6.0  - t * 1.6));
-  float fib2 = fbm(vec2(ang * 9.0 + t, r * 16.0));
+  /* crossfade attorno alla giuntura di atan2 (asse -x) per eliminare il taglio */
+  float TAU = 6.2831853;
+  float wseam = smoothstep(2.55, 3.14159, abs(ang));
+  float angW = ang - sign(ang) * TAU;
+  float fib  = mix(fbm(vec2(ang * 3.0, r * 6.0 - t * 1.6)), fbm(vec2(angW * 3.0, r * 6.0 - t * 1.6)), 0.5 * wseam);
+  float fib2 = mix(fbm(vec2(ang * 9.0 + t, r * 16.0)),      fbm(vec2(angW * 9.0 + t, r * 16.0)),      0.5 * wseam);
   float rr = r + (fib - 0.5) * 0.15 + (fib2 - 0.5) * 0.05;
 
   vec3 ink    = vec3(0.039, 0.039, 0.063);
@@ -64,32 +72,26 @@ void main(){
 
   vec3 col = ink;
 
-  /* ambient nebula around the eye */
   float field = fbm(uv * 2.0 + vec2(t * 0.5, -t * 0.35));
-  col += purple * 0.18 * smoothstep(0.85, 0.15, r) * field;
-  col += blue * 0.06 * smoothstep(1.0, 0.3, r) * fbm(uv * 3.0 - t * 0.2);
+  col += purple * 0.14 * smoothstep(1.05, 0.05, r) * field;
+  col += blue * 0.05 * smoothstep(1.15, 0.10, r) * fbm(uv * 3.0 - t * 0.2);
 
-  /* iris annulus */
-  float iris = smoothstep(0.47, 0.44, rr) * smoothstep(0.155, 0.185, rr);
+  float iris = smoothstep(0.56, 0.32, rr) * smoothstep(0.10, 0.24, rr);
   vec3 irisCol = mix(purple, blue, smoothstep(0.16, 0.47, rr + (fib - 0.5) * 0.1));
-  irisCol = mix(irisCol, fluoV, fib2 * 0.5);
-  irisCol += fluoB * pow(fib, 3.0) * 1.1;
-  col = mix(col, irisCol, iris);
+  irisCol = mix(irisCol, fluoV, fib2 * 0.36);
+  irisCol += fluoB * pow(fib, 3.0) * 0.38;
+  col = mix(col, irisCol, iris * 0.82);
 
-  /* limbal glow ring */
-  col += fluoB * 0.32 * exp(-pow((rr - 0.455) * 26.0, 2.0));
-  col += fluoV * 0.20 * exp(-pow((rr - 0.19) * 30.0, 2.0));
+  col += fluoB * 0.11 * exp(-pow((rr - 0.455) * 10.0, 2.0));
+  col += fluoV * 0.09 * exp(-pow((rr - 0.19) * 16.0, 2.0));
 
-  /* pupil */
   float pupil = smoothstep(0.185, 0.155, rr);
   col = mix(col, ink * 0.5, pupil);
 
-  /* catchlight */
-  col += vec3(0.9, 0.95, 1.0) * 0.45 * exp(-pow(length(p - vec2(-0.08, 0.09)) * 10.0, 2.0));
+  col += vec3(0.9, 0.95, 1.0) * 0.15 * exp(-pow(length(p - vec2(-0.08, 0.09)) * 10.0 * u_zoom, 2.0));
 
-  /* vignette + intro fade */
-  col *= 1.0 - smoothstep(0.45, 1.25, length(uv)) * 0.65;
-  col *= u_intro;
+  col *= 1.0 - smoothstep(0.5, 1.45, length(uv)) * 0.82 / u_zoom;
+  col *= u_intro * 0.68;
 
   gl_FragColor = vec4(col, 1.0);
 }
@@ -110,6 +112,7 @@ function createShader(gl: WebGLRenderingContext, type: number, src: string) {
 export default function HeroIris() {
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const zoomRef = useRef({ v: 1 });
 
   /* ——— WebGL iris ——— */
   useEffect(() => {
@@ -139,13 +142,12 @@ export default function HeroIris() {
     const uTime = gl.getUniformLocation(prog, 'u_time');
     const uMouse = gl.getUniformLocation(prog, 'u_mouse');
     const uIntro = gl.getUniformLocation(prog, 'u_intro');
+    const uZoom = gl.getUniformLocation(prog, 'u_zoom');
 
     const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
     const resize = () => {
-      const w = canvas.clientWidth;
-      const h = canvas.clientHeight;
-      canvas.width = Math.round(w * dpr);
-      canvas.height = Math.round(h * dpr);
+      canvas.width = Math.round(canvas.clientWidth * dpr);
+      canvas.height = Math.round(canvas.clientHeight * dpr);
       gl.viewport(0, 0, canvas.width, canvas.height);
     };
     resize();
@@ -173,12 +175,12 @@ export default function HeroIris() {
       gl.uniform1f(uTime, (performance.now() - start) / 1000);
       gl.uniform2f(uMouse, mouse.x, mouse.y);
       gl.uniform1f(uIntro, intro.v);
+      gl.uniform1f(uZoom, zoomRef.current.v);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
 
-    /* pause offscreen / hidden tab */
     const io = new IntersectionObserver(([entry]) => {
       const active = entry.isIntersecting && !document.hidden;
       if (active && !running) {
@@ -209,15 +211,15 @@ export default function HeroIris() {
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', onMove);
       gsap.killTweensOf(intro);
-      /* NOTE: no loseContext() here — in dev StrictMode the effect re-runs on the
-         same canvas and getContext would return the already-lost context (white box). */
+      /* NOTE: no loseContext() — in dev StrictMode il canvas viene rimontato col contesto perso */
     };
   }, []);
 
-  /* ——— entry choreography ——— */
+  /* ——— entrata + portale: lo scroll ti porta DENTRO la pupilla ——— */
   useLayoutEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
+    const zoom = zoomRef.current;
     const ctx = gsap.context(() => {
       gsap.set('.hero-line-inner', { yPercent: 120, skewY: 6 });
       gsap.set('.hero-fade', { opacity: 0, y: 24 });
@@ -231,6 +233,22 @@ export default function HeroIris() {
         ease: 'power4.out',
       })
         .to('.hero-fade', { opacity: 1, y: 0, duration: 1, stagger: 0.12, ease: 'power3.out' }, '-=0.9');
+
+      /* portal zoom — pinned scrub */
+      const portal = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: '+=90%',
+          pin: true,
+          scrub: 0.8,
+          anticipatePin: 1,
+        },
+      });
+      portal
+        .to(zoom, { v: 7.5, ease: 'power2.in' }, 0)
+        .to('.hero-content', { scale: 1.9, opacity: 0, ease: 'power2.in', transformOrigin: '50% 42%' }, 0)
+        .to('.hero-frame', { opacity: 0, ease: 'power1.in' }, 0);
     }, section);
     return () => ctx.revert();
   }, []);
@@ -241,78 +259,71 @@ export default function HeroIris() {
       className="relative flex min-h-svh flex-col justify-between overflow-hidden bg-[#0a0a10] text-[#f8f9fa]"
     >
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
-      <div className="blueprint pointer-events-none absolute inset-0" />
       <div className="grain pointer-events-none absolute inset-0" />
 
-      {/* corner registration marks — the optical instrument frame */}
-      <div className="voice-mono pointer-events-none absolute left-5 top-24 hidden text-white/35 md:left-10 md:block hero-fade">
-        44.4056° N — 8.9463° E
-      </div>
-      <div className="voice-mono pointer-events-none absolute right-5 top-24 hidden text-white/35 md:right-10 md:block hero-fade">
-        [ EST. GENOVA ]
-      </div>
-
-      <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-5 pt-28 text-center md:px-10">
-        <p className="voice-mono hero-fade mb-6 text-[#6db5ff]">
-          Agenzia di comunicazione — Glee to eye
-        </p>
-
+      <div className="hero-content relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-5 pt-28 md:px-16 lg:px-24">
+        {/* cascata asimmetrica */}
         <h1 className="voice-display">
           <span className="block overflow-hidden">
-            <span className="hero-line-inner block text-[14vw] text-transparent [-webkit-text-stroke:1.5px_rgba(248,249,250,0.75)] md:text-[9vw] md:[-webkit-text-stroke:2.5px_rgba(248,249,250,0.75)]">
-              Architetti
+            <span className="hero-line-inner block text-[14vw] leading-[0.88] md:text-[min(10vw,8rem)]">
+              Metodo<span className="text-white">.</span>
+            </span>
+          </span>
+          <span className="block overflow-hidden md:ml-[min(10vw,8rem)]">
+            <span className="hero-line-inner block text-[14vw] leading-[0.88] md:text-[min(10vw,8rem)]">
+              Visione<span className="text-white">.</span>
             </span>
           </span>
           <span className="block overflow-hidden">
-            <span className="hero-line-inner block text-[14vw] md:text-[9vw]">
-              di <span className="text-gradient">percezioni.</span>
+            <span className="hero-line-inner block whitespace-nowrap text-[9vw] leading-[0.9] md:text-[min(7.5vw,6rem)]">
+              <span className="text-gradient">Comunicazione</span><span className="text-white">.</span>
             </span>
           </span>
         </h1>
 
-        <p className="hero-fade mt-8 max-w-xl font-jakarta text-base font-medium leading-relaxed text-white/60 md:text-lg">
-          Boutique strategica, factory creativa. Costruiamo il modo in cui il
-          tuo brand viene visto — e il motivo per cui viene ricordato.
-        </p>
-
-        <div className="hero-fade mt-10 flex flex-col items-center gap-4 sm:flex-row">
-          <Magnetic strength={0.25}>
+        <div className="hero-fade mt-10 flex flex-col gap-6 md:max-w-md">
+          <p className="font-jakarta text-base font-medium leading-relaxed text-white/90 md:text-lg">
+            Soluzioni di comunicazione e marketing per far crescere la tua
+            attività. Il nostro metodo nasce da una sola domanda: cosa serve
+            davvero?
+          </p>
+          <div className="flex flex-wrap gap-4">
             <Link
               href="/contatti"
               className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-[#f8f9fa] px-8 py-4 font-satoshi text-sm font-bold uppercase tracking-wide text-[#0a0a10]"
             >
               <span className="absolute inset-0 translate-y-full bg-gradient-to-r from-[#4e92d8] to-[#614aa2] transition-transform duration-500 ease-out group-hover:translate-y-0" />
               <span className="relative transition-colors duration-500 group-hover:text-white">
-                Parliamo del tuo progetto
+                Parliamone
               </span>
               <span className="relative h-1.5 w-1.5 rounded-full bg-[#614aa2] transition-colors duration-500 group-hover:bg-white animate-pulse-dot" />
             </Link>
-          </Magnetic>
-          <Magnetic strength={0.25}>
             <Link
-              href="/#aree"
-              className="inline-flex items-center gap-3 rounded-full border border-white/25 px-8 py-4 font-satoshi text-sm font-bold uppercase tracking-wide text-white/85 transition-colors duration-300 hover:border-[#6db5ff] hover:text-[#6db5ff]"
+              href="/#metodo"
+              className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-white/25 px-8 py-4 font-satoshi text-sm font-bold uppercase tracking-wide text-white/85 transition-colors duration-500 hover:border-transparent hover:text-white"
             >
-              Le tre aree
+              <span className="absolute inset-0 translate-y-full bg-gradient-to-r from-[#4e92d8] to-[#614aa2] transition-transform duration-500 ease-out group-hover:translate-y-0" />
+              <span className="relative">Scopri il metodo</span>
             </Link>
-          </Magnetic>
+          </div>
         </div>
       </div>
 
-      {/* bottom strip */}
-      <div className="relative z-10 flex items-end justify-between px-5 pb-6 md:px-10 md:pb-8">
-        <p className="voice-mono hero-fade max-w-[180px] text-left text-white/35">
-          Comunicazione &amp; marketing · operativi ovunque
+      {/* striscia bassa */}
+      <div className="hero-content relative z-10 mx-auto flex w-full max-w-7xl items-end justify-center px-5 pb-6 md:justify-between md:px-16 md:pb-8 lg:px-24">
+        <p className="voice-mono hero-fade hidden whitespace-nowrap text-left text-white/35 md:block">
+          Identity — Digital — Factory
         </p>
         <div className="hero-fade flex flex-col items-center gap-2" aria-hidden="true">
-          <span className="voice-mono text-white/35">Scroll</span>
+          <span className="voice-mono text-white/35">Scrolla</span>
           <span className="relative h-12 w-px overflow-hidden bg-white/15">
             <span className="absolute inset-x-0 top-0 h-4 animate-[scrolldrip_1.8s_ease-in-out_infinite] bg-[#6db5ff]" />
           </span>
         </div>
-        <p className="voice-mono hero-fade max-w-[180px] text-right text-white/35">
-          Identity — Digital — Factory
-        </p>
+        <div className="voice-mono hero-fade hidden whitespace-nowrap text-right leading-relaxed text-white/35 md:block">
+          <span className="block">44.4056° N — 8.9463° E</span>
+          <span className="block">Genova — Operativi ovunque</span>
+        </div>
       </div>
     </section>
   );
