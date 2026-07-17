@@ -1,19 +1,19 @@
 import Header from '@/components/v2/Header';
 import Footer from '@/components/v2/Footer';
-import BrandDiscovery from '@/components/v2/identity/BrandDiscovery';
+import BrandStrategy from '@/components/v2/identity/BrandStrategy';
 
 export const metadata = {
-  title: 'Brand Discovery — Gleeye Identity',
+  title: 'Brand Strategy — Gleeye Identity',
   description:
-    "Brand discovery e strategic audit: analizziamo il DNA aziendale e i punti di sabotaggio d'immagine. Prima di costruire, capiamo cosa c'è. A Genova, operativi ovunque.",
+    'Brand strategy per aziende che vogliono posizionarsi con chiarezza. Positioning, architettura di brand, framework valoriale. La strategia che precede tutto il resto.',
 };
 
-export default function BrandDiscoveryPage() {
+export default function BrandStrategyPage() {
   return (
     <>
       <Header />
       <main>
-        <BrandDiscovery />
+        <BrandStrategy />
       </main>
       <Footer />
     </>
