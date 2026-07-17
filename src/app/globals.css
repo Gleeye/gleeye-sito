@@ -106,6 +106,26 @@ h1, h2, h3, h4, h5, h6 {
   color: transparent;
 }
 
+/* Gradiente vivo: la luce scorre dentro il testo, in loop */
+.text-gradient-flow {
+  background: linear-gradient(100deg,
+    var(--color-fluo-blue) 0%,
+    var(--color-fluo-violet) 30%,
+    #8fc1ee 50%,
+    var(--color-fluo-blue) 70%,
+    var(--color-fluo-violet) 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: text-gradient-flow 6s linear infinite;
+}
+
+@keyframes text-gradient-flow {
+  from { background-position: 0% 50%; }
+  to { background-position: -250% 50%; }
+}
+
 /* ——— Motion utilities ——— */
 
 @keyframes marquee {

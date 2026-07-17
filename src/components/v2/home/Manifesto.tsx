@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -70,7 +71,10 @@ export default function Manifesto() {
             <div className="flex flex-col">
               {TABS.map((tab) => (
                 <div key={tab.href} className="border-b border-white/10 py-5">
-                  <span className="voice-mono text-white/50">{tab.label}</span>
+                  <Link href={tab.href} className="voice-mono group/tab inline-flex items-center gap-2 text-white/50 transition-colors duration-300 hover:text-white">
+                    {tab.label}
+                    <span className="opacity-0 transition-all duration-300 group-hover/tab:translate-x-1 group-hover/tab:opacity-100" aria-hidden>→</span>
+                  </Link>
                 </div>
               ))}
             </div>
