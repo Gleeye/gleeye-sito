@@ -208,6 +208,14 @@ export default function BrandStrategy() {
       <div className="relative flex min-h-[85svh] flex-col justify-end px-5 pb-20 md:px-10 md:pb-28">
         <div className="pointer-events-none absolute right-[-12%] top-[5%] h-[55vh] w-[55vh] rounded-full bg-[#614aa2]/18 blur-[140px]" />
         <div className="pointer-events-none absolute bottom-[-15%] left-[-8%] h-[45vh] w-[45vh] rounded-full bg-[#4e92d8]/12 blur-[130px]" />
+        {/* arco decorativo gigante, ritagliato fuori campo */}
+        <svg viewBox="0 0 100 100" className="pointer-events-none absolute -right-[30%] -top-[35%] h-[110vh] w-[110vh] opacity-[0.35]" aria-hidden>
+          <circle cx="50" cy="50" r="47" fill="none" stroke="url(#bs-arc-g)" strokeWidth="0.25" />
+          <circle cx="50" cy="50" r="38" fill="none" stroke="url(#bs-arc-g)" strokeWidth="0.12" strokeDasharray="0.4 1.6" />
+          <defs><linearGradient id="bs-arc-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#8257e6" /><stop offset="100%" stopColor="#4e92d8" /></linearGradient></defs>
+        </svg>
+        {/* vignetta: profondità ai bordi */}
+        <div className="pointer-events-none absolute inset-0" style={{ background: 'radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,0.5) 100%)' }} />
         <h1>
           <span className="block overflow-hidden py-[0.04em]">
             <span className="bs-hero-line voice-display block text-[10.5vw] leading-[0.92] md:text-[6.5vw]">Brand come</span>
@@ -222,7 +230,8 @@ export default function BrandStrategy() {
       </div>
 
       {/* ---------- il nostro approccio ---------- */}
-      <div className="bs-appr relative px-5 py-24 md:px-10 md:py-36">
+      <div className="bs-appr relative mx-3 rounded-[2.5rem] border-t border-white/[0.08] bg-gradient-to-b from-[#0e1020] to-[#0a0a10] px-5 py-24 md:mx-6 md:px-10 md:py-36" style={{ boxShadow: '0 -30px 80px -40px rgba(97,74,162,0.25), inset 0 1px 0 rgba(255,255,255,0.06)' }}>
+        <span className="voice-mono pointer-events-none absolute left-6 top-10 hidden text-white/25 md:block" style={{ writingMode: 'vertical-rl' }}>Il nostro approccio</span>
         <h2 className="voice-display max-w-4xl text-3xl leading-[1.05] md:ml-[14%] md:text-6xl">
           {statement.split(' ').map((w, i) => (
             <span key={i} className="bs-appr-word inline-block" style={{ marginRight: '0.26em' }}>{w}</span>
@@ -249,7 +258,16 @@ export default function BrandStrategy() {
                 style={{ background: `radial-gradient(60% 120% at 8% 50%, ${s.accent}14 0%, transparent 60%)` }}
               />
               <div className="relative grid grid-cols-[3.5rem_1fr] items-start gap-5 md:grid-cols-[5rem_1fr_auto] md:gap-10">
-                <div className="h-12 w-12 md:h-16 md:w-16"><s.Ico a={s.accent} /></div>
+                <div
+                  className="flex h-14 w-14 items-center justify-center rounded-2xl p-2.5 transition-transform duration-500 group-hover:-translate-y-1 group-hover:scale-105 md:h-[4.5rem] md:w-[4.5rem] md:p-3.5"
+                  style={{
+                    background: `linear-gradient(150deg, ${s.accent}22, transparent 65%), #10121f`,
+                    boxShadow: `inset 0 1px 0 rgba(255,255,255,0.1), 0 12px 30px -12px ${s.accent}55`,
+                    border: '1px solid rgba(255,255,255,0.08)',
+                  }}
+                >
+                  <s.Ico a={s.accent} />
+                </div>
                 <div>
                   <h3 className="voice-display text-2xl md:text-4xl">{s.titolo}</h3>
                   <p className="mt-3 max-w-2xl font-jakarta text-sm font-medium leading-relaxed text-white/50 md:text-base md:opacity-0 md:transition-all md:duration-500 md:group-hover:opacity-100">
@@ -279,10 +297,14 @@ export default function BrandStrategy() {
           {FASI.map((f) => (
             <article
               key={f.n}
-              className="bs-fase relative flex shrink-0 flex-col justify-between overflow-hidden rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-[#0c0e18] to-[#141628] p-8 lg:min-h-[24rem] lg:w-[30rem] lg:p-10"
+              className="bs-fase relative flex shrink-0 flex-col justify-between overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#0e1122] to-[#161a30] p-8 lg:min-h-[24rem] lg:w-[30rem] lg:p-10"
+              style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1), 0 30px 60px -25px rgba(0,0,0,0.8), 0 20px 50px -30px rgba(78,146,216,0.35)', border: '1px solid rgba(255,255,255,0.09)' }}
             >
-              <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-[#4e92d8]/15 blur-[70px]" />
-              <span className="voice-mono text-white/35">Fase {f.n}</span>
+              <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-[#4e92d8]/20 blur-[70px]" />
+              <span className="voice-display pointer-events-none absolute -bottom-8 -right-3 select-none text-[9rem] leading-none opacity-[0.07]" aria-hidden>{f.n}</span>
+              <span className="voice-mono inline-flex w-fit items-center gap-2 rounded-full border border-white/12 bg-white/[0.04] px-3.5 py-1.5 text-white/55">
+                Fase {f.n}
+              </span>
               <div className="mt-10">
                 <h3 className="voice-display text-2xl md:text-3xl">{f.titolo}</h3>
                 <p className="mt-4 max-w-sm font-jakarta text-sm font-medium leading-relaxed text-white/50">{f.desc}</p>
@@ -358,7 +380,10 @@ export default function BrandStrategy() {
       </div>
 
       {/* ---------- cta ---------- */}
-      <div id="contatti" className="relative flex min-h-[55vh] flex-col items-center justify-center px-5 pb-32 text-center">
+      <div id="contatti" className="relative flex min-h-[55vh] flex-col items-center justify-center overflow-hidden px-5 pb-32 text-center">
+        {/* anello gradiente dietro la chiusura */}
+        <div className="pointer-events-none absolute left-1/2 top-1/2 h-[80vh] w-[80vh] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-40" style={{ background: 'radial-gradient(closest-side, transparent 62%, rgba(130,87,230,0.35) 68%, rgba(78,146,216,0.25) 74%, transparent 82%)' }} />
+        <div className="pointer-events-none absolute bottom-[-30%] left-1/2 h-[45vh] w-[70vw] -translate-x-1/2 rounded-full bg-[#4e92d8]/10 blur-[120px]" />
         <h2 className="bs-reveal voice-display text-3xl leading-tight md:text-6xl">
           La strategia viene <span className="text-gradient-flow">prima di tutto</span>.
         </h2>
