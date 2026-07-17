@@ -110,7 +110,7 @@ export default function Areas() {
               </p>
 
               {/* si rivela quando il pannello si apre */}
-              <div className="mt-5 max-h-0 overflow-hidden opacity-0 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:max-h-96 group-hover:opacity-100">
+              <div className="mt-5 overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] md:max-h-0 md:opacity-0 md:group-hover:max-h-96 md:group-hover:opacity-100">
                 <p className="max-w-md font-jakarta text-sm font-medium leading-relaxed text-black/60 md:text-base">
                   {area.desc}
                 </p>
