@@ -14,7 +14,7 @@
 
   --font-satoshi: var(--font-satoshi-local), 'Satoshi', sans-serif;
   --font-jakarta: var(--font-jakarta-next), 'Plus Jakarta Sans', sans-serif;
-  --font-cormorant: var(--font-cormorant-next), 'Cormorant Garamond', serif;
+  --font-newsreader: var(--font-newsreader-next), 'Newsreader', serif;
   --font-mono: var(--font-plex-mono), 'IBM Plex Mono', monospace;
 }
 
@@ -68,7 +68,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .voice-serif {
-  font-family: var(--font-cormorant);
+  font-family: var(--font-newsreader);
   font-style: italic;
   font-weight: 400;
   text-transform: none;
@@ -210,11 +210,73 @@ h1, h2, h3, h4, h5, h6 {
    (vedi useLayoutEffect in Areas.tsx). Regola in CSS puro: il valore arbitrario
    Tailwind con var() dentro calc() non viene generato. */
 .area-ico {
-  display: block;
+  display: none; /* mobile a card chiusa: niente icona */
   margin: 0 auto 2.5rem;
   width: clamp(96px, 30vw, 150px);
   color: rgba(10, 10, 16, 0.16);
   pointer-events: none;
+}
+
+/* mobile a card aperta (tap): l'icona compare in alto */
+.area-panel[data-open='true'] .area-ico {
+  display: block;
+}
+
+/* ——— Stato APERTO della card aree ———
+   Mobile: tap → [data-open="true"]. Desktop: hover.
+   (Le varianti Tailwind group-data-[open=true] non vengono generate:
+    lo scanner scarta il token per via dell'"=", quindi CSS puro.) */
+.area-panel[data-open='true'] {
+  background-color: #ffffff;
+}
+.area-panel[data-open='true'] .area-bg {
+  opacity: 0.1;
+}
+.area-panel[data-open='true'] .area-accent {
+  opacity: 1;
+}
+.area-panel[data-open='true'] .area-tag {
+  color: rgba(10, 10, 16, 0.4);
+}
+.area-panel[data-open='true'] .area-name {
+  color: #0a0a10;
+}
+.area-panel[data-open='true'] .area-dot,
+.area-panel[data-open='true'] .area-claim {
+  -webkit-text-fill-color: transparent;
+}
+.area-panel[data-open='true'] .area-reveal {
+  max-height: 40rem;
+  opacity: 1;
+}
+.area-panel[data-open='true'] .area-underline {
+  transform: scaleX(1);
+}
+
+@media (min-width: 768px) {
+  .area-panel:hover .area-bg {
+    opacity: 0.1;
+  }
+  .area-panel:hover .area-accent {
+    opacity: 1;
+  }
+  .area-panel:hover .area-tag {
+    color: rgba(10, 10, 16, 0.4);
+  }
+  .area-panel:hover .area-name {
+    color: #0a0a10;
+  }
+  .area-panel:hover .area-dot,
+  .area-panel:hover .area-claim {
+    -webkit-text-fill-color: transparent;
+  }
+  .area-panel:hover .area-reveal {
+    max-height: 40rem;
+    opacity: 1;
+  }
+  .area-panel:hover .area-underline {
+    transform: scaleX(1);
+  }
 }
 
 .area-ico svg {
@@ -232,16 +294,19 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (min-width: 768px) {
   .area-ico {
+    display: block; /* su desktop l'icona esiste sempre (posizionata) */
     position: absolute;
     margin: 0;
     left: 50%;
     top: 30%;
     width: clamp(150px, 15vw, 230px);
     transform: translate(-50%, -50%);
+    opacity: 0; /* card chiusa (foto): niente icona */
     transition:
       left 0.75s cubic-bezier(0.22, 1, 0.36, 1),
       top 0.75s cubic-bezier(0.22, 1, 0.36, 1),
       width 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.6s ease,
       color 0.75s ease;
   }
 
@@ -250,6 +315,7 @@ h1, h2, h3, h4, h5, h6 {
     left: 74%;
     top: 46%;
     width: clamp(230px, 24vw, 380px);
+    opacity: 1;
     color: rgba(10, 10, 16, 0.2);
   }
 }
