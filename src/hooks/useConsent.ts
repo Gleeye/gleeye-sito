@@ -68,6 +68,10 @@ export function useConsent() {
     setConsents(newConsents);
     localStorage.setItem(CONSENT_KEY, JSON.stringify(newConsents));
 
+    // Notifica gli altri componenti nella stessa tab (es. AnalyticsGate):
+    // l'evento 'storage' nativo scatta solo nelle ALTRE tab.
+    window.dispatchEvent(new CustomEvent('gleeye-consent', { detail: newConsents }));
+
     // Background log
     sendConsentLog(newConsents, isUpdate || false);
   };

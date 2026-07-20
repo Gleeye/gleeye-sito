@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Volume2, VolumeX } from 'lucide-react';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -12,14 +11,13 @@ if (typeof window !== 'undefined') {
 /**
  * Showreel: il video parte da solo (muto, in loop) appena entra in vista.
  * Lo scroll comanda solo l'ingresso: la card si allarga fino a prendersi
- * tutto lo schermo. Audio attivabile col pulsante.
+ * tutto lo schermo. Sempre muto, senza controllo audio.
  */
 export default function Showreel({ clips = [] }: { clips?: string[] }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
-  const [muted, setMuted] = useState(true);
   const hasClips = clips.length > 0;
 
   useEffect(() => {
@@ -77,26 +75,18 @@ export default function Showreel({ clips = [] }: { clips?: string[] }) {
     <div ref={rootRef} className="relative overflow-hidden bg-[#0a0a10] py-16 md:py-24">
       <div className="mx-auto flex min-h-[70vh] items-center justify-center md:min-h-screen">
         <div ref={frameRef} className="relative aspect-video w-full max-w-[1600px] overflow-hidden bg-black will-change-transform">
+          {/* Sempre muto: niente controllo audio, nessuno lo alzerebbe. */}
           {hasClips ? (
-            <>
-              <video
-                ref={videoRef}
-                src={clips[0]}
-                className="absolute inset-0 h-full w-full object-cover"
-                autoPlay
-                muted={muted}
-                loop
-                playsInline
-                preload="metadata"
-              />
-              <button
-                onClick={() => setMuted(m => !m)}
-                className="absolute bottom-5 right-5 z-10 flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/40 backdrop-blur-md transition-colors hover:border-white/60"
-                aria-label={muted ? 'Attiva audio' : 'Disattiva audio'}
-              >
-                {muted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-              </button>
-            </>
+            <video
+              ref={videoRef}
+              src={clips[0]}
+              className="absolute inset-0 h-full w-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+            />
           ) : (
             <div
               className="absolute inset-0"

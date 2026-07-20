@@ -37,10 +37,21 @@ export default function Intro() {
         },
       });
 
-      tl.fromTo('.intro-word', { opacity: 0 }, { opacity: 1, duration: 0.45, ease: 'power2.out' })
-        .to('.intro-word', { opacity: 0.25, duration: 0.12 }, '+=0.3')
-        .to('.intro-word', { opacity: 1, duration: 0.12 })
-        .to('.intro-word', { opacity: 0, duration: 0.3 }, '+=0.25')
+      tl.fromTo(
+        '.intro-mark',
+        { opacity: 0, scale: 0.94 },
+        { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' },
+      )
+        // respiro: il marchio pulsa due volte
+        .to('.intro-mark', {
+          opacity: 0.4,
+          scale: 0.975,
+          duration: 0.5,
+          ease: 'sine.inOut',
+          yoyo: true,
+          repeat: 1,
+        })
+        .to('.intro-mark', { opacity: 0, scale: 1.03, duration: 0.35, ease: 'power2.in' }, '+=0.15')
         .to('.intro-lid-top', { yPercent: -100, duration: 0.95, ease: 'expo.inOut' }, '-=0.1')
         .to('.intro-lid-bottom', { yPercent: 100, duration: 0.95, ease: 'expo.inOut' }, '<');
     }, root);
@@ -65,10 +76,14 @@ export default function Intro() {
         className="intro-lid-bottom absolute inset-x-0 bottom-0 h-[51%] bg-[#07070c]"
         style={{ borderTopLeftRadius: '100% 22%', borderTopRightRadius: '100% 22%' }}
       />
-      {/* wordmark al centro */}
-      <div className="intro-word absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 opacity-0">
-        <span className="h-2.5 w-2.5 rounded-full bg-gradient-to-r from-[#6db5ff] to-[#9b7bff]" />
-        <p className="voice-mono text-white/70">Gleeye — glee to eye</p>
+      {/* marchio al centro */}
+      <div className="absolute inset-0 z-10 flex items-center justify-center">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/brand/logo.png"
+          alt=""
+          className="intro-mark w-[min(42vw,230px)] opacity-0"
+        />
       </div>
     </div>
   );

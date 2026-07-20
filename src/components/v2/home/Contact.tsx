@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowUpRight } from 'lucide-react';
@@ -9,13 +9,8 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-/* Form Gleeye embeddato. NB: src su localhost — sostituire col dominio reale in produzione. */
-const FORM_ID = '517d363a-dea8-47d1-ba6e-1acf22498b99';
-const FORM_SRC = `http://localhost:5188/form/${FORM_ID}?embed=true`;
-
 export default function Contact() {
   const rootRef = useRef<HTMLElement>(null);
-  const [formHeight, setFormHeight] = useState(600);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -41,16 +36,6 @@ export default function Contact() {
     return () => ctx.revert();
   }, []);
 
-  useEffect(() => {
-    const onMessage = (e: MessageEvent) => {
-      if (e.data && e.data.type === 'gleeye-form-resize' && e.data.height) {
-        setFormHeight(e.data.height);
-      }
-    };
-    window.addEventListener('message', onMessage);
-    return () => window.removeEventListener('message', onMessage);
-  }, []);
-
   return (
     <section
       ref={rootRef}
@@ -61,17 +46,22 @@ export default function Contact() {
       <div className="absolute -left-32 top-0 h-[55vh] w-[55vh] rounded-full bg-[#4e92d8]/20 blur-[150px]" />
       <div className="absolute -right-32 bottom-0 h-[55vh] w-[55vh] rounded-full bg-[#614aa2]/25 blur-[150px]" />
 
-      <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-16 px-5 md:grid-cols-[1fr_1fr] md:gap-20 md:px-10">
+      {/* Due colonne solo da lg: a md la colonna sarebbe di 304px e il titolo
+          si spezzerebbe comunque. */}
+      <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-16 px-5 md:px-10 lg:grid-cols-[1fr_1fr] lg:gap-20">
         {/* left */}
         <div className="ct-left">
-          <h2 className="voice-display text-5xl leading-[0.95] md:text-7xl">
+          {/* Misure ricavate dalla larghezza reale del testo: la riga più lunga
+              ("Hai un progetto") vale 8.95px per ogni px di corpo, e deve stare
+              dentro la colonna a ogni breakpoint senza spezzarsi. */}
+          <h2 className="voice-display text-[2rem] leading-[1.02] md:text-5xl lg:text-[min(4.4vw,3.75rem)]">
             Hai un progetto
             <br />
-            da realizzare<span className="text-[#6db5ff]">?</span>
+            da realizzare?
             <br />
             <span className="text-gradient">Contattaci.</span>
           </h2>
-          <p className="mt-8 max-w-md font-jakarta text-lg font-medium leading-relaxed text-white/70">
+          <p className="mt-7 max-w-md font-jakarta text-lg font-medium leading-relaxed text-white/70">
             Fissiamo un appuntamento oppure organizza una video call.
           </p>
 
@@ -92,23 +82,44 @@ export default function Contact() {
                 +39 010 09 54 533
               </a>
             </div>
+            {/* Niente "vieni a trovarci": la sede di Piazza Brignole è
+                delegata, non è un ufficio dove ricevere. L'indirizzo resta
+                nel footer e nella privacy policy, dove serve per legge. */}
             <div>
-              <p className="voice-mono mb-2 text-white/35">Vieni a trovarci</p>
-              <p className="font-jakarta text-white/70">Piazza Brignole 2/3 — 16122 Genova</p>
+              <p className="voice-mono mb-2 text-white/35">Dove siamo</p>
+              <p className="font-jakarta text-white/70">Genova — operativi ovunque</p>
             </div>
           </div>
         </div>
 
-        {/* form embed */}
-        <div className="ct-card self-start overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-3 backdrop-blur-md md:p-4">
-          <iframe
-            id={`gleeye-form-${FORM_ID}`}
-            title="Modulo di contatto Gleeye"
-            src={FORM_SRC}
-            width="100%"
-            height={formHeight}
-            style={{ width: '100%', border: 0, background: 'transparent' }}
-          />
+        {/* card CTA */}
+        <div className="ct-card self-start overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-md md:p-12">
+          <p className="voice-mono text-white/35">Partiamo da qui</p>
+          <h3 className="mt-4 font-satoshi text-3xl font-black uppercase leading-[1.05] tracking-tight md:text-4xl">
+            Raccontaci
+            <br />
+            il progetto.
+          </h3>
+          <p className="mt-6 font-jakarta font-medium leading-relaxed text-white/60">
+            Due righe su cosa hai in mente e chi sei. Ti rispondiamo entro un giorno
+            lavorativo con una prima lettura e una proposta di call.
+          </p>
+
+          <a
+            href="mailto:info@gleeye.eu?subject=Nuovo%20progetto"
+            className="group mt-10 inline-flex items-center gap-3 rounded-full bg-white px-8 py-4 font-satoshi text-base font-black uppercase tracking-tight text-[#0a0a10] transition-colors hover:bg-[#6db5ff]"
+          >
+            Scrivici una mail
+            <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" />
+          </a>
+
+          <p className="mt-6 font-jakarta text-sm text-white/45">
+            Preferisci sentirci a voce?{' '}
+            <a href="tel:+390100954533" className="text-white/75 underline underline-offset-4 transition-colors hover:text-[#6db5ff]">
+              Chiamaci
+            </a>
+            .
+          </p>
         </div>
       </div>
     </section>

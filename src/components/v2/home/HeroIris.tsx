@@ -275,7 +275,7 @@ export default function HeroIris() {
             </span>
           </span>
           <span className="block overflow-hidden">
-            <span className="hero-line-inner block whitespace-nowrap text-[9vw] leading-[0.9] md:text-[min(7.5vw,6rem)]">
+            <span className="hero-line-inner block whitespace-nowrap text-[9vw] leading-[0.9] md:text-[min(8.5vw,7rem)]">
               <span className="text-gradient">Comunicazione</span><span className="text-white">.</span>
             </span>
           </span>

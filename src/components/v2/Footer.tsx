@@ -7,7 +7,6 @@ const NAV = [
   { label: 'Identity', href: '/identity' },
   { label: 'Digital', href: '/digital' },
   { label: 'Factory', href: '/factory' },
-  { label: 'Podcast', href: '/podcast' },
   { label: 'Lavora con noi', href: '/lavora-con-noi' },
 ];
 
@@ -27,7 +26,18 @@ export default function Footer() {
         {/* Columns */}
         <div className="grid grid-cols-2 gap-10 py-14 md:grid-cols-4">
           <div className="col-span-2 md:col-span-1">
-            <p className="voice-mono mb-5 text-white/40">Quartier generale</p>
+            {/* Il PNG è quadrato 1080×1080 ma la scritta occupa solo il 23.6%
+                centrale (38% di vuoto sopra e sotto): va dimensionato sulla
+                larghezza e ritagliato, altrimenti resta minuscolo. */}
+            <div className="mb-7 h-8 overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/brand/logo%20bianco.png"
+                alt="Gleeye"
+                className="w-[130px] max-w-none -translate-y-[50px]"
+              />
+            </div>
+            <p className="voice-mono mb-5 text-white/40">Sede legale</p>
             <p className="font-jakarta leading-relaxed text-white/70">
               Piazza Brignole 2/3
               <br />
@@ -82,15 +92,22 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-            <p className="voice-mono mt-8 text-white/30">P.IVA 02944020995</p>
           </div>
         </div>
       </div>
 
-      <div className="relative mt-8 border-t border-white/10 px-5 py-5 md:px-10">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 md:flex-row">
-          <p className="voice-mono text-white/35">© {new Date().getFullYear()} Gleeye — Tutti i diritti riservati</p>
-          <p className="voice-mono text-white/35">Comunicazione & marketing · Genova, operativi ovunque</p>
+      {/* Dati societari: gli stessi del sito precedente. */}
+      <div className="relative mt-8 border-t border-white/10 px-5 py-6 md:px-10">
+        <div className="mx-auto flex max-w-7xl flex-col gap-2 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-1.5">
+            <p className="voice-mono text-white/35">
+              N. REA GE 521871 — Capitale sociale: 10.000,00 €
+            </p>
+            <p className="voice-mono text-white/35">P.IVA 02944020995</p>
+          </div>
+          <p className="voice-mono text-white/35">
+            © {new Date().getFullYear()} Gleeye srl. Tutti i diritti riservati.
+          </p>
         </div>
       </div>
     </footer>

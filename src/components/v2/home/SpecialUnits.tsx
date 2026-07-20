@@ -15,7 +15,7 @@ const UNITS = [
     icon: Landmark,
     name: 'Spicco',
     logo: '/brand/spicco-white.png',
-    desc: 'Consulenza strategica per candidati e istituzioni: sintesi visiva, chiarezza del messaggio, gestione della reputazione in contesti elettorali.',
+    desc: "Studio content-first di comunicazione politica digitale: partiti, candidati e istituzioni con una presenza online chiara, coerente e credibile. Dal messaggio alla misurazione, professionalità dove spesso c'è improvvisazione.",
     accent: '#57b8ad',
     href: 'https://spicco.studio',
     external: true,
@@ -40,8 +40,40 @@ export default function SpecialUnits() {
     const root = rootRef.current;
     if (!root) return;
     const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    let failsafe = 0;
 
     const ctx = gsap.context(() => {
+      /* Titolo: le righe salgono da dietro la maschera, come nella hero.
+         gsap.set + to (non from): con StrictMode il from lascia gli elementi
+         invisibili al secondo montaggio. */
+      gsap.set('.su-line', { yPercent: 115, skewY: 5 });
+      const lines = gsap.to('.su-line', {
+        yPercent: 0,
+        skewY: 0,
+        duration: 1.1,
+        stagger: 0.12,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: root, start: 'top 72%', once: true },
+      });
+
+      gsap.set('.su-sub', { opacity: 0, y: 24 });
+      const sub = gsap.to('.su-sub', {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        delay: 0.35,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: root, start: 'top 72%', once: true },
+      });
+
+      /* Il titolo parte nascosto dietro la maschera: se l'animazione non
+         arrivasse in fondo resterebbe invisibile. Passato un tempo ampio lo
+         portiamo comunque allo stato finale. */
+      failsafe = window.setTimeout(() => {
+        if (lines.progress() < 1) gsap.set('.su-line', { yPercent: 0, skewY: 0 });
+        if (sub.progress() < 1) gsap.set('.su-sub', { opacity: 1, y: 0 });
+      }, 7000);
+
       gsap.from('.su-item', {
         opacity: 0,
         y: 60,
@@ -72,16 +104,37 @@ export default function SpecialUnits() {
       }
     }, root);
 
-    return () => ctx.revert();
+    return () => {
+      clearTimeout(failsafe);
+      ctx.revert();
+    };
   }, []);
 
   return (
     <section ref={rootRef} className="relative overflow-hidden bg-[#f8f9fa] py-28 md:py-36">
       <div className="relative mx-auto max-w-7xl px-5 md:px-10">
-        <div className="mb-14 md:mb-20">
-          <h2 className="voice-display max-w-3xl text-4xl text-[#0a0a10] md:text-6xl">
-            Divisioni <span className="text-gradient">verticali</span>
+        {/* Le righe salgono da dietro una maschera come nella hero: è la
+            firma di movimento del sito. */}
+        <div className="mb-14 grid gap-8 md:mb-20 md:grid-cols-12 md:items-end md:gap-10">
+          <h2 className="voice-display col-span-full text-[2.1rem] leading-[1.02] text-[#0a0a10] md:col-span-7 md:text-[min(4.2vw,3.5rem)] md:leading-[0.9]">
+            {/* Copy da rifare: le parole le dà Davide. Struttura, misure e
+                animazione sono pronte — basta sostituire il testo delle due
+                righe e, se serve, del paragrafo. */}
+            <span className="block overflow-hidden">
+              <span className="su-line block pb-[0.12em] [margin-bottom:-0.12em]">
+                Divisioni
+              </span>
+            </span>
+            <span className="block overflow-hidden">
+              <span className="su-line text-gradient-flow block pb-[0.12em] [margin-bottom:-0.12em]">
+                verticali.
+              </span>
+            </span>
           </h2>
+          <p className="su-sub font-jakarta text-lg font-medium leading-relaxed text-black/55 md:col-span-4 md:col-start-9 md:pb-2">
+            Competenze rimesse a sistema sui codici, i tempi e il linguaggio di
+            un mondo specifico, con un nome tutto loro.
+          </p>
         </div>
 
         <div className="su-grid grid grid-cols-1 gap-6 [perspective:1200px] md:grid-cols-2">

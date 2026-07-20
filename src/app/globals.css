@@ -12,9 +12,9 @@
   --color-pastel-blue: #dce9f7;
   --color-pastel-lilac: #e5dff2;
 
-  --font-satoshi: 'Satoshi', sans-serif;
+  --font-satoshi: var(--font-satoshi-local), 'Satoshi', sans-serif;
   --font-jakarta: var(--font-jakarta-next), 'Plus Jakarta Sans', sans-serif;
-  --font-cormorant: var(--font-cormorant), 'Cormorant Garamond', serif;
+  --font-cormorant: var(--font-cormorant-next), 'Cormorant Garamond', serif;
   --font-mono: var(--font-plex-mono), 'IBM Plex Mono', monospace;
 }
 
@@ -200,5 +200,62 @@ h1, h2, h3, h4, h5, h6 {
   .animate-spin-slow,
   .animate-pulse-dot {
     animation: none;
+  }
+}
+
+/* Icone delle aree (home).
+   Vivono ancorate al titolo: a pannello aperto stanno sempre di fianco alla
+   scritta, qualunque sia la sua larghezza. A riposo le spostiamo al centro del
+   vuoto sopra il testo, con --rest-x/--rest-y misurati sul layout reale
+   (vedi useLayoutEffect in Areas.tsx). Regola in CSS puro: il valore arbitrario
+   Tailwind con var() dentro calc() non viene generato. */
+.area-ico {
+  display: block;
+  margin: 0 auto 2.5rem;
+  width: clamp(96px, 30vw, 150px);
+  color: rgba(10, 10, 16, 0.16);
+  pointer-events: none;
+}
+
+.area-ico svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+/* Tratto sempre sottile uguale, a qualsiasi dimensione: è quello che le tiene
+   leggere anche da 260px. Va sulle forme, non sull'<svg>: non si eredita. */
+.area-ico :is(path, rect, circle, line, polyline, polygon) {
+  vector-effect: non-scaling-stroke;
+}
+
+@media (min-width: 768px) {
+  .area-ico {
+    position: absolute;
+    margin: 0;
+    left: 50%;
+    top: 30%;
+    width: clamp(150px, 15vw, 230px);
+    transform: translate(-50%, -50%);
+    transition:
+      left 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+      top 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+      width 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+      color 0.75s ease;
+  }
+
+  /* a pannello aperto va a occupare il vuoto sulla destra, e cresce */
+  .area-panel:hover .area-ico {
+    left: 74%;
+    top: 46%;
+    width: clamp(230px, 24vw, 380px);
+    color: rgba(10, 10, 16, 0.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .area-ico {
+    transition: none;
   }
 }

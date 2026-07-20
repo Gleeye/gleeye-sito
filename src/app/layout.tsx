@@ -1,11 +1,25 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, IBM_Plex_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
+
+/* Satoshi self-hosted: niente dipendenza dal CDN Fontshare a runtime. */
+const satoshi = localFont({
+  variable: "--font-satoshi-local",
+  display: "swap",
+  src: [
+    { path: "./fonts/Satoshi-Regular.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/Satoshi-Medium.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/Satoshi-Bold.woff2", weight: "700", style: "normal" },
+    { path: "./fonts/Satoshi-Black.woff2", weight: "900", style: "normal" },
+  ],
+});
 import CookieBanner from "@/components/CookieBanner";
+import AnalyticsGate from "@/components/AnalyticsGate";
 import SmoothScroll from "@/components/v2/SmoothScroll";
 
 const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
+  variable: "--font-cormorant-next",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   style: ["italic", "normal"],
@@ -45,22 +59,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Le variabili dei font stanno su <html>: i token in @theme sono emessi su
+  // :root, e da lì non vedrebbero variabili definite solo sul <body>.
   return (
-    <html lang="it">
-      <head>
-        <link rel="preconnect" href="https://cdn.fontshare.com" crossOrigin="anonymous" />
-        <link
-          href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400,1,2&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body
-        className={`${cormorant.variable} ${plexMono.variable} ${jakarta.variable} antialiased`}
-      >
+    <html
+      lang="it"
+      className={`${satoshi.variable} ${cormorant.variable} ${plexMono.variable} ${jakarta.variable}`}
+    >
+      <body className="antialiased">
         <SmoothScroll>
           {children}
         </SmoothScroll>
         <CookieBanner />
+        <AnalyticsGate />
       </body>
     </html>
   );

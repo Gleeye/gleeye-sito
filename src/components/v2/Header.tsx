@@ -187,7 +187,7 @@ export default function Header() {
                 </ul>
               </div>
               <div>
-                <p className="voice-mono mb-4 text-white/40">Quartier generale</p>
+                <p className="voice-mono mb-4 text-white/40">Sede legale</p>
                 <p className="font-jakarta text-white/70">
                   Piazza Brignole 2/3
                   <br />
