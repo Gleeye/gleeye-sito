@@ -1,0 +1,28 @@
+name: Supabase keepalive
+
+# Tiene sveglio il progetto Supabase del sito (free tier: va in pausa dopo
+# ~7 giorni di inattività). Un ping giornaliero genera attività e lo mantiene attivo.
+# Gira su GitHub Actions: sempre acceso, indipendente da qualsiasi macchina locale.
+
+on:
+  schedule:
+    - cron: "17 6 * * *"   # ogni giorno alle 06:17 UTC
+  workflow_dispatch:        # avviabile a mano dalla tab Actions
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST
+        run: |
+          set -euo pipefail
+          code=$(curl -s -o /tmp/out -w "%{http_code}" --max-time 30 \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/case_studies?select=id&limit=1")
+          echo "HTTP $code"
+          head -c 300 /tmp/out || true; echo
+          if [ "$code" != "200" ]; then
+            echo "::error::Keepalive fallito (HTTP $code) — progetto forse in pausa o secret errato"
+            exit 1
+          fi
+          echo "Keepalive OK"
