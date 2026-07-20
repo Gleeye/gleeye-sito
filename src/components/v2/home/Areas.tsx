@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -94,6 +94,7 @@ const AREAS = [
     services: ['Brand Discovery', 'Naming & Verbal Identity', 'Visual Identity System', 'Brand Guidelines & Rebranding'],
     href: '/identity',
     icon: IconIdentity,
+    img: '/areas/identity.webp',
   },
   {
     name: 'Digital',
@@ -104,6 +105,7 @@ const AREAS = [
     services: ['Web Design & Development', 'Social Strategy', 'SEO & Positioning', 'Performance Marketing'],
     href: '/digital',
     icon: IconDigital,
+    img: '/areas/digital.webp',
   },
   {
     name: 'Factory',
@@ -114,19 +116,12 @@ const AREAS = [
     services: ['Video Production', 'Photography', 'Strategic Copywriting', 'Podcast & Audio', 'Graphic & Motion Design'],
     href: '/factory',
     icon: IconFactory,
+    img: '/areas/factory.webp',
   },
 ];
 
 /* Un solo gradiente per tutte e tre le aree: niente colore proprietario per area. */
 const GRADIENT = 'linear-gradient(100deg, #4e92d8 0%, #614aa2 100%)';
-
-/* Testo riempito col gradiente. */
-const gradientText = {
-  backgroundImage: GRADIENT,
-  WebkitBackgroundClip: 'text',
-  backgroundClip: 'text',
-  color: 'transparent',
-} as const;
 
 /**
  * Trittico su fondo chiaro: tre pannelli paritari fianco a fianco,
@@ -134,6 +129,8 @@ const gradientText = {
  */
 export default function Areas() {
   const rootRef = useRef<HTMLElement>(null);
+  /* mobile: accordion a tap. Desktop: apertura a hover (CSS). */
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -174,39 +171,59 @@ export default function Areas() {
 
       {/* trittico: il pannello sotto il mouse si apre */}
       <div className="areas-strip flex flex-col border-y border-black/10 md:h-[68vh] md:flex-row">
-        {AREAS.map((area) => (
+        {AREAS.map((area, i) => (
           <div
             key={area.name}
-            className="area-panel group relative flex flex-1 flex-col justify-end overflow-hidden border-t border-black/10 px-6 py-10 transition-[flex-grow,background-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] first:border-t-0 hover:flex-[2.4] hover:bg-white md:border-l md:border-t-0 md:px-8 md:py-12 md:first:border-l-0"
+            role="button"
+            tabIndex={0}
+            aria-expanded={openIndex === i}
+            data-open={openIndex === i ? 'true' : 'false'}
+            onClick={() => setOpenIndex(openIndex === i ? null : i)}
+            className="area-panel group relative flex min-h-[42vh] flex-1 cursor-pointer flex-col justify-end overflow-hidden border-t border-black/10 px-6 py-10 transition-[flex-grow,background-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] first:border-t-0 md:min-h-0 md:cursor-default md:border-l md:border-t-0 md:px-8 md:py-12 md:first:border-l-0 md:hover:flex-[2.4] md:hover:bg-white"
           >
+            {/* Sfondo foto a card CHIUSA: all'apertura sfuma fino al ~15% (fantasma).
+                In basso scurisce per far leggere i testi bianchi.
+                Lo stato "aperto" è gestito in CSS (.area-panel[data-open] / :hover). */}
+            <div
+              aria-hidden="true"
+              className="area-bg pointer-events-none absolute inset-0 bg-cover bg-center opacity-100 transition-opacity duration-700"
+              style={{ backgroundImage: `url(${area.img})` }}
+            >
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(to top, rgba(8,8,14,0.94) 0%, rgba(8,8,14,0.66) 28%, rgba(8,8,14,0.28) 55%, rgba(8,8,14,0.06) 100%)',
+                }}
+              />
+            </div>
+
             {/* alone d'accento che si accende dal basso */}
             <div
-              className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+              className="area-accent pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700"
               style={{
                 background:
                   'radial-gradient(120% 90% at 50% 115%, rgba(78,146,216,0.16) 0%, rgba(97,74,162,0.10) 45%, transparent 68%)',
               }}
             />
 
-            {/* Grande e leggerissima: riempie il vuoto sopra il testo e, quando
-                il pannello si apre, scivola nello spazio libero a destra.
-                Posizione in percentuale: segue il pannello mentre si allarga. */}
+            {/* Icona: nascosta a card chiusa, compare all'apertura (vedi CSS). */}
             <span aria-hidden="true" className="area-ico">
               {area.icon}
             </span>
 
             <div className="relative">
-              <p className="voice-mono mb-4 text-black/40">{area.tag}</p>
-              <h3 className="voice-display leading-none text-[#0a0a10]" style={{ fontSize: 'clamp(2.2rem, 4.6vw, 5rem)' }}>
+              <p className="area-tag voice-mono mb-4 text-white/60">{area.tag}</p>
+              <h3 className="area-name voice-display leading-none text-white" style={{ fontSize: 'clamp(2.2rem, 4.6vw, 5rem)' }}>
                 {area.name}
-                <span style={gradientText}>.</span>
+                <span className="area-dot bg-[linear-gradient(100deg,#4e92d8_0%,#614aa2_100%)] bg-clip-text [-webkit-text-fill-color:#fff]">.</span>
               </h3>
-              <p className="mt-3 font-satoshi text-base font-black uppercase tracking-tight md:text-lg" style={gradientText}>
+              <p className="area-claim mt-3 bg-[linear-gradient(100deg,#4e92d8_0%,#614aa2_100%)] bg-clip-text font-newsreader text-[1.6rem] font-medium italic normal-case leading-tight tracking-[-0.01em] [-webkit-text-fill-color:#fff] md:text-[1.9rem]">
                 {area.claim}
               </p>
 
-              {/* si rivela quando il pannello si apre */}
-              <div className="mt-5 overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] md:max-h-0 md:opacity-0 md:group-hover:max-h-96 md:group-hover:opacity-100">
+              {/* si rivela quando il pannello si apre (hover desktop / tap mobile) */}
+              <div className="area-reveal mt-5 max-h-0 overflow-hidden opacity-0 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]">
                 <p className="max-w-md font-jakarta text-sm font-medium leading-relaxed text-black/60 md:text-base">
                   {area.desc}
                 </p>
@@ -219,12 +236,13 @@ export default function Areas() {
                 </ul>
                 <Link
                   href={area.href}
-                  className="mt-8 inline-flex items-center gap-2 font-satoshi text-sm font-black uppercase tracking-wide text-[#0a0a10]"
+                  onClick={(e) => e.stopPropagation()}
+                  className="area-cta mt-8 inline-flex items-center gap-2 font-satoshi text-sm font-black uppercase tracking-wide text-[#0a0a10]"
                 >
                   <span className="relative">
                     Esplora {area.name}
                     <span
-                      className="absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 transition-transform duration-500 group-hover:scale-x-100"
+                      className="area-underline absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 transition-transform duration-500"
                       style={{ backgroundImage: GRADIENT }}
                     />
                   </span>

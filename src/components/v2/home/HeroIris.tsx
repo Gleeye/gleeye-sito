@@ -220,19 +220,29 @@ export default function HeroIris() {
     const section = sectionRef.current;
     if (!section) return;
     const zoom = zoomRef.current;
+
     const ctx = gsap.context(() => {
       gsap.set('.hero-line-inner', { yPercent: 120, skewY: 6 });
+      gsap.set('.comunica-letter', { opacity: 0 });
       gsap.set('.hero-fade', { opacity: 0, y: 24 });
 
       const tl = gsap.timeline({ delay: 0.5 });
+      /* Metodo / Visione: si "stampano" con lo slide-up */
       tl.to('.hero-line-inner', {
         yPercent: 0,
         skewY: 0,
         duration: 1.4,
         stagger: 0.14,
         ease: 'power4.out',
-      })
-        .to('.hero-fade', { opacity: 1, y: 0, duration: 1, stagger: 0.12, ease: 'power3.out' }, '-=0.9');
+      }, 0)
+        /* Comunicazione: macchina da scrivere — una lettera alla volta, secca */
+        .to('.comunica-letter', {
+          opacity: 1,
+          duration: 0.02,
+          ease: 'none',
+          stagger: 0.052,
+        }, 0.8)
+        .to('.hero-fade', { opacity: 1, y: 0, duration: 1, stagger: 0.12, ease: 'power3.out' }, 1.35);
 
       /* portal zoom — pinned scrub */
       const portal = gsap.timeline({
@@ -274,9 +284,13 @@ export default function HeroIris() {
               Visione<span className="text-white">.</span>
             </span>
           </span>
-          <span className="block overflow-hidden">
-            <span className="hero-line-inner block whitespace-nowrap text-[9vw] leading-[0.9] md:text-[min(8.5vw,7rem)]">
-              <span className="text-gradient">Comunicazione</span><span className="text-white">.</span>
+          <span className="-mt-[0.5vw] block overflow-visible md:-mt-[0.6vw]">
+            <span className="comunica-line text-gradient block whitespace-nowrap text-center font-newsreader italic font-medium normal-case tracking-[-0.01em] text-[14vw] leading-[1.2] md:text-[min(12.5vw,10.5rem)]">
+              {'Comunicazione.'.split('').map((ch, i) => (
+                <span key={i} className="comunica-letter">
+                  {ch}
+                </span>
+              ))}
             </span>
           </span>
         </h1>
