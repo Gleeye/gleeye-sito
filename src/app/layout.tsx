@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Playfair_Display, IBM_Plex_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { IBM_Plex_Mono, Newsreader, Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -18,10 +18,10 @@ import CookieBanner from "@/components/CookieBanner";
 import AnalyticsGate from "@/components/AnalyticsGate";
 import SmoothScroll from "@/components/v2/SmoothScroll";
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant-next",
+const newsreader = Newsreader({
+  variable: "--font-newsreader-next",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600"],
   style: ["italic", "normal"],
 });
 
@@ -73,7 +73,7 @@ export default function RootLayout({
   return (
     <html
       lang="it"
-      className={`${satoshi.variable} ${cormorant.variable} ${playfair.variable} ${plexMono.variable} ${jakarta.variable}`}
+      className={`${satoshi.variable} ${newsreader.variable} ${playfair.variable} ${plexMono.variable} ${jakarta.variable}`}
     >
       <body className="antialiased">
         <SmoothScroll>

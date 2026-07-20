@@ -17,7 +17,7 @@ export default function PrivacyPolicy() {
                     <h1 className="text-4xl md:text-6xl font-satoshi font-black tracking-tighter uppercase">
                         Privacy Policy
                     </h1>
-                    <p className="text-xl md:text-2xl font-cormorant italic text-black/60">
+                    <p className="text-xl md:text-2xl font-newsreader italic text-black/60">
                         Ultimo aggiornamento: Luglio 2026
                     </p>
                 </header>

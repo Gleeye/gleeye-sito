@@ -16,7 +16,7 @@ export default function CookiePolicy() {
                     <h1 className="text-4xl md:text-6xl font-satoshi font-black tracking-tighter uppercase">
                         Cookie Policy
                     </h1>
-                    <p className="text-xl md:text-2xl font-cormorant italic text-black/60">
+                    <p className="text-xl md:text-2xl font-newsreader italic text-black/60">
                         Informativa sull'utilizzo dei cookie
                     </p>
                 </header>
