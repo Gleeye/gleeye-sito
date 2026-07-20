@@ -9,8 +9,11 @@ import Ticker from '@/components/v2/home/Ticker';
 import Showreel from '@/components/v2/home/Showreel';
 import Areas from '@/components/v2/home/Areas';
 
-/* Showreel 2022 già montato — servito dall'hosting del sito attuale */
-const SHOWREEL_URL = 'https://gleeye.eu/wp-content/uploads/2023/02/gleeye-shoowreel-case-history-2022.mp4';
+/* Showreel 2022, servito dal sito stesso (2.3 MB).
+   Prima puntava a gleeye.eu/wp-content: al passaggio del dominio quell'URL
+   sarebbe finito nel rewrite verso old.gleeye.eu, e il video sarebbe sparito
+   dalla home. Era l'ultima dipendenza dal vecchio hosting. */
+const SHOWREEL_URL = '/video/showreel-2022.mp4';
 import Manifesto from '@/components/v2/home/Manifesto';
 import SpecialUnits from '@/components/v2/home/SpecialUnits';
 import Contact from '@/components/v2/home/Contact';
