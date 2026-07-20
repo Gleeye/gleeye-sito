@@ -34,7 +34,7 @@ export default function EventsCtaSection() {
           <a
             href="mailto:info@gleeye.eu"
             className="group relative px-10 py-5 rounded-full overflow-hidden flex items-center justify-center min-w-[200px] transition-all duration-700"
-            style={{ background: 'linear-gradient(135deg, #614aa2, #4e92d8)' }}
+            style={{ background: 'linear-gradient(135deg, #4e92d8, #614aa2)' }}
           >
             <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
             <span className="relative z-10 font-satoshi text-[10px] font-bold uppercase tracking-[0.2em] text-white">Scrivici</span>

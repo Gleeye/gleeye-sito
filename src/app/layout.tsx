@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, IBM_Plex_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { Cormorant_Garamond, Playfair_Display, IBM_Plex_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -23,6 +23,15 @@ const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   style: ["italic", "normal"],
+});
+
+// Playfair Display: serif display ad alto contrasto, usato in corsivo per lo
+// statement di "Il nostro approccio" nelle pagine area.
+const playfair = Playfair_Display({
+  variable: "--font-playfair-next",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
 });
 
 const plexMono = IBM_Plex_Mono({
@@ -64,7 +73,7 @@ export default function RootLayout({
   return (
     <html
       lang="it"
-      className={`${satoshi.variable} ${cormorant.variable} ${plexMono.variable} ${jakarta.variable}`}
+      className={`${satoshi.variable} ${cormorant.variable} ${playfair.variable} ${plexMono.variable} ${jakarta.variable}`}
     >
       <body className="antialiased">
         <SmoothScroll>

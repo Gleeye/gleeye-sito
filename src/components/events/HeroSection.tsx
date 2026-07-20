@@ -3,7 +3,9 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 
+// "CHE SERVE" in gradiente (le ultime due), non solo "SERVE"
 const WORDS = ['TUTTO', 'QUELLO', 'CHE', 'SERVE'];
+const GRADIENT_FROM = 2; // da questo indice in poi, gradiente
 
 export default function EventsHeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -56,43 +58,54 @@ export default function EventsHeroSection() {
 
       <div ref={badgeRef} className="relative z-10 flex justify-center">
         <span className="inline-block text-[10px] md:text-xs font-bold uppercase tracking-[0.25em] text-white/35 font-satoshi border border-white/10 px-4 py-2 rounded-full">
-          Gleeye — Comunicazione per Eventi
+          Comunicazione per eventi
         </span>
       </div>
 
       <div className="relative z-10 flex flex-col items-center justify-center flex-1 py-12 text-center">
         <div className="flex flex-wrap justify-center gap-x-4 md:gap-x-6 lg:gap-x-8">
-          {WORDS.map((word, i) => (
+          {WORDS.slice(0, GRADIENT_FROM).map((word, i) => (
             <div key={word} className="overflow-hidden">
               <span
                 ref={el => { wordRefs.current[i] = el; }}
-                className={`block font-satoshi font-black tracking-tight leading-none text-[13vw] md:text-[10vw] lg:text-[8vw] xl:text-[7rem] ${
-                  i === WORDS.length - 1
-                    ? 'bg-gradient-to-r from-[#614aa2] to-[#4e92d8] bg-clip-text text-transparent'
-                    : 'text-white'
-                }`}
+                className="block font-satoshi font-black tracking-tight leading-none text-[13vw] md:text-[10vw] lg:text-[8vw] xl:text-[7rem] text-white"
               >
                 {word}
               </span>
             </div>
           ))}
+          {/* "CHE SERVE" resta un gruppo unico: va a capo insieme, mai spezzato */}
+          <div className="flex gap-x-4 md:gap-x-6 lg:gap-x-8 whitespace-nowrap">
+            {WORDS.slice(GRADIENT_FROM).map((word, j) => (
+              <div key={word} className="overflow-hidden">
+                <span
+                  ref={el => { wordRefs.current[GRADIENT_FROM + j] = el; }}
+                  className="block font-satoshi font-black tracking-tight leading-none text-[13vw] md:text-[10vw] lg:text-[8vw] xl:text-[7rem] bg-gradient-to-r from-[#4e92d8] to-[#614aa2] bg-clip-text text-transparent"
+                >
+                  {word}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
         <p className="mt-3 font-satoshi font-black text-[13vw] md:text-[10vw] lg:text-[8vw] xl:text-[7rem] text-white leading-none tracking-tight">
           AL TUO EVENTO.
         </p>
 
         <p ref={subRef} className="mt-8 max-w-xl font-jakarta font-medium text-lg md:text-xl text-white/30 leading-relaxed">
-          Dalla comunicazione pre-lancio al racconto post-evento. Un partner unico per ogni fase.
+          Dalla comunicazione pre-lancio al racconto post-evento.
+          <br />
+          Un partner unico per ogni fase.
         </p>
       </div>
 
-      <div ref={ctaRef} className="relative z-10 flex items-center justify-center gap-6">
+      <div ref={ctaRef} className="relative z-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
         <a
           href="#contatti"
           className="group relative px-8 py-4 bg-white text-black rounded-full overflow-hidden flex items-center justify-center transition-all duration-700"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-[#614aa2] to-[#4e92d8] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-          <span className="relative z-10 font-satoshi text-[10px] font-bold uppercase tracking-[0.2em] group-hover:text-white transition-colors duration-500">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#4e92d8] to-[#614aa2] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+          <span className="relative z-10 whitespace-nowrap font-satoshi text-[10px] font-bold uppercase tracking-[0.2em] group-hover:text-white transition-colors duration-500">
             Parliamo del tuo evento
           </span>
         </a>

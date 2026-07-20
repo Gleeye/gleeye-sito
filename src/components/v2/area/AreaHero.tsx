@@ -18,8 +18,11 @@ export default function AreaHero({ area }: { area: AreaConfig }) {
       gsap.set('.ah-fade', { opacity: 0, y: 24 });
 
       const tl = gsap.timeline({ delay: 0.35 });
-      tl.to('.ah-line-inner', { yPercent: 0, skewY: 0, duration: 1.3, stagger: 0.13, ease: 'power4.out' })
-        .to('.ah-fade', { opacity: 1, y: 0, duration: 0.9, stagger: 0.1, ease: 'power3.out' }, '-=0.8');
+      // clearProps: la seconda riga del claim è in gradiente; un transform
+      // residuo romperebbe background-clip:text in Chrome (→ rettangolo)
+      tl.to('.ah-line-inner', { yPercent: 0, skewY: 0, duration: 1.3, stagger: 0.13, ease: 'power4.out', clearProps: 'transform' })
+        // clearProps anche qui: il breadcrumb (in gradiente) è dentro .ah-fade
+        .to('.ah-fade', { opacity: 1, y: 0, duration: 0.9, stagger: 0.1, ease: 'power3.out', clearProps: 'transform' }, '-=0.8');
     }, section);
     return () => ctx.revert();
   }, []);
@@ -33,18 +36,26 @@ export default function AreaHero({ area }: { area: AreaConfig }) {
         // eslint-disable-next-line @next/next/no-img-element
         <img src={area.bgImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
       ) : (
-        <AreaBackdrop from="#6db5ff" to="#9b7bff" />
+        <AreaBackdrop variant={area.slug} from="#4e92d8" to="#614aa2" />
       )}
       {/* overlay per leggibilità del testo a sinistra */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#0a0a10] via-[#0a0a10]/85 to-[#0a0a10]/30" />
       <div className="grain pointer-events-none absolute inset-0" />
 
       <div className="relative z-10 flex flex-1 flex-col justify-center px-5 pt-32 md:px-10 md:pt-36">
-        <nav className="ah-fade voice-mono mb-6 flex items-center gap-3 text-white/45" aria-label="breadcrumb">
-          <Link href="/" className="transition-colors hover:text-white">Gleeye</Link>
-          <span aria-hidden="true">/</span>
-          <span style={{ color: area.accent1 }}>{area.name}</span>
-        </nav>
+        <p className="ah-fade voice-mono mb-6">
+          <span
+            className="inline-block"
+            style={{
+              backgroundImage: 'linear-gradient(100deg, #4e92d8, #614aa2)',
+              WebkitBackgroundClip: 'text',
+              backgroundClip: 'text',
+              color: 'transparent',
+            }}
+          >
+            {area.name}
+          </span>
+        </p>
 
         <h1 className="voice-display max-w-5xl">
           <span className="block overflow-hidden">
@@ -53,7 +64,17 @@ export default function AreaHero({ area }: { area: AreaConfig }) {
             </span>
           </span>
           <span className="block overflow-hidden">
-            <span className="ah-line-inner text-gradient block text-[8.5vw] leading-[0.98] md:text-[min(5.4vw,4.3rem)]">
+            {/* w-fit: il gradiente si estende sulla larghezza del testo, non del
+                blocco — altrimenti un claim corto cattura solo il blu iniziale */}
+            <span
+              className="ah-line-inner block w-fit text-[8.5vw] leading-[0.98] md:text-[min(5.4vw,4.3rem)]"
+              style={{
+                backgroundImage: 'linear-gradient(100deg, #4e92d8, #614aa2)',
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                color: 'transparent',
+              }}
+            >
               {area.claim.serif}
             </span>
           </span>
@@ -71,7 +92,7 @@ export default function AreaHero({ area }: { area: AreaConfig }) {
             >
               <span
                 className="absolute inset-0 translate-y-full transition-transform duration-500 ease-out group-hover:translate-y-0"
-                style={{ background: `linear-gradient(90deg, ${area.accent2}, ${area.accent1})` }}
+                style={{ background: `linear-gradient(90deg, ${area.accent1}, ${area.accent2})` }}
               />
               <span className="relative transition-colors duration-500 group-hover:text-white">
                 Parliamo del tuo progetto
@@ -81,12 +102,6 @@ export default function AreaHero({ area }: { area: AreaConfig }) {
         </div>
       </div>
 
-      <div className="relative z-10 flex items-end justify-between px-5 pb-6 md:px-10 md:pb-8">
-        <p className="ah-fade voice-mono text-white/35">{area.soul}</p>
-        <p className="ah-fade voice-mono hidden text-white/35 md:block">
-          {area.services.length} servizi — un solo presidio
-        </p>
-      </div>
     </section>
   );
 }

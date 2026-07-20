@@ -1,10 +1,26 @@
 export interface AreaService {
   n: string;
+  /** chiave icona: risolta in AreaChapters (i dati passano da una Server
+      Component, non possono trasportare il componente React). */
+  icon: string;
   title: string;
   tag: string;
   desc: string;
   deliverables: string[];
   href?: string;
+}
+
+/** Uno step del metodo ("Come lavoriamo"). icon = chiave risolta in AreaMethod. */
+export interface MethodStep {
+  icon: string;
+  title: string;
+  desc: string;
+}
+
+/** Un beneficio ("Cosa ottieni"). */
+export interface Outcome {
+  title: string;
+  desc: string;
 }
 
 export interface AreaConfig {
@@ -17,8 +33,11 @@ export interface AreaConfig {
   bgImage?: string;
   accent1: string;
   accent2: string;
+  /** "Il nostro approccio": lo statement si illumina parola per parola allo scroll. */
+  approach: { statement: string; body: [string, string] };
   services: AreaService[];
-  principles: { title: string; desc: string }[];
+  method: MethodStep[];
+  outcomes: Outcome[];
   ctaLine: string;
 }
 
@@ -31,11 +50,19 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
     claim: { plain: "L'identità non si inventa.", serif: 'Si scopre.' },
     intro:
       "È la fase in cui si risponde alla domanda: chi siamo e come vogliamo essere percepiti? Senza questa base, ogni investimento in marketing è un potenziale spreco di budget. Qui il tuo brand trova DNA, nome e volto.",
-    accent1: '#9b7bff',
+    accent1: '#4e92d8',
     accent2: '#614aa2',
+    approach: {
+      statement: "L'identità non è come ti vedi tu. È come ti riconoscono gli altri, ogni volta, prima ancora del nome.",
+      body: [
+        'Costruire un’identità significa decidere, prima di tutto, chi sei e per cosa vuoi essere scelto. È il lavoro che viene prima di ogni campagna: senza una base chiara, ogni messaggio riparte da zero e ogni euro di marketing rischia di disperdersi.',
+        'Lo facciamo con un processo, non con l’ispirazione: analisi, strategia, e la costruzione di nome, voce e sistema visivo. Il risultato è un’identità coerente che regge nel tempo — non un restyling da rifare fra due anni.',
+      ],
+    },
     services: [
       {
         n: '01',
+        icon: 'fingerprint',
         title: 'Brand Discovery & Strategic Audit',
         tag: "l'analisi del DNA",
         desc:
@@ -45,6 +72,7 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
       },
       {
         n: '02',
+        icon: 'type',
         title: 'Naming & Verbal Identity',
         tag: 'come il brand suona',
         desc:
@@ -54,6 +82,7 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
       },
       {
         n: '03',
+        icon: 'shapes',
         title: 'Visual Identity System',
         tag: 'il volto del brand',
         desc:
@@ -63,6 +92,7 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
       },
       {
         n: '04',
+        icon: 'book',
         title: 'Brand Guidelines & Rebranding',
         tag: 'la coerenza nel tempo',
         desc:
@@ -71,10 +101,16 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
         href: '/identity/brand-guidelines',
       },
     ],
-    principles: [
-      { title: 'Prima chi sei, poi cosa dici', desc: 'La strategia precede sempre lo strumento: un messaggio senza identità è rumore.' },
-      { title: "La fiducia nasce dall'ordine", desc: "L'armonia formale non è estetica fine a sé stessa: riduce l'attrito e genera credibilità." },
-      { title: 'Asset, non spesa', desc: "Un'identità ben costruita resiste all'obsolescenza e diventa patrimonio aziendale." },
+    method: [
+      { icon: 'ear', title: 'Ascoltiamo', desc: 'Audit del DNA e della percezione attuale.' },
+      { icon: 'compass', title: 'Posizioniamo', desc: 'Dove sei e dove vuoi arrivare.' },
+      { icon: 'pen', title: 'Costruiamo', desc: 'Nome, voce, sistema visivo.' },
+      { icon: 'book', title: 'Codifichiamo', desc: 'Le guidelines per restare coerente nel tempo.' },
+    ],
+    outcomes: [
+      { title: 'Ti riconoscono subito', desc: "Un'identità coerente ti rende identificabile prima ancora che si legga il nome." },
+      { title: 'Budget che non si disperde', desc: 'Con una base solida, ogni euro di marketing lavora invece di tamponare.' },
+      { title: 'Un asset, non una spesa', desc: "Un'identità costruita bene resiste al tempo e diventa patrimonio dell'azienda." },
     ],
     ctaLine: 'Scopriamo chi sei davvero.',
   },
@@ -87,11 +123,19 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
     claim: { plain: 'La tua presenza online non è un sito.', serif: "È un'infrastruttura." },
     intro:
       "Quest'area costruisce il posto dove il brand vive e si relaziona con il mercato. La strategia si traduce in tecnologia e flussi di marketing: siti velocissimi, ecosistemi social presidiati, autorità sui motori di ricerca, advertising monitorato senza fuffa.",
-    accent1: '#6db5ff',
-    accent2: '#4e92d8',
+    accent1: '#4e92d8',
+    accent2: '#614aa2',
+    approach: {
+      statement: 'Esserci online non basta più. Conta essere trovati da chi cerca, e non far scappare chi arriva.',
+      body: [
+        'Il digitale non è un sito e qualche post. È l’infrastruttura dove il brand vive: dove ti cercano, dove ti valutano, dove decidono se fidarsi. Se quell’infrastruttura è lenta, confusa o assente, tutto il lavoro sull’identità si perde nell’ultimo passo.',
+        'Costruiamo presenza e conversione insieme: siti veloci, canali presidiati, autorità sui motori, campagne misurabili. Ogni scelta poggia sui numeri, non sulle sensazioni — così sai sempre dove va il budget e cosa produce.',
+      ],
+    },
     services: [
       {
         n: '01',
+        icon: 'layout',
         title: 'Web Design & Development',
         tag: 'architettura piuma',
         desc:
@@ -101,6 +145,7 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
       },
       {
         n: '02',
+        icon: 'share',
         title: 'Digital Ecosystem & Social Strategy',
         tag: 'presidio dei punti di contatto',
         desc:
@@ -110,6 +155,7 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
       },
       {
         n: '03',
+        icon: 'search',
         title: 'Search Authority',
         tag: 'SEO & positioning',
         desc:
@@ -119,6 +165,7 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
       },
       {
         n: '04',
+        icon: 'target',
         title: 'Performance Marketing',
         tag: 'advertising senza fuffa',
         desc:
@@ -127,10 +174,16 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
         href: '/digital/advertising',
       },
     ],
-    principles: [
-      { title: 'La velocità è estetica', desc: "Un sito lento tradisce il brand: l'architettura piuma rende la performance parte del design." },
-      { title: 'Presidio, non presenza', desc: 'Esserci non basta: ogni canale va governato con una strategia e un perché.' },
-      { title: 'Report senza fuffa', desc: 'Numeri chiari, risultati misurabili. Se non si può misurare, non lo promettiamo.' },
+    method: [
+      { icon: 'chart', title: 'Analizziamo', desc: 'Dati, canali, concorrenza: da dove parti.' },
+      { icon: 'ruler', title: 'Progettiamo', desc: 'La strategia e l\'infrastruttura tecnica.' },
+      { icon: 'code', title: 'Costruiamo', desc: 'Sito, ecosistema, campagne.' },
+      { icon: 'activity', title: 'Misuriamo', desc: 'Ottimizzazione continua sui numeri veri.' },
+    ],
+    outcomes: [
+      { title: 'Ti trovano quando cercano', desc: 'Autorità sui motori e canali presidiati: sei dove il cliente ti cerca.' },
+      { title: 'Un sito che non fa scappare', desc: 'Velocità e chiarezza: chi arriva resta, invece di chiudere la scheda.' },
+      { title: 'Numeri, non promesse', desc: 'Report chiari e misurabili: sai dove va ogni euro investito.' },
     ],
     ctaLine: 'Costruiamo la tua infrastruttura.',
   },
@@ -143,11 +196,19 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
     claim: { plain: "L'eccellenza come", serif: 'output prevedibile.' },
     intro:
       "Il braccio produttivo che trasforma la strategia in oggetti digitali tangibili. È il luogo dell'artigianato scalabile, dove la qualità d'agenzia incontra l'efficienza di un processo industriale: tempi certi, standard costante, anche su volumi elevati.",
-    accent1: '#6db5ff',
+    accent1: '#4e92d8',
     accent2: '#614aa2',
+    approach: {
+      statement: 'La qualità che colpisce una volta è fortuna. La qualità che si ripete, ogni volta, è un processo.',
+      body: [
+        'La produzione di contenuti è il punto dove la strategia diventa tangibile: video, foto, grafica, audio. È anche il punto dove la maggior parte delle agenzie oscilla — un progetto ottimo, il successivo mediocre, i tempi che saltano.',
+        'Noi trattiamo la creatività come una factory: protocolli, tempi certi, standard costante anche sui volumi. Qualità da boutique con l’affidabilità di un processo industriale — consegne quando servono, allo stesso livello, sempre.',
+      ],
+    },
     services: [
       {
         n: '01',
+        icon: 'clapperboard',
         title: 'Video Production',
         tag: 'high-end & social content',
         desc:
@@ -157,6 +218,7 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
       },
       {
         n: '02',
+        icon: 'camera',
         title: 'Photography & Visual Assets',
         tag: 'la realtà, post-prodotta bene',
         desc:
@@ -166,6 +228,7 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
       },
       {
         n: '03',
+        icon: 'pen',
         title: 'Strategic Copywriting',
         tag: 'parole chirurgiche',
         desc:
@@ -175,6 +238,7 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
       },
       {
         n: '04',
+        icon: 'mic',
         title: 'Podcast & Audio Branding',
         tag: "l'autorità della voce",
         desc:
@@ -184,6 +248,7 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
       },
       {
         n: '05',
+        icon: 'palette',
         title: 'Graphic & Motion Design',
         tag: "l'identità in movimento",
         desc:
@@ -192,10 +257,16 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
         href: '/factory/grafica',
       },
     ],
-    principles: [
-      { title: 'Protocollo, non ispirazione', desc: "L'esperienza è diventata processo replicabile: il risultato non dipende dal caso." },
-      { title: 'Tempi certi', desc: 'Una factory vera consegna quando promesso. La puntualità è parte della qualità.' },
-      { title: 'Standard costante', desc: "Dal primo all'ennesimo asset, lo stesso livello. Anche su volumi elevati." },
+    method: [
+      { icon: 'clipboard', title: 'Briefing', desc: 'Obiettivo, tono, formati.' },
+      { icon: 'lightbulb', title: 'Pre-produzione', desc: 'Concept e pianificazione.' },
+      { icon: 'clapperboard', title: 'Produzione', desc: 'Riprese, scatti, realizzazione.' },
+      { icon: 'package', title: 'Consegna', desc: 'Post-produzione e asset pronti all\'uso.' },
+    ],
+    outcomes: [
+      { title: 'Consegne quando serve', desc: 'Tempi certi e processo replicabile: niente attese, niente sorprese.' },
+      { title: 'Qualità che non oscilla', desc: "Dal primo all'ultimo asset, lo stesso livello. Anche sui volumi." },
+      { title: 'Contenuti pronti all\'uso', desc: 'Foto, video, grafica finiti e coerenti, pronti per ogni canale.' },
     ],
     ctaLine: 'Mettiamo in produzione la tua immagine.',
   },

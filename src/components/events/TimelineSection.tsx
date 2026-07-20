@@ -6,6 +6,16 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 if (typeof window !== 'undefined') gsap.registerPlugin(ScrollTrigger);
 
+/* Testo in gradiente brand (blu→viola). backgroundImage, NON background: la
+   shorthand azzera il background-clip e il gradiente riempirebbe tutto il box
+   invece del solo testo. */
+const gradientText = {
+  backgroundImage: 'linear-gradient(90deg, #4e92d8, #614aa2)',
+  WebkitBackgroundClip: 'text',
+  backgroundClip: 'text',
+  color: 'transparent',
+} as const;
+
 const phases = [
   {
     number: '01',
@@ -82,6 +92,11 @@ export default function EventsTimelineSection() {
       gsap.utils.toArray<HTMLElement>('.etl-col').forEach((col, i) => {
         gsap.from(col, {
           opacity: 0, y: 50, duration: 1.1, delay: i * 0.12, ease: 'power3.out',
+          // clearProps: la colonna contiene l'etichetta in gradiente (Prima/
+          // Durante/Dopo). Un transform residuo sull'antenato rompe
+          // background-clip:text in Chrome → il gradiente riempie il box invece
+          // del testo. A fine animazione togliamo il transform.
+          clearProps: 'transform',
           scrollTrigger: { trigger: col, start: 'top 85%' },
         });
       });
@@ -121,7 +136,7 @@ export default function EventsTimelineSection() {
                   style={{
                     fontSize: 'clamp(4rem, 8vw, 7rem)',
                     color: 'transparent',
-                    WebkitTextStroke: '1px rgba(255,255,255,0.08)',
+                    WebkitTextStroke: '1.5px rgba(255,255,255,0.32)',
                   }}
                 >
                   {phase.number}
@@ -129,12 +144,7 @@ export default function EventsTimelineSection() {
                 <div>
                   <h3
                     className="font-satoshi font-black uppercase tracking-tight text-2xl md:text-3xl"
-                    style={{
-                      background: 'linear-gradient(90deg, #614aa2, #4e92d8)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                    }}
+                    style={gradientText}
                   >
                     {phase.label}
                   </h3>
@@ -145,7 +155,7 @@ export default function EventsTimelineSection() {
               </div>
 
               {/* Gradient separator */}
-              <div className="h-px w-full" style={{ background: 'linear-gradient(90deg, #614aa2, #4e92d8)' }} />
+              <div className="h-px w-full" style={{ background: 'linear-gradient(90deg, #4e92d8, #614aa2)' }} />
 
               {/* Areas */}
               <div className="flex flex-col gap-8">
@@ -157,7 +167,7 @@ export default function EventsTimelineSection() {
                     <ul className="space-y-2">
                       {area.items.map((item, j) => (
                         <li key={j} className="flex items-start gap-2.5">
-                          <span className="shrink-0 mt-[7px] w-1 h-1 rounded-full opacity-40" style={{ background: 'linear-gradient(90deg, #614aa2, #4e92d8)' }} />
+                          <span className="shrink-0 mt-[7px] w-1 h-1 rounded-full opacity-40" style={{ background: 'linear-gradient(90deg, #4e92d8, #614aa2)' }} />
                           <span className="font-jakarta font-medium text-sm text-white/45 leading-relaxed">
                             {item}
                           </span>
