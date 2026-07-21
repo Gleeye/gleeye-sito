@@ -3,7 +3,6 @@
 import { useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import IrisCanvas from '@/components/v2/IrisCanvas';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -72,22 +71,29 @@ export default function LavoraConNoi() {
     if (!root) return;
 
     const ctx = gsap.context(() => {
-      /* hero: righe che salgono dalla maschera */
-      gsap.from('.lcn-hero-line', {
-        yPercent: 110,
-        duration: 1.25,
-        stagger: 0.12,
-        ease: 'power4.out',
-        delay: 0.15,
-      });
-      gsap.from('.lcn-hero-sub', {
-        opacity: 0,
-        y: 30,
-        duration: 1,
-        stagger: 0.12,
-        ease: 'power3.out',
-        delay: 0.65,
-      });
+      /* hero: come gli altri hero del sito (AreaHero). Le righe salgono dalla
+         maschera; clearProps sul transform perché la riga in gradiente,
+         con un transform residuo, romperebbe background-clip:text in Chrome. */
+      gsap.set('.lcn-hero-line', { yPercent: 120, skewY: 5 });
+      gsap.set('.lcn-hero-fade', { opacity: 0, y: 24 });
+      gsap
+        .timeline({ delay: 0.35 })
+        .to('.lcn-hero-line', {
+          yPercent: 0,
+          skewY: 0,
+          duration: 1.3,
+          stagger: 0.13,
+          ease: 'power4.out',
+          clearProps: 'transform',
+        })
+        .to('.lcn-hero-fade', {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          stagger: 0.1,
+          ease: 'power3.out',
+          clearProps: 'transform',
+        }, '-=0.8');
 
       /* reveal robusti: set + onEnter (mai from+scrollTrigger) */
       const reveal = (targets: string, stagger = 0.1) => {
@@ -150,44 +156,48 @@ export default function LavoraConNoi() {
 
   return (
     <div ref={rootRef}>
-      {/* ——— HERO — riempie esattamente la prima schermata ——— */}
+      {/* ——— HERO — stesso impianto degli hero del sito (AreaHero) ——— */}
       <section className="relative flex min-h-[calc(100svh-4rem)] flex-col justify-center overflow-hidden bg-[#0a0a10] px-5 py-20 text-[#f8f9fa] md:min-h-[calc(100svh-5rem)] md:px-10">
-        {/* Iride liquida (WebGL riusabile), tinta brand come la home. Full-bleed
-            su mobile, pesata a destra da md in su (il claim sta a sinistra). */}
-        <div className="absolute inset-0 md:left-auto md:w-[72%] lg:w-[64%]">
-          <IrisCanvas color1="#6db5ff" color2="#9b7bff" zoom={1.2} className="h-full w-full" />
-        </div>
-        {/* Overlay leggibilità: da md velo da sinistra; su mobile scrim in basso
-            (il centro scuro dell'iride regge il titolo, come in home). */}
-        <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-[#0a0a10] via-[#0a0a10]/85 to-[#0a0a10]/25 md:block" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0a0a10]/30 via-transparent to-[#0a0a10]/85 md:hidden" />
-        <div className="grain pointer-events-none absolute inset-0" />
+        <div className="grain absolute inset-0" />
+        <div className="pointer-events-none absolute right-[-15%] top-[8%] h-[60vh] w-[60vh] rounded-full bg-[#614aa2]/20 blur-[140px]" />
+        <div className="pointer-events-none absolute bottom-[4%] left-[-10%] h-[50vh] w-[50vh] rounded-full bg-[#4e92d8]/15 blur-[130px]" />
 
-        <div className="relative mx-auto w-full max-w-7xl">
-          <p className="lcn-hero-sub voice-mono mb-8 text-white/40">
-            [ Lavora con noi ]
+        <div className="relative z-10 mx-auto w-full max-w-7xl">
+          <p className="lcn-hero-fade voice-mono mb-6">
+            <span
+              className="inline-block"
+              style={{
+                backgroundImage: 'linear-gradient(100deg, #4e92d8, #614aa2)',
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                color: 'transparent',
+              }}
+            >
+              Lavora con noi
+            </span>
           </p>
 
-          <h1>
-            <span className="block overflow-hidden py-[0.04em]">
-              <span className="lcn-hero-line voice-display block text-[12.5vw] leading-[0.92] md:text-[8.5vw]">
+          <h1 className="voice-display max-w-none">
+            <span className="block overflow-hidden">
+              <span className="lcn-hero-line block text-[8.5vw] leading-[1.02] md:text-[min(7vw,5.6rem)]">
                 Il lavoro bello
               </span>
             </span>
-            <span className="block overflow-hidden py-[0.04em]">
-              <span className="lcn-hero-line voice-display text-gradient-flow block pb-[0.08em] text-[12.5vw] leading-[0.92] md:text-[8.5vw]">
+            {/* Corsivo in gradiente come le altre pagine (font-playfair italic).
+                w-fit: il gradiente si estende sul testo, non sul blocco.
+                pb per non tagliare i discendenti col background-clip:text. */}
+            <span className="block overflow-hidden">
+              <span className="lcn-hero-line text-gradient block w-fit pb-[0.18em] pr-[0.08em] font-playfair italic font-medium normal-case leading-[1.12] tracking-[-0.01em] text-[13vw] md:text-[min(9vw,7rem)]">
                 esiste.
               </span>
             </span>
           </h1>
 
-          <div className="lcn-hero-sub mt-12 max-w-xl border-l-2 border-[#4e92d8]/50 pl-6">
-            <p className="font-jakarta text-base font-medium leading-relaxed text-white/75 md:text-lg">
-              Alzarti ogni mattina per fare la cosa che ti appassiona, accanto a
-              gente con il tuo stesso fuoco dentro. Per noi lavorare è questo.
-              Se per te vale lo stesso, sei nel posto giusto.
-            </p>
-          </div>
+          <p className="lcn-hero-fade mt-8 max-w-xl font-jakarta text-base font-medium leading-relaxed text-white/60 md:text-lg">
+            Alzarti ogni mattina per fare la cosa che ti appassiona, accanto a
+            gente con il tuo stesso fuoco dentro. Per noi lavorare è questo.
+            Se per te vale lo stesso, sei nel posto giusto.
+          </p>
         </div>
       </section>
 
@@ -321,7 +331,7 @@ export default function LavoraConNoi() {
           <div className="lcn-outro mt-20 md:mt-28">
             <p className="font-jakarta text-lg font-medium text-white/55">
               Il tuo mestiere non è in lista?{' '}
-              <span className="voice-serif text-xl text-white/85">
+              <span className="font-playfair text-2xl italic text-white/85">
                 Ancora meglio: sorprendici.
               </span>
             </p>
