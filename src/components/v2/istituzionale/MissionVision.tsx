@@ -73,11 +73,11 @@ export default function MissionVision() {
           <span className="block overflow-hidden py-[0.04em]">
             <span className="mv-hero-line voice-display block text-[13vw] leading-[0.9] md:text-[9vw]">Dove siamo</span>
           </span>
-          <span className="block overflow-hidden py-[0.08em]">
-            <span className="mv-hero-line voice-display block text-[13vw] leading-[1.02] md:text-[9vw]">
+          <span className="block overflow-hidden text-[13vw] leading-[0] pb-[0.22em] md:text-[9vw]">
+            <span className="mv-hero-line voice-display block leading-[1.05]">
               diretti,{' '}
               <span
-                className="inline-block align-baseline font-playfair font-medium normal-case italic leading-none pb-[0.12em] -mb-[0.1em]"
+                className="inline-block align-baseline font-playfair font-medium normal-case italic leading-none pb-[0.34em] -mb-[0.3em]"
                 style={accentGrad}
               >
                 e perché.
