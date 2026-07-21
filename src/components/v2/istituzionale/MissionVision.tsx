@@ -9,8 +9,7 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-/* Accento in gradiente su fondo chiaro: blu→viola del sito, leggibile su bianco.
-   backgroundImage (non la shorthand) per non azzerare il background-clip. */
+/* Corsivo gradiente del sito (come in home e nelle sottopagine). */
 const accentGrad = {
   backgroundImage: 'linear-gradient(100deg, #4e92d8, #614aa2)',
   WebkitBackgroundClip: 'text',
@@ -18,71 +17,74 @@ const accentGrad = {
   color: 'transparent',
 } as const;
 
-/* Parola-fantasma gigante dietro un atto: contorno tenue + riempimento in
-   gradiente che sale con lo scroll. Deriva lateralmente per dare profondità. */
-function Ghost({ word, side }: { word: string; side: 'left' | 'right' }) {
+function Accent({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className={`mv-ghost pointer-events-none absolute top-1/2 -translate-y-1/2 z-0 select-none whitespace-nowrap ${side === 'right' ? 'right-[-4%]' : 'left-[-4%]'}`}
-      aria-hidden="true"
-    >
-      <span className="voice-display relative block leading-none" style={{ fontSize: 'clamp(5.5rem, 19vw, 20rem)' }}>
-        <span style={{ color: 'transparent', WebkitTextStroke: '1px rgba(10,10,16,0.05)' }}>{word}</span>
-        <span
-          className="mv-ghost-fill absolute inset-0"
-          style={{
-            backgroundImage: 'linear-gradient(160deg, #4e92d8, #614aa2)',
-            WebkitBackgroundClip: 'text',
-            backgroundClip: 'text',
-            color: 'transparent',
-            clipPath: 'inset(100% 0 0 0)',
-            opacity: 0.14,
-          }}
-        >
-          {word}
-        </span>
-      </span>
-    </div>
+    <span className="font-playfair italic font-medium normal-case" style={accentGrad}>
+      {children}
+    </span>
+  );
+}
+
+/* Il titolo della missione, due volte: la versione "comunicata male" (sfocata,
+   con rumore cromatico) e quella nitida. Stesso markup = stesso wrapping. */
+function MissionStatement({ degraded }: { degraded?: boolean }) {
+  return (
+    <>
+      Ridurre l&apos;attrito tra ciò che <Accent>vali</Accent> e ciò che si <Accent>vede</Accent>.
+    </>
   );
 }
 
 export default function MissionVision() {
   const rootRef = useRef<HTMLElement>(null);
+  const wipeRef = useRef<HTMLDivElement>(null);
+  const degRef = useRef<HTMLHeadingElement>(null);
+  const cleanRef = useRef<HTMLHeadingElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
+  const dotRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const root = rootRef.current;
-    if (!root) return;
+    const deg = degRef.current;
+    const clean = cleanRef.current;
+    const bar = barRef.current;
+    if (!root || !deg || !clean || !bar) return;
 
     const ctx = gsap.context(() => {
-      /* Su touch: niente scrub (su iOS post-navigazione lascerebbero parole,
-         titoli e fantasmi invisibili). Stato finale + intro hero al load.
-         I bagliori sono CSS e comunque nascosti su mobile dal GPU-diet. */
-      if (isTouchDevice()) {
-        gsap.set('.mv-word', { opacity: 1 });
-        gsap.set('.mv-act-title', { opacity: 1, y: 0 });
-        gsap.set('.mv-ghost-fill', { clipPath: 'inset(0% 0 0 0)' });
-        gsap.from('.mv-hero-line', { yPercent: 110, duration: 1.1, stagger: 0.1, ease: 'power4.out', delay: 0.15 });
-        return;
-      }
-
+      /* intro hero: sempre (è al load) */
       gsap.from('.mv-hero-line', {
         yPercent: 110, duration: 1.3, stagger: 0.12, ease: 'power4.out', delay: 0.2,
       });
 
-      /* per ogni atto: fantasma che si riempie + deriva laterale (parallax) */
-      gsap.utils.toArray<HTMLElement>('.mv-act', root).forEach((act) => {
-        const side = act.dataset.side;
-        gsap.fromTo(act.querySelector('.mv-ghost-fill'),
-          { clipPath: 'inset(100% 0 0 0)' },
-          { clipPath: 'inset(0% 0 0 0)', ease: 'none', scrollTrigger: { trigger: act, start: 'top 80%', end: 'center 45%', scrub: 0.5 } },
-        );
-        gsap.fromTo(act.querySelector('.mv-ghost'),
-          { x: side === 'right' ? 70 : -70 },
-          { x: side === 'right' ? -50 : 50, ease: 'none', scrollTrigger: { trigger: act, start: 'top bottom', end: 'bottom top', scrub: 1 } },
-        );
+      /* Su touch: niente scrub (su iOS post-nav lascerebbero tutto a metà).
+         Stato finale: frase già "ripulita", orizzonte disegnato. */
+      if (isTouchDevice()) {
+        gsap.set(clean, { clipPath: 'inset(-8% 0% -8% 0)' });
+        gsap.set(deg, { clipPath: 'inset(-8% 0 -8% 100%)' });
+        gsap.set('.mv-word', { opacity: 1 });
+        gsap.set('.mv-vis-title', { opacity: 1, y: 0 });
+        if (lineRef.current) gsap.set(lineRef.current, { scaleX: 1 });
+        if (dotRef.current) gsap.set(dotRef.current, { left: 'calc(100% - 10px)' });
+        return;
+      }
+
+      /* ————— ATTO I: la lama che toglie l'attrito ————— */
+      ScrollTrigger.create({
+        trigger: wipeRef.current,
+        start: 'top 72%',
+        end: 'bottom 38%',
+        scrub: 0.5,
+        onUpdate: (self) => {
+          const p = self.progress * 100;
+          clean.style.clipPath = `inset(-8% ${100 - p}% -8% 0)`;
+          deg.style.clipPath = `inset(-8% 0 -8% ${Math.max(0, p - 0.5)}%)`;
+          bar.style.left = `${p}%`;
+          bar.style.opacity = p > 0.5 && p < 99 ? '1' : '0';
+        },
       });
 
-      /* testi: parola per parola */
+      /* corpo: parola per parola */
       gsap.utils.toArray<HTMLElement>('.mv-body', root).forEach((b) => {
         gsap.fromTo(b.querySelectorAll('.mv-word'), { opacity: 0.12 }, {
           opacity: 1, stagger: 0.03, ease: 'none',
@@ -90,13 +92,19 @@ export default function MissionVision() {
         });
       });
 
-      /* titoli d'atto: reveal dal basso con wipe */
-      gsap.utils.toArray<HTMLElement>('.mv-act-title', root).forEach((t) => {
-        gsap.fromTo(t,
-          { y: 60, opacity: 0, clipPath: 'inset(0 0 100% 0)' },
-          { y: 0, opacity: 1, clipPath: 'inset(0 0 0% 0)', duration: 1.2, ease: 'power3.out', scrollTrigger: { trigger: t, start: 'top 85%', once: true } },
-        );
+      /* ————— ATTO II: l'orizzonte si disegna, il punto viaggia ————— */
+      gsap.from('.mv-vis-title', {
+        y: 60, opacity: 0, duration: 1.1, ease: 'power3.out',
+        scrollTrigger: { trigger: '.mv-vis-title', start: 'top 85%', once: true },
       });
+      if (lineRef.current && dotRef.current) {
+        const horizonTl = gsap.timeline({
+          scrollTrigger: { trigger: '.mv-horizon', start: 'top 85%', end: 'top 30%', scrub: 0.6 },
+        });
+        horizonTl
+          .fromTo(lineRef.current, { scaleX: 0 }, { scaleX: 1, ease: 'none' }, 0)
+          .fromTo(dotRef.current, { left: '0%' }, { left: 'calc(100% - 10px)', ease: 'none' }, 0);
+      }
     }, root);
 
     return () => ctx.revert();
@@ -109,11 +117,6 @@ export default function MissionVision() {
 
   return (
     <section ref={rootRef} className="relative overflow-hidden bg-[#f8f9fa] text-[#0a0a10]">
-
-      {/* bagliori ambientali: colore vivo ma tenue sul bianco (nascosti su mobile) */}
-      <div className="mv-glow pointer-events-none absolute -left-[12%] top-[10%] h-[46vw] w-[46vw] rounded-full opacity-[0.12] blur-[130px]" style={{ background: '#4e92d8', animation: 'mv-drift-a 20s ease-in-out infinite' }} />
-      <div className="mv-glow pointer-events-none absolute right-[-14%] top-[48%] h-[42vw] w-[42vw] rounded-full opacity-[0.12] blur-[140px]" style={{ background: '#614aa2', animation: 'mv-drift-b 26s ease-in-out infinite' }} />
-      <div className="mv-glow pointer-events-none absolute bottom-[2%] left-[18%] h-[34vw] w-[34vw] rounded-full opacity-[0.10] blur-[120px]" style={{ background: '#4e92d8', animation: 'mv-drift-a 23s ease-in-out infinite 3s' }} />
 
       {/* ------- hero ------- */}
       <div className="relative flex min-h-svh flex-col justify-center px-5 md:px-10">
@@ -138,51 +141,84 @@ export default function MissionVision() {
         </p>
       </div>
 
-      {/* ------- atto I: la missione ------- */}
-      <div className="mv-act relative overflow-hidden px-5 py-24 md:px-10 md:py-40" data-side="right">
-        <Ghost word="MISSIONE" side="right" />
-        <div className="relative z-10">
-          <p className="voice-mono mb-8 text-black/40">La missione</p>
-          <h2 className="mv-act-title voice-display max-w-5xl text-4xl leading-[1.02] md:text-7xl">
-            Ridurre l&apos;attrito tra ciò che <span style={accentGrad}>vali</span> e ciò che si <span style={accentGrad}>vede</span>.
+      {/* ------- atto I: la missione — l'attrito che si toglie ------- */}
+      <div className="relative px-5 py-24 md:px-10 md:py-40">
+        <p className="voice-mono mb-10 text-black/40">La missione</p>
+
+        {/* La frase esiste due volte: com'è quando la comunicazione tradisce
+            (sfocata, rumore cromatico) e com'è quando l'attrito è tolto.
+            Scrollando, una lama in gradiente la attraversa e la ripulisce. */}
+        <div ref={wipeRef} className="relative max-w-5xl">
+          <h2
+            ref={degRef}
+            aria-hidden="true"
+            className="voice-display text-4xl leading-[1.06] md:text-7xl"
+            style={{
+              color: 'rgba(10,10,16,0.22)',
+              filter: 'blur(6px)',
+              textShadow: '10px 0 rgba(78,146,216,0.35), -10px 0 rgba(97,74,162,0.35)',
+            }}
+          >
+            <MissionStatement degraded />
           </h2>
-          <p className="mv-body mt-14 max-w-2xl font-satoshi text-xl font-black leading-snug tracking-tight md:ml-[26%] md:text-3xl">
-            {missionBody.split(' ').map((w, i) => (
-              <span key={i} className="mv-word inline-block" style={{ marginRight: '0.28em' }}>{w}</span>
-            ))}
-          </p>
+          <h2
+            ref={cleanRef}
+            className="voice-display absolute inset-0 text-4xl leading-[1.06] md:text-7xl"
+            style={{ clipPath: 'inset(-8% 100% -8% 0)' }}
+          >
+            <MissionStatement />
+          </h2>
+          {/* la lama */}
+          <div
+            ref={barRef}
+            className="pointer-events-none absolute bottom-[-6%] top-[-6%] w-[2px] opacity-0"
+            style={{ left: '0%', background: 'linear-gradient(180deg, #4e92d8, #614aa2)', boxShadow: '0 0 22px 2px rgba(78,146,216,0.4)' }}
+          />
         </div>
+
+        <p className="mv-body mt-14 max-w-2xl font-satoshi text-xl font-black leading-snug tracking-tight md:ml-[26%] md:text-3xl">
+          {missionBody.split(' ').map((w, i) => (
+            <span key={i} className="mv-word inline-block" style={{ marginRight: '0.28em' }}>{w}</span>
+          ))}
+        </p>
       </div>
 
-      {/* ------- separatore ------- */}
-      <div className="relative z-10 mx-5 border-t border-black/[0.08] md:mx-10" />
+      {/* ------- atto II: la visione — il punto all'orizzonte ------- */}
+      <div className="relative px-5 py-24 pb-32 md:px-10 md:py-40">
+        <p className="voice-mono mb-10 text-black/40">La visione</p>
+        <h2 className="mv-vis-title voice-display max-w-5xl text-4xl leading-[1.06] md:ml-[18%] md:text-7xl">
+          Un mercato dove la forma non tradisce più il <Accent>valore</Accent>.
+        </h2>
+        <p className="mv-body mt-14 max-w-2xl font-satoshi text-xl font-black leading-snug tracking-tight md:ml-[18%] md:text-3xl">
+          {visionBody.split(' ').map((w, i) => (
+            <span key={i} className="mv-word inline-block" style={{ marginRight: '0.28em' }}>{w}</span>
+          ))}
+        </p>
 
-      {/* ------- atto II: la visione ------- */}
-      <div className="mv-act relative overflow-hidden px-5 py-24 pb-32 md:px-10 md:py-40" data-side="left">
-        <Ghost word="VISIONE" side="left" />
-        <div className="relative z-10">
-          <p className="voice-mono mb-8 text-black/40">La visione</p>
-          <h2 className="mv-act-title voice-display max-w-5xl text-4xl leading-[1.02] md:ml-[18%] md:text-7xl">
-            Un mercato dove la forma non tradisce più il <span style={accentGrad}>valore</span>.
-          </h2>
-          <p className="mv-body mt-14 max-w-2xl font-satoshi text-xl font-black leading-snug tracking-tight md:ml-[18%] md:text-3xl">
-            {visionBody.split(' ').map((w, i) => (
-              <span key={i} className="mv-word inline-block" style={{ marginRight: '0.28em' }}>{w}</span>
-            ))}
-          </p>
-
-          <div className="mt-24 border-t border-black/[0.08] pt-10">
-            <p className="font-jakarta text-sm font-medium text-black/50">
-              Il tragitto tra i due punti è il nostro{' '}
-              <a href="/metodo" className="font-semibold text-[#0a0a10] underline decoration-[#4e92d8] underline-offset-4">metodo</a>.
-            </p>
-          </div>
+        {/* l'orizzonte: la linea si disegna, il punto arriva a destinazione */}
+        <div className="mv-horizon relative mt-28 h-10">
+          <div
+            ref={lineRef}
+            className="absolute left-0 right-0 top-1/2 h-px origin-left"
+            style={{ background: 'linear-gradient(90deg, rgba(78,146,216,0.12), #4e92d8 55%, #614aa2)', transform: 'scaleX(0)' }}
+          />
+          <div
+            ref={dotRef}
+            className="absolute top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full"
+            style={{ left: '0%', background: '#614aa2', boxShadow: '0 0 20px 5px rgba(97,74,162,0.45)', animation: 'mv-pulse 2.8s ease-in-out infinite' }}
+          />
         </div>
+        <p className="mt-8 text-right font-jakarta text-sm font-medium text-black/50">
+          Il tragitto tra i due punti è il nostro{' '}
+          <a href="/metodo" className="font-semibold text-[#0a0a10] underline decoration-[#4e92d8] underline-offset-4">metodo</a>.
+        </p>
       </div>
 
       <style>{`
-        @keyframes mv-drift-a { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(5vw,-4vh) scale(1.08); } }
-        @keyframes mv-drift-b { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-6vw,5vh) scale(1.1); } }
+        @keyframes mv-pulse {
+          0%, 100% { box-shadow: 0 0 14px 3px rgba(97,74,162,0.35); }
+          50% { box-shadow: 0 0 26px 8px rgba(97,74,162,0.55); }
+        }
       `}</style>
     </section>
   );
