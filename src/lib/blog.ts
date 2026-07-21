@@ -25,29 +25,40 @@ const COLS =
 
 /* Tutti gli articoli, dal più recente. Usato dall'indice /blog. */
 export async function getAllPosts(): Promise<BlogPost[]> {
-  const { data, error } = await getSupabase()
-    .from('blog_posts')
-    .select(COLS)
-    .order('published_at', { ascending: false, nullsFirst: false });
-  if (error) {
-    console.error('[blog] getAllPosts', error.message);
+  try {
+    const { data, error } = await getSupabase()
+      .from('blog_posts')
+      .select(COLS)
+      .order('published_at', { ascending: false, nullsFirst: false });
+    if (error) {
+      console.error('[blog] getAllPosts', error.message);
+      return [];
+    }
+    return (data ?? []) as BlogPost[];
+  } catch (e) {
+    // Supabase assente/in pausa (es. al build): non far crollare tutto.
+    console.error('[blog] getAllPosts — Supabase non raggiungibile', e);
     return [];
   }
-  return (data ?? []) as BlogPost[];
 }
 
 /* Un singolo articolo per slug. */
 export async function getPost(slug: string): Promise<BlogPost | null> {
-  const { data, error } = await getSupabase()
-    .from('blog_posts')
-    .select(COLS)
-    .eq('slug', slug)
-    .maybeSingle();
-  if (error) {
-    console.error('[blog] getPost', slug, error.message);
+  try {
+    const { data, error } = await getSupabase()
+      .from('blog_posts')
+      .select(COLS)
+      .eq('slug', slug)
+      .maybeSingle();
+    if (error) {
+      console.error('[blog] getPost', slug, error.message);
+      return null;
+    }
+    return (data as BlogPost) ?? null;
+  } catch (e) {
+    console.error('[blog] getPost — Supabase non raggiungibile', slug, e);
     return null;
   }
-  return (data as BlogPost) ?? null;
 }
 
 /* Correlati per categoria, escluso l'articolo corrente. */
@@ -57,31 +68,41 @@ export async function getRelated(
   limit = 3,
 ): Promise<BlogPost[]> {
   if (!category) return [];
-  const { data, error } = await getSupabase()
-    .from('blog_posts')
-    .select(COLS)
-    .eq('category', category)
-    .neq('slug', excludeSlug)
-    .order('published_at', { ascending: false, nullsFirst: false })
-    .limit(limit);
-  if (error) {
-    console.error('[blog] getRelated', error.message);
+  try {
+    const { data, error } = await getSupabase()
+      .from('blog_posts')
+      .select(COLS)
+      .eq('category', category)
+      .neq('slug', excludeSlug)
+      .order('published_at', { ascending: false, nullsFirst: false })
+      .limit(limit);
+    if (error) {
+      console.error('[blog] getRelated', error.message);
+      return [];
+    }
+    return (data ?? []) as BlogPost[];
+  } catch (e) {
+    console.error('[blog] getRelated — Supabase non raggiungibile', e);
     return [];
   }
-  return (data ?? []) as BlogPost[];
 }
 
 /* Solo gli slug (+ modified) per generateStaticParams e sitemap. */
 export async function getAllSlugs(): Promise<
   { slug: string; modified_at: string | null }[]
 > {
-  const { data, error } = await getSupabase()
-    .from('blog_posts')
-    .select('slug, modified_at')
-    .order('published_at', { ascending: false, nullsFirst: false });
-  if (error) {
-    console.error('[blog] getAllSlugs', error.message);
+  try {
+    const { data, error } = await getSupabase()
+      .from('blog_posts')
+      .select('slug, modified_at')
+      .order('published_at', { ascending: false, nullsFirst: false });
+    if (error) {
+      console.error('[blog] getAllSlugs', error.message);
+      return [];
+    }
+    return (data ?? []) as { slug: string; modified_at: string | null }[];
+  } catch (e) {
+    console.error('[blog] getAllSlugs — Supabase non raggiungibile', e);
     return [];
   }
-  return (data ?? []) as { slug: string; modified_at: string | null }[];
 }
