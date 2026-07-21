@@ -94,7 +94,10 @@ export default function ApproachSection({ data }: { data: ApproachData }) {
   const statement = (
     <h2 className="sub-pos-statement font-satoshi text-[8vw] font-black leading-[1.06] tracking-tight text-black md:text-[3.6vw] lg:text-[3vw]">
       {data.statement.plain}
-      <span className="mt-2 block pb-[0.14em]" style={gradientText}>
+      <span
+        className="mt-2 block pb-[0.14em] font-playfair text-[9vw] font-medium italic normal-case tracking-[-0.01em] md:text-[4vw] lg:text-[3.4vw]"
+        style={gradientText}
+      >
         {data.statement.accent}
       </span>
     </h2>

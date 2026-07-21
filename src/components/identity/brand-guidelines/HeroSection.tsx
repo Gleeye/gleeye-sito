@@ -73,15 +73,15 @@ export default function BrandGuidelinesHeroSection() {
 
       {/* Headline */}
       <div className="relative z-10 flex flex-col items-center justify-center flex-1 py-12 text-center">
-        <div className="flex flex-wrap justify-center gap-x-4 md:gap-x-6 lg:gap-x-8">
+        <div className="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1 md:gap-x-5 lg:gap-x-6">
           {WORDS.map((word, i) => (
-            <div key={word} className="overflow-hidden">
+            <div key={word} className="overflow-hidden pb-[0.12em]">
               <span
                 ref={el => { wordRefs.current[i] = el; }}
-                className={`block font-satoshi font-black tracking-tight leading-none text-[13vw] md:text-[10vw] lg:text-[8vw] xl:text-[7rem] ${
+                className={`block leading-[0.95] ${
                   i === WORDS.length - 1
-                    ? 'bg-gradient-to-r from-[#614aa2] to-[#4e92d8] bg-clip-text text-transparent'
-                    : 'text-white'
+                    ? 'text-gradient font-playfair italic font-medium lowercase tracking-[-0.01em] pr-[0.06em] text-[11.5vw] md:text-[9vw] lg:text-[7.5vw] xl:text-[6.8rem]'
+                    : 'font-satoshi font-black tracking-tight text-white text-[10vw] md:text-[8.2vw] lg:text-[6.8vw] xl:text-[6rem]'
                 }`}
               >
                 {word}

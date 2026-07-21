@@ -93,7 +93,7 @@ export default function ServicesSection({ services }: { services: ServiceItem[] 
               <div
                 key={s.title}
                 onMouseEnter={() => setActive(i)}
-                className="sub-svc-row group relative cursor-default overflow-hidden border-b border-black/10 py-8 md:py-10"
+                className="sub-svc-row group relative cursor-default overflow-hidden border-b border-black/10 py-11 md:py-14"
               >
                 <div
                   className="pointer-events-none absolute inset-0 bg-black/[0.02] transition-opacity duration-500"

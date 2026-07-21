@@ -62,8 +62,20 @@ const AREAS = [
   },
 ];
 
+/* Vista mobile: una sola lista ordinata. Le prime tre voci sono aree con
+   sotto-servizi (accordion); le ultime due sono link diretti. */
+type SubLink = { label: string; href: string };
+const MOBILE: { label: string; href: string; pages: SubLink[]; landings: SubLink[] }[] = [
+  { label: 'Identity', href: '/identity', pages: AREAS[0].pages, landings: AREAS[0].landings },
+  { label: 'Digital', href: '/digital', pages: AREAS[1].pages, landings: AREAS[1].landings },
+  { label: 'Factory', href: '/factory', pages: AREAS[2].pages, landings: AREAS[2].landings },
+  { label: 'Lavora con noi', href: '/lavora-con-noi', pages: [], landings: [] },
+  { label: 'Contatti', href: '/contatti', pages: [], landings: [] },
+];
+
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState<string | null>(null);
   const [onLight, setOnLight] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
@@ -108,6 +120,7 @@ export default function Header() {
     } else {
       document.body.style.overflow = '';
       tlRef.current?.timeScale(1.5).reverse();
+      setExpanded(null);
     }
   }, []);
 
@@ -117,6 +130,7 @@ export default function Header() {
      restava bloccato sulla pagina nuova finché non si ricaricava a mano. */
   useEffect(() => {
     setOpen(false);
+    setExpanded(null);
     document.body.style.overflow = '';
     tlRef.current?.timeScale(1.5).reverse();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -228,8 +242,86 @@ export default function Header() {
 
         <div className="relative flex h-full flex-col justify-between px-5 pt-28 pb-6 md:px-10 md:pt-36 md:pb-10">
           <div className="grid flex-1 grid-cols-1 gap-10 overflow-y-auto md:grid-cols-[1.15fr_1fr] md:gap-10 md:overflow-visible">
+            {/* ——— Mobile: lista pulita e leggibile, accordion per area ——— */}
+            <div className="flex flex-col md:hidden">
+              {MOBILE.map((item) => {
+                const isOpen = expanded === item.label;
+                const hasChildren = item.pages.length > 0 || item.landings.length > 0;
+                return (
+                  <div key={item.href} className="menu-link-row border-b border-white/10">
+                    <div className="flex items-stretch">
+                      <Link href={item.href} className="flex flex-1 items-center py-5">
+                        <span className="voice-display text-[7.5vw] leading-none text-[#f8f9fa]">
+                          {item.label}
+                        </span>
+                      </Link>
+                      {hasChildren && (
+                        <button
+                          type="button"
+                          onClick={() => setExpanded(isOpen ? null : item.label)}
+                          aria-expanded={isOpen}
+                          aria-label={`${isOpen ? 'Chiudi' : 'Apri'} i servizi ${item.label}`}
+                          className="flex w-14 items-center justify-center text-white/55 transition-colors active:text-white"
+                        >
+                          <svg
+                            width="22"
+                            height="22"
+                            viewBox="0 0 22 22"
+                            fill="none"
+                            className={`transition-transform duration-300 ease-out ${isOpen ? 'rotate-45' : ''}`}
+                          >
+                            <path d="M11 4.5v13M4.5 11h13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                    {hasChildren && (
+                      <div
+                        className={`grid overflow-hidden transition-[grid-template-rows] duration-300 ease-out ${
+                          isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+                        }`}
+                      >
+                        <div className="min-h-0">
+                          <ul>
+                            {item.pages.map((c) => (
+                              <li key={c.href}>
+                                <Link
+                                  href={c.href}
+                                  className="block py-3.5 font-jakarta text-[16px] font-medium text-white/60 transition-colors active:text-white"
+                                >
+                                  {c.label}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                          {item.landings.length > 0 && (
+                            <>
+                              <p className="voice-mono mt-3 mb-1 text-white/40">Servizi più richiesti</p>
+                              <ul>
+                                {item.landings.map((c) => (
+                                  <li key={c.href}>
+                                    <Link
+                                      href={c.href}
+                                      className="block py-3.5 font-jakarta text-[16px] font-medium text-white/60 transition-colors active:text-white"
+                                    >
+                                      {c.label}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </>
+                          )}
+                          <div aria-hidden className="h-3" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
             {/* Primary nav — tutte le voci sullo stesso livello */}
-            <nav className="flex flex-col justify-center">
+            <nav className="hidden flex-col justify-center md:flex">
               {PRIMARY.map((item) => (
                 <div key={item.href} className="overflow-hidden">
                   <div className="menu-link-row">
@@ -237,7 +329,6 @@ export default function Header() {
                       href={item.href}
                       className="group flex items-baseline gap-4 py-1 md:gap-6"
                     >
-                      <span className="voice-mono text-[10px] text-[#6db5ff]">{item.n}</span>
                       <span className="voice-display text-[8.5vw] leading-[1.04] text-transparent transition-colors duration-500 [-webkit-text-stroke:1.5px_rgba(248,249,250,0.6)] group-hover:text-[#f8f9fa] group-hover:[-webkit-text-stroke:1.5px_transparent] md:whitespace-nowrap md:text-[4.6vw]">
                         {item.label}
                       </span>
@@ -252,7 +343,7 @@ export default function Header() {
 
             {/* Aside — per ogni area: storytelling a sinistra, i suoi servizi
                 più richiesti a destra (vuoto se non ne ha) */}
-            <aside className="flex flex-col justify-center gap-8 md:border-l md:border-white/10 md:pl-10">
+            <aside className="hidden flex-col justify-center gap-8 md:flex md:border-l md:border-white/10 md:pl-10">
               {AREAS.map((area) => (
                 <div key={area.href} className="menu-aside-group grid grid-cols-1 gap-x-10 gap-y-4 md:grid-cols-2">
                   {/* Storytelling dell'area, una per riga */}

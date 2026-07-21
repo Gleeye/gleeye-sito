@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { LucideIcon } from 'lucide-react';
-import { isTouchDevice } from '@/lib/isTouch';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -35,9 +34,6 @@ export default function ProcessSection({
   }, [steps.length]);
 
   useEffect(() => {
-    // Su touch niente reveal/pin: contenuto sempre visibile, scroll nativo.
-    // (su iOS i trigger post-navigazione misurano male e lasciano tutto invisibile)
-    if (isTouchDevice()) return;
     const section = sectionRef.current;
     const track = trackRef.current;
     if (!section || !track) return;
@@ -94,8 +90,7 @@ export default function ProcessSection({
           </h2>
         </div>
 
-        {/* su touch il pin è disattivato: il track scorre nativamente in orizzontale */}
-        <div ref={trackRef} className="flex items-stretch gap-5 overflow-x-auto px-6 will-change-transform md:gap-6 md:px-16 lg:overflow-x-visible">
+        <div ref={trackRef} className="flex items-stretch gap-5 px-6 will-change-transform md:gap-6 md:px-16">
           {steps.map((s, i) => {
             const isActive = i === active;
             const { Icon } = s;
