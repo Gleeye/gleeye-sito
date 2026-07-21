@@ -116,18 +116,13 @@ export default function SpecialUnits() {
         {/* Le righe salgono da dietro una maschera come nella hero: è la
             firma di movimento del sito. */}
         <div className="mb-14 grid gap-8 md:mb-20 md:grid-cols-12 md:items-end md:gap-10">
-          <h2 className="voice-display col-span-full text-[2.1rem] leading-[1.02] text-[#0a0a10] md:col-span-7 md:text-[min(4.2vw,3.5rem)] md:leading-[0.9]">
-            {/* Copy da rifare: le parole le dà Davide. Struttura, misure e
-                animazione sono pronte — basta sostituire il testo delle due
-                righe e, se serve, del paragrafo. */}
+          <h2 className="voice-display col-span-full text-[2.7rem] leading-[1.02] text-[#0a0a10] md:col-span-7 md:text-[min(5.6vw,4.8rem)] md:leading-[0.9]">
             <span className="block overflow-hidden">
-              <span className="su-line block pb-[0.12em] [margin-bottom:-0.12em]">
-                Divisioni
-              </span>
-            </span>
-            <span className="block overflow-hidden">
-              <span className="su-line text-gradient-flow block pb-[0.12em] [margin-bottom:-0.12em]">
-                verticali.
+              <span
+                className="su-line block font-newsreader italic uppercase pb-[0.12em] [margin-bottom:-0.12em]"
+                style={{ fontWeight: 700, letterSpacing: '-0.01em' }}
+              >
+                Verticali.
               </span>
             </span>
           </h2>
