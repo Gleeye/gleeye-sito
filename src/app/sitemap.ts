@@ -1,38 +1,11 @@
 import type { MetadataRoute } from 'next';
+import { getAllSlugs } from '@/lib/blog';
 
 const BASE = 'https://gleeye.eu';
-const WP_API = 'https://old.gleeye.eu/wp-json/wp/v2';
 
-/* Gli slug dei ~120 articoli nativi (/blog/<slug>) vengono dal vecchio WordPress
-   via REST. Rigenerato con la pagina (ISR). Retry con backoff: il vecchio WP è
-   su hosting fragile e sotto raffica chiude le connessioni. */
-type WpSlug = { slug: string; modified?: string };
-
-async function fetchJson<T>(url: string): Promise<T | null> {
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      const res = await fetch(url, { next: { revalidate: 3600 } });
-      if (res.ok) return (await res.json()) as T;
-    } catch {
-      /* rete ballerina: ritenta */
-    }
-    await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
-  }
-  return null;
-}
-
-async function getPostSlugs(): Promise<WpSlug[]> {
-  const all: WpSlug[] = [];
-  for (let page = 1; page <= 6; page++) {
-    const posts = await fetchJson<WpSlug[]>(
-      `${WP_API}/posts?per_page=100&page=${page}&_fields=slug,modified`,
-    );
-    if (!posts || posts.length === 0) break;
-    all.push(...posts);
-    if (posts.length < 100) break;
-  }
-  return all;
-}
+/* Gli slug dei ~120 articoli nativi (/blog/<slug>) vengono dal DB del sito
+   (public.blog_posts). Rigenerato con la pagina (ISR). Nessun fetch a
+   old.gleeye.eu. */
 
 export const revalidate = 3600;
 
@@ -73,10 +46,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: r.priority,
   }));
 
-  const slugs = await getPostSlugs();
+  const slugs = await getAllSlugs();
   const blogEntries: MetadataRoute.Sitemap = slugs.map((p) => ({
     url: `${BASE}/blog/${p.slug}`,
-    lastModified: p.modified ? new Date(p.modified) : now,
+    lastModified: p.modified_at ? new Date(p.modified_at) : now,
     changeFrequency: 'monthly' as const,
     priority: 0.6,
   }));
