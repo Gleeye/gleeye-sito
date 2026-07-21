@@ -9,7 +9,17 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-/* Corsivo gradiente del sito (come in home e nelle sottopagine). */
+/* ————————————————————————————————————————————————————————————————
+   CONCEPT — "La rotta".
+   Il titolo della pagina è "Dove siamo diretti": la pagina è il viaggio.
+   Una rotta luminosa parte dalla hero e si disegna con lo scroll; un punto
+   — noi — la percorre. Passa per la missione (il lavoro di ogni giorno:
+   la lama che toglie l'attrito alla frase), poi per la visione, e arriva
+   a destinazione: il punto all'orizzonte, un anello che pulsa.
+   Chiusa: "il tragitto tra i due punti è il nostro metodo".
+   ———————————————————————————————————————————————————————————————— */
+
+/* Corsivo gradiente del sito. */
 const accentGrad = {
   backgroundImage: 'linear-gradient(100deg, #4e92d8, #614aa2)',
   WebkitBackgroundClip: 'text',
@@ -25,9 +35,7 @@ function Accent({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* Il titolo della missione, due volte: la versione "comunicata male" (sfocata,
-   con rumore cromatico) e quella nitida. Stesso markup = stesso wrapping. */
-function MissionStatement({ degraded }: { degraded?: boolean }) {
+function MissionStatement() {
   return (
     <>
       Ridurre l&apos;attrito tra ciò che <Accent>vali</Accent> e ciò che si <Accent>vede</Accent>.
@@ -35,41 +43,73 @@ function MissionStatement({ degraded }: { degraded?: boolean }) {
   );
 }
 
+/* Geometria della rotta (viewBox 1000×2600, stirata sull'intera pagina).
+   La rotta parte sotto la hero, sfiora la missione (a destra), scende alla
+   visione (a sinistra) e termina al centro, dove vive l'anello-destinazione. */
+const ROUTE_D =
+  'M 140 300 C 300 450, 620 520, 720 700 C 810 860, 840 980, 760 1120 C 690 1240, 420 1330, 320 1500 C 240 1640, 240 1760, 330 1880 C 420 2000, 520 2140, 500 2380';
+const VIEW_W = 1000;
+const VIEW_H = 2600;
+const END_X = 500;
+const END_Y = 2380;
+
 export default function MissionVision() {
   const rootRef = useRef<HTMLElement>(null);
+  const pathRef = useRef<SVGPathElement>(null);
+  const dotRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
   const wipeRef = useRef<HTMLDivElement>(null);
   const degRef = useRef<HTMLHeadingElement>(null);
   const cleanRef = useRef<HTMLHeadingElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
-  const lineRef = useRef<HTMLDivElement>(null);
-  const dotRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const root = rootRef.current;
+    const path = pathRef.current;
+    const dot = dotRef.current;
     const deg = degRef.current;
     const clean = cleanRef.current;
     const bar = barRef.current;
-    if (!root || !deg || !clean || !bar) return;
+    if (!root || !path || !dot || !deg || !clean || !bar) return;
 
     const ctx = gsap.context(() => {
-      /* intro hero: sempre (è al load) */
+      /* intro hero: sempre */
       gsap.from('.mv-hero-line', {
         yPercent: 110, duration: 1.3, stagger: 0.12, ease: 'power4.out', delay: 0.2,
       });
 
-      /* Su touch: niente scrub (su iOS post-nav lascerebbero tutto a metà).
-         Stato finale: frase già "ripulita", orizzonte disegnato. */
+      /* Su touch niente scrub: rotta già tracciata, punto a destinazione,
+         frase già ripulita, tutto leggibile. */
       if (isTouchDevice()) {
+        gsap.set(path, { strokeDashoffset: 0 });
+        gsap.set(dot, { left: `${(END_X / VIEW_W) * 100}%`, top: `${(END_Y / VIEW_H) * 100}%`, opacity: 1 });
         gsap.set(clean, { clipPath: 'inset(-8% 0% -8% 0)' });
         gsap.set(deg, { clipPath: 'inset(-8% 0 -8% 100%)' });
         gsap.set('.mv-word', { opacity: 1 });
         gsap.set('.mv-vis-title', { opacity: 1, y: 0 });
-        if (lineRef.current) gsap.set(lineRef.current, { scaleX: 1 });
-        if (dotRef.current) gsap.set(dotRef.current, { left: 'calc(100% - 10px)' });
+        gsap.set('.mv-vis-glow', { opacity: 1, scale: 1 });
+        if (ringRef.current) gsap.set(ringRef.current, { opacity: 1, scale: 1 });
         return;
       }
 
-      /* ————— ATTO I: la lama che toglie l'attrito ————— */
+      /* ————— la rotta si disegna e il punto la percorre ————— */
+      const len = path.getTotalLength();
+      ScrollTrigger.create({
+        trigger: root,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 0.5,
+        onUpdate: (self) => {
+          const p = self.progress;
+          path.style.strokeDashoffset = String(1 - p);
+          const pt = path.getPointAtLength(p * len);
+          dot.style.left = `${(pt.x / VIEW_W) * 100}%`;
+          dot.style.top = `${(pt.y / VIEW_H) * 100}%`;
+          dot.style.opacity = p > 0.015 && p < 0.985 ? '1' : '0';
+        },
+      });
+
+      /* ————— missione: la lama che toglie l'attrito ————— */
       ScrollTrigger.create({
         trigger: wipeRef.current,
         start: 'top 72%',
@@ -84,7 +124,7 @@ export default function MissionVision() {
         },
       });
 
-      /* corpo: parola per parola */
+      /* corpi: parola per parola */
       gsap.utils.toArray<HTMLElement>('.mv-body', root).forEach((b) => {
         gsap.fromTo(b.querySelectorAll('.mv-word'), { opacity: 0.12 }, {
           opacity: 1, stagger: 0.03, ease: 'none',
@@ -92,18 +132,22 @@ export default function MissionVision() {
         });
       });
 
-      /* ————— ATTO II: l'orizzonte si disegna, il punto viaggia ————— */
+      /* ————— visione: il titolo affiora quando il punto arriva ————— */
       gsap.from('.mv-vis-title', {
-        y: 60, opacity: 0, duration: 1.1, ease: 'power3.out',
+        y: 70, opacity: 0, duration: 1.2, ease: 'power3.out',
         scrollTrigger: { trigger: '.mv-vis-title', start: 'top 85%', once: true },
       });
-      if (lineRef.current && dotRef.current) {
-        const horizonTl = gsap.timeline({
-          scrollTrigger: { trigger: '.mv-horizon', start: 'top 85%', end: 'top 30%', scrub: 0.6 },
+      gsap.fromTo('.mv-vis-glow', { opacity: 0, scale: 0.7 }, {
+        opacity: 1, scale: 1, duration: 1.6, ease: 'power2.out',
+        scrollTrigger: { trigger: '.mv-vis-title', start: 'top 80%', once: true },
+      });
+
+      /* ————— destinazione: l'anello si accende all'arrivo ————— */
+      if (ringRef.current) {
+        gsap.fromTo(ringRef.current, { opacity: 0, scale: 0.5 }, {
+          opacity: 1, scale: 1, duration: 1.1, ease: 'back.out(1.6)',
+          scrollTrigger: { trigger: ringRef.current, start: 'top 78%', once: true },
         });
-        horizonTl
-          .fromTo(lineRef.current, { scaleX: 0 }, { scaleX: 1, ease: 'none' }, 0)
-          .fromTo(dotRef.current, { left: '0%' }, { left: 'calc(100% - 10px)', ease: 'none' }, 0);
       }
     }, root);
 
@@ -118,8 +162,71 @@ export default function MissionVision() {
   return (
     <section ref={rootRef} className="relative overflow-hidden bg-[#f8f9fa] text-[#0a0a10]">
 
-      {/* ------- hero ------- */}
-      <div className="relative flex min-h-svh flex-col justify-center px-5 md:px-10">
+      {/* ————— la rotta (dietro tutto) ————— */}
+      <svg
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id="mvRoute" gradientUnits="userSpaceOnUse" x1="140" y1="300" x2="500" y2="2380">
+            <stop offset="0%" stopColor="#4e92d8" />
+            <stop offset="55%" stopColor="#6db5ff" />
+            <stop offset="100%" stopColor="#614aa2" />
+          </linearGradient>
+        </defs>
+        {/* la rotta è già tracciata, appena percettibile: sai dove si va */}
+        <path
+          d={ROUTE_D}
+          fill="none"
+          stroke="rgba(10,10,16,0.06)"
+          strokeWidth="1.5"
+          strokeDasharray="3 9"
+          vectorEffect="non-scaling-stroke"
+        />
+        {/* il tragitto percorso, in gradiente, si disegna con lo scroll */}
+        <path
+          ref={pathRef}
+          d={ROUTE_D}
+          fill="none"
+          stroke="url(#mvRoute)"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          pathLength={1}
+          vectorEffect="non-scaling-stroke"
+          style={{ strokeDasharray: 1, strokeDashoffset: 1, filter: 'drop-shadow(0 0 6px rgba(78,146,216,0.45))' }}
+        />
+      </svg>
+
+      {/* il viaggiatore */}
+      <div
+        ref={dotRef}
+        className="pointer-events-none absolute z-[5] h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{
+          left: `${(140 / VIEW_W) * 100}%`,
+          top: `${(300 / VIEW_H) * 100}%`,
+          opacity: 0,
+          background: 'linear-gradient(135deg, #4e92d8, #614aa2)',
+          boxShadow: '0 0 18px 5px rgba(78,146,216,0.5)',
+        }}
+      />
+
+      {/* la destinazione: il punto all'orizzonte */}
+      <div
+        ref={ringRef}
+        className="pointer-events-none absolute z-[4] -translate-x-1/2 -translate-y-1/2"
+        style={{ left: `${(END_X / VIEW_W) * 100}%`, top: `${(END_Y / VIEW_H) * 100}%`, opacity: 0 }}
+      >
+        <div className="relative flex h-20 w-20 items-center justify-center md:h-28 md:w-28">
+          <div className="absolute inset-0 rounded-full border border-[#614aa2]/30" style={{ animation: 'mv-ring 3s ease-in-out infinite' }} />
+          <div className="absolute inset-[22%] rounded-full border border-[#4e92d8]/45" />
+          <div className="h-2.5 w-2.5 rounded-full" style={{ background: 'linear-gradient(135deg, #4e92d8, #614aa2)', boxShadow: '0 0 22px 6px rgba(97,74,162,0.5)' }} />
+        </div>
+      </div>
+
+      {/* ————— hero ————— */}
+      <div className="relative z-10 flex min-h-svh flex-col justify-center px-5 md:px-10">
         <h1 className="relative">
           <span className="block overflow-hidden py-[0.04em]">
             <span className="mv-hero-line voice-display block text-[13vw] leading-[0.9] md:text-[9vw]">Dove siamo</span>
@@ -137,87 +244,82 @@ export default function MissionVision() {
           </span>
         </h1>
         <p className="mv-hero-line mt-10 max-w-md font-jakarta text-base font-medium leading-relaxed text-black/50 md:text-lg">
-          La missione è il lavoro di ogni giorno. La visione è il punto all&apos;orizzonte.
+          La missione è il lavoro di ogni giorno. La visione è il punto all&apos;orizzonte. Scorri: la rotta è già tracciata.
         </p>
       </div>
 
-      {/* ------- atto I: la missione — l'attrito che si toglie ------- */}
-      <div className="relative px-5 py-24 md:px-10 md:py-40">
-        <p className="voice-mono mb-10 text-black/40">La missione</p>
+      {/* ————— tappa 1: la missione (a destra, la rotta la sfiora) ————— */}
+      <div className="relative z-10 flex min-h-[95vh] items-center px-5 py-24 md:px-10">
+        <div className="w-full md:ml-auto md:w-[58%]">
+          <p className="voice-mono mb-8 text-black/40">La missione</p>
 
-        {/* La frase esiste due volte: com'è quando la comunicazione tradisce
-            (sfocata, rumore cromatico) e com'è quando l'attrito è tolto.
-            Scrollando, una lama in gradiente la attraversa e la ripulisce. */}
-        <div ref={wipeRef} className="relative max-w-5xl">
-          <h2
-            ref={degRef}
-            aria-hidden="true"
-            className="voice-display text-4xl leading-[1.06] md:text-7xl"
-            style={{
-              color: 'rgba(10,10,16,0.22)',
-              filter: 'blur(6px)',
-              textShadow: '10px 0 rgba(78,146,216,0.35), -10px 0 rgba(97,74,162,0.35)',
-            }}
-          >
-            <MissionStatement degraded />
-          </h2>
-          <h2
-            ref={cleanRef}
-            className="voice-display absolute inset-0 text-4xl leading-[1.06] md:text-7xl"
-            style={{ clipPath: 'inset(-8% 100% -8% 0)' }}
-          >
-            <MissionStatement />
-          </h2>
-          {/* la lama */}
-          <div
-            ref={barRef}
-            className="pointer-events-none absolute bottom-[-6%] top-[-6%] w-[2px] opacity-0"
-            style={{ left: '0%', background: 'linear-gradient(180deg, #4e92d8, #614aa2)', boxShadow: '0 0 22px 2px rgba(78,146,216,0.4)' }}
-          />
+          <div ref={wipeRef} className="relative">
+            <h2
+              ref={degRef}
+              aria-hidden="true"
+              className="voice-display text-4xl leading-[1.06] md:text-6xl"
+              style={{
+                color: 'rgba(10,10,16,0.22)',
+                filter: 'blur(6px)',
+                textShadow: '10px 0 rgba(78,146,216,0.35), -10px 0 rgba(97,74,162,0.35)',
+              }}
+            >
+              <MissionStatement />
+            </h2>
+            <h2
+              ref={cleanRef}
+              className="voice-display absolute inset-0 text-4xl leading-[1.06] md:text-6xl"
+              style={{ clipPath: 'inset(-8% 100% -8% 0)' }}
+            >
+              <MissionStatement />
+            </h2>
+            <div
+              ref={barRef}
+              className="pointer-events-none absolute bottom-[-6%] top-[-6%] w-[2px] opacity-0"
+              style={{ left: '0%', background: 'linear-gradient(180deg, #4e92d8, #614aa2)', boxShadow: '0 0 22px 2px rgba(78,146,216,0.4)' }}
+            />
+          </div>
+
+          <p className="mv-body mt-12 max-w-xl font-satoshi text-lg font-black leading-snug tracking-tight md:text-2xl">
+            {missionBody.split(' ').map((w, i) => (
+              <span key={i} className="mv-word inline-block" style={{ marginRight: '0.28em' }}>{w}</span>
+            ))}
+          </p>
         </div>
-
-        <p className="mv-body mt-14 max-w-2xl font-satoshi text-xl font-black leading-snug tracking-tight md:ml-[26%] md:text-3xl">
-          {missionBody.split(' ').map((w, i) => (
-            <span key={i} className="mv-word inline-block" style={{ marginRight: '0.28em' }}>{w}</span>
-          ))}
-        </p>
       </div>
 
-      {/* ------- atto II: la visione — il punto all'orizzonte ------- */}
-      <div className="relative px-5 py-24 pb-32 md:px-10 md:py-40">
-        <p className="voice-mono mb-10 text-black/40">La visione</p>
-        <h2 className="mv-vis-title voice-display max-w-5xl text-4xl leading-[1.06] md:ml-[18%] md:text-7xl">
-          Un mercato dove la forma non tradisce più il <Accent>valore</Accent>.
-        </h2>
-        <p className="mv-body mt-14 max-w-2xl font-satoshi text-xl font-black leading-snug tracking-tight md:ml-[18%] md:text-3xl">
-          {visionBody.split(' ').map((w, i) => (
-            <span key={i} className="mv-word inline-block" style={{ marginRight: '0.28em' }}>{w}</span>
-          ))}
-        </p>
-
-        {/* l'orizzonte: la linea si disegna, il punto arriva a destinazione */}
-        <div className="mv-horizon relative mt-28 h-10">
-          <div
-            ref={lineRef}
-            className="absolute left-0 right-0 top-1/2 h-px origin-left"
-            style={{ background: 'linear-gradient(90deg, rgba(78,146,216,0.12), #4e92d8 55%, #614aa2)', transform: 'scaleX(0)' }}
-          />
-          <div
-            ref={dotRef}
-            className="absolute top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full"
-            style={{ left: '0%', background: '#614aa2', boxShadow: '0 0 20px 5px rgba(97,74,162,0.45)', animation: 'mv-pulse 2.8s ease-in-out infinite' }}
-          />
+      {/* ————— tappa 2: la visione (a sinistra) ————— */}
+      <div className="relative z-10 flex min-h-[95vh] items-center px-5 py-24 md:px-10">
+        {/* bagliore che fiorisce quando il punto arriva alla tappa */}
+        <div
+          className="mv-vis-glow pointer-events-none absolute left-[8%] top-1/2 h-[60vh] w-[60vh] -translate-y-1/2 rounded-full opacity-0 blur-[120px]"
+          style={{ background: 'radial-gradient(closest-side, rgba(78,146,216,0.18), rgba(97,74,162,0.10), transparent)' }}
+        />
+        <div className="relative w-full md:w-[58%]">
+          <p className="voice-mono mb-8 text-black/40">La visione</p>
+          <h2 className="mv-vis-title voice-display text-4xl leading-[1.06] md:text-6xl">
+            Un mercato dove la forma non tradisce più il <Accent>valore</Accent>.
+          </h2>
+          <p className="mv-body mt-12 max-w-xl font-satoshi text-lg font-black leading-snug tracking-tight md:text-2xl">
+            {visionBody.split(' ').map((w, i) => (
+              <span key={i} className="mv-word inline-block" style={{ marginRight: '0.28em' }}>{w}</span>
+            ))}
+          </p>
         </div>
-        <p className="mt-8 text-right font-jakarta text-sm font-medium text-black/50">
+      </div>
+
+      {/* ————— arrivo ————— */}
+      <div className="relative z-10 flex h-[80vh] flex-col items-center justify-end px-5 pb-24 text-center">
+        <p className="font-jakarta text-base font-medium text-black/50 md:text-lg">
           Il tragitto tra i due punti è il nostro{' '}
           <a href="/metodo" className="font-semibold text-[#0a0a10] underline decoration-[#4e92d8] underline-offset-4">metodo</a>.
         </p>
       </div>
 
       <style>{`
-        @keyframes mv-pulse {
-          0%, 100% { box-shadow: 0 0 14px 3px rgba(97,74,162,0.35); }
-          50% { box-shadow: 0 0 26px 8px rgba(97,74,162,0.55); }
+        @keyframes mv-ring {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.18); opacity: 0.55; }
         }
       `}</style>
     </section>
