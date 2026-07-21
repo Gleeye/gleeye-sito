@@ -6,6 +6,10 @@ export default function PositioningSection() {
   return (
     <ApproachSection
       data={{
+        video: {
+          src: '/upload/logo-design.mp4',
+          poster: '/upload/logo-design-poster.jpg',
+        },
         eyebrowRight: 'Visual Identity · Genova',
         statement: {
           plain: 'Il tuo brand viene visto prima di essere letto.',

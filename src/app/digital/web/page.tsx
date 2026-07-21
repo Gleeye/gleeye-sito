@@ -4,6 +4,7 @@ import HeroSection from '@/components/digital/web/HeroSection';
 import MarqueeSection from '@/components/digital/web/MarqueeSection';
 import PositioningSection from '@/components/digital/web/PositioningSection';
 import ServicesSection from '@/components/digital/web/ServicesSection';
+import ShowreelSection from '@/components/digital/web/ShowreelSection';
 import ProcessSection from '@/components/digital/web/ProcessSection';
 import ForWhoSection from '@/components/digital/web/ForWhoSection';
 import WhySection from '@/components/digital/web/WhySection';
@@ -25,6 +26,7 @@ export default function WebPage() {
         <MarqueeSection />
         <PositioningSection />
         <ServicesSection />
+        <ShowreelSection />
         <ProcessSection />
         <DarkBand>
           <ForWhoSection />

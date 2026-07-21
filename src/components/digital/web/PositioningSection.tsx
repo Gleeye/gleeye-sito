@@ -6,6 +6,10 @@ export default function WebPositioningSection() {
   return (
     <ApproachSection
       data={{
+        video: {
+          src: '/upload/web-design.mp4',
+          poster: '/upload/web-design-poster.jpg',
+        },
         eyebrowRight: 'Web Design & Dev · Genova',
         statement: {
           plain: 'Un sito non è una brochure online.',
