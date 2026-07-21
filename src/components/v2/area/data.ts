@@ -120,7 +120,7 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
     index: '02',
     name: 'Digital',
     soul: 'Infrastruttura — presenza e conversione',
-    claim: { plain: ['La tua presenza online non è un sito.'], serif: "È un'infrastruttura." },
+    claim: { plain: ['La tua presenza online', 'non è un sito.'], serif: "È un'infrastruttura." },
     intro:
       "Quest'area costruisce il posto dove il brand vive e si relaziona con il mercato. La strategia si traduce in tecnologia e flussi di marketing: siti velocissimi, ecosistemi social presidiati, autorità sui motori di ricerca, advertising monitorato senza fuffa.",
     accent1: '#4e92d8',

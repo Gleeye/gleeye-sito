@@ -60,7 +60,7 @@ export default function AreaHero({ area }: { area: AreaConfig }) {
         <h1 className="voice-display max-w-none">
           {area.claim.plain.map((line) => (
             <span key={line} className="block overflow-hidden">
-              <span className="ah-line-inner block text-[8.5vw] leading-[0.98] md:text-[min(6vw,4rem)]">
+              <span className="ah-line-inner block text-[6.8vw] leading-[1.02] md:text-[min(6.4vw,5.2rem)]">
                 {line}
               </span>
             </span>
