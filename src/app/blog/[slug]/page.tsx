@@ -6,111 +6,30 @@ import Footer from '@/components/v2/Footer';
 import BlogReveal from './BlogReveal';
 import BlogToc, { type TocItem } from './BlogToc';
 import HeroCover from './HeroCover';
+import { getPost, getRelated, getAllSlugs, type BlogPost } from '@/lib/blog';
 import '../blog-prose.css';
 
 /* ————————————————————————————————————————————————————————————————
-   Blog nativo — articoli del vecchio WordPress resi dentro il Next, col
-   design del sito. I contenuti restano su old.gleeye.eu e si leggono via REST
-   (?slug=&_embed). Template editoriale: hero magazine (titolo sulla foto),
-   sommario laterale sticky, reveal allo scroll, articoli correlati.
+   Blog nativo — articolo. I contenuti vivono nel DB del sito
+   (public.blog_posts) e le immagini nello storage Supabase (bucket blog-media).
+   Nessun fetch a old.gleeye.eu a runtime. Template editoriale: hero magazine
+   (titolo sulla foto), sommario laterale sticky, reveal allo scroll, correlati.
 
-   ⚠️ Il routing di /blog/* è aperto dal middleware (src/middleware.ts,
-   commento "blog nativo"): generateStaticParams qui sotto pre-genera tutti
-   gli slug al build.
+   generateStaticParams pre-genera tutti i 120 slug al build (SSG). Con dati nel
+   nostro DB non c'è più il vincolo del vecchio hosting fragile.
    ———————————————————————————————————————————————————————————————— */
 
-const WP_API = 'https://old.gleeye.eu/wp-json/wp/v2';
-
-/* Il vecchio WordPress è su hosting condiviso fragile: sotto raffica chiude la
-   connessione ("other side closed"). Quindi NON pre-generiamo tutti i 120 al
-   build (vedi generateStaticParams) e ogni fetch ha un retry con backoff. */
-async function fetchJson<T>(url: string): Promise<T | null> {
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      const res = await fetch(url, { next: { revalidate: 3600 } });
-      if (res.ok) return (await res.json()) as T;
-    } catch {
-      /* rete ballerina: ritenta */
-    }
-    await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
-  }
-  return null;
-}
-
-type WpPost = {
-  id: number;
-  slug: string;
-  date: string;
-  categories?: number[];
-  title: { rendered: string };
-  content: { rendered: string };
-  excerpt: { rendered: string };
-  _embedded?: {
-    author?: { name: string }[];
-    'wp:featuredmedia'?: {
-      source_url?: string;
-      alt_text?: string;
-    }[];
-    'wp:term'?: { taxonomy: string; name: string }[][];
-  };
-};
-
-/* ——— fetch ——— */
-
-async function getPost(slug: string): Promise<WpPost | null> {
-  const posts = await fetchJson<WpPost[]>(
-    `${WP_API}/posts?slug=${encodeURIComponent(slug)}&_embed`,
-  );
-  return posts?.[0] ?? null;
-}
-
-async function getRelated(
-  categoryId: number | undefined,
-  excludeId: number,
-): Promise<WpPost[]> {
-  if (!categoryId) return [];
-  const posts = await fetchJson<WpPost[]>(
-    `${WP_API}/posts?categories=${categoryId}&exclude=${excludeId}&per_page=3&_embed`,
-  );
-  return posts ?? [];
-}
-
-/* Tutti i 120 articoli sono raggiungibili, ma NON li pre-generiamo in blocco al
-   build: il vecchio WordPress non regge la raffica. Ognuno viene generato alla
-   prima visita e poi servito statico per un'ora (ISR, vedi `revalidate`).
-   `dynamicParams = true` (default) fa sì che qualunque slug valido passi.
-   ⚠️ Se un domani si vuole il full-SSG al build, ripristinare qui il fetch
-   paginato degli slug — ma a bassa concorrenza, o il WP chiude le connessioni. */
-export const dynamicParams = true;
+/* SSG completo dai 120 slug nel DB; ISR orario per riflettere eventuali
+   modifiche fatte dal gestionale. dynamicParams: uno slug nuovo viene reso
+   alla prima visita. */
 export const revalidate = 3600;
 
-export function generateStaticParams() {
-  return [];
+export async function generateStaticParams() {
+  const slugs = await getAllSlugs();
+  return slugs.map((s) => ({ slug: s.slug }));
 }
 
 /* ——— helpers ——— */
-
-function decodeEntities(input: string): string {
-  return input
-    .replace(/&#8217;|&#039;|&#39;/g, '’')
-    .replace(/&#8216;/g, '‘')
-    .replace(/&#8220;/g, '“')
-    .replace(/&#8221;/g, '”')
-    .replace(/&#8211;/g, '–')
-    .replace(/&#8212;/g, '—')
-    .replace(/&#8230;/g, '…')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)));
-}
-
-function toLocalWpUrl(url?: string): string | undefined {
-  if (!url) return undefined;
-  return url.replace(/^https?:\/\/(old\.)?gleeye\.eu/, '');
-}
 
 function readingMinutes(html: string): number {
   const words = html.replace(/<[^>]+>/g, ' ').trim().split(/\s+/).filter(Boolean)
@@ -138,16 +57,6 @@ function tintFor(category: string | null): { c1: string; c2: string } {
   return { c1, c2 };
 }
 
-function pickCategory(post: WpPost): string | null {
-  const groups = post._embedded?.['wp:term'] ?? [];
-  for (const group of groups) {
-    const cat = group.find((t) => t.taxonomy === 'category');
-    if (cat) return decodeEntities(cat.name);
-  }
-  const first = groups.flat()[0];
-  return first ? decodeEntities(first.name) : null;
-}
-
 function slugifyHeading(s: string): string {
   return s
     .toLowerCase()
@@ -158,6 +67,23 @@ function slugifyHeading(s: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 60);
+}
+
+function decodeEntities(input: string): string {
+  return input
+    .replace(/&#8217;|&#039;|&#39;/g, '’')
+    .replace(/&#8216;/g, '‘')
+    .replace(/&#8220;/g, '“')
+    .replace(/&#8221;/g, '”')
+    .replace(/&#8211;/g, '–')
+    .replace(/&#8212;/g, '—')
+    .replace(/&#8230;/g, '…')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)));
 }
 
 /* Inietta un id su ogni titolo (h2/h3/h4) e restituisce la lista per il TOC. */
@@ -192,14 +118,13 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = await getPost(slug);
   if (!post) return { title: 'Articolo' }; // layout applica "%s — Gleeye"
-  const title = decodeEntities(post.title.rendered);
-  const description = decodeEntities(
-    post.excerpt.rendered.replace(/<[^>]+>/g, '').trim(),
-  ).slice(0, 160);
-  const cover = post._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+  const title = post.title;
+  const description = (post.excerpt ?? '').slice(0, 160);
+  const cover = post.cover_url ?? undefined;
   return {
     title,
     description,
+    alternates: { canonical: `/blog/${slug}` },
     openGraph: {
       title,
       description,
@@ -211,10 +136,10 @@ export async function generateMetadata({
 
 /* ——— card articolo correlato ——— */
 
-function RelatedCard({ post }: { post: WpPost }) {
-  const title = decodeEntities(post.title.rendered);
-  const cover = toLocalWpUrl(post._embedded?.['wp:featuredmedia']?.[0]?.source_url);
-  const category = pickCategory(post);
+function RelatedCard({ post }: { post: BlogPost }) {
+  const title = post.title;
+  const cover = post.cover_url ?? undefined;
+  const category = post.category;
   const { c1, c2 } = tintFor(category);
   const duo = `linear-gradient(130deg, ${c1}, ${c2})`;
   return (
@@ -250,14 +175,13 @@ export default async function BlogArticlePage({
   const post = await getPost(slug);
   if (!post) notFound();
 
-  const title = decodeEntities(post.title.rendered);
-  const category = pickCategory(post);
-  const media = post._embedded?.['wp:featuredmedia']?.[0];
-  const cover = toLocalWpUrl(media?.source_url);
-  const coverAlt = media?.alt_text || title;
-  const minutes = readingMinutes(post.content.rendered);
-  const { html, toc } = processContent(post.content.rendered);
-  const related = await getRelated(post.categories?.[0], post.id);
+  const title = post.title;
+  const category = post.category;
+  const cover = post.cover_url ?? undefined;
+  const coverAlt = title;
+  const minutes = post.reading_time_min ?? readingMinutes(post.content_html);
+  const { html, toc } = processContent(post.content_html);
+  const related = await getRelated(category, slug);
   const tint = tintFor(category);
 
   return (
@@ -306,7 +230,7 @@ export default async function BlogArticlePage({
               <p className="voice-mono mb-10 text-black/40">Continua a leggere</p>
               <div className="grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
                 {related.map((p) => (
-                  <RelatedCard key={p.id} post={p} />
+                  <RelatedCard key={p.slug} post={p} />
                 ))}
               </div>
             </div>

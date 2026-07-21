@@ -2,19 +2,19 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import Header from '@/components/v2/Header';
 import Footer from '@/components/v2/Footer';
+import { getAllPosts, type BlogPost } from '@/lib/blog';
 
 /* ————————————————————————————————————————————————————————————————
-   Blog nativo — INDICE (/blog). Magazine di tutti i ~120 articoli del vecchio
-   WordPress, resi dentro il Next col design del sito. I contenuti restano su
-   old.gleeye.eu e si leggono via REST (?per_page=100&page=N&_embed). Un post in
-   evidenza + griglia di card; ognuna linka /blog/<slug> (rotta [slug]).
+   Blog nativo — INDICE (/blog). Magazine dei ~120 articoli (ex WordPress) resi
+   dentro il Next col design del sito. I contenuti ora vivono nel DB del sito
+   (public.blog_posts) e le immagini nello storage Supabase (bucket blog-media).
+   Nessun fetch a old.gleeye.eu a runtime. Un post in evidenza + griglia di card;
+   ognuna linka /blog/<slug> (rotta [slug]).
 
    ⚠️ Il routing è aperto dal middleware (src/middleware.ts, blocco "blog
    nativo"): /blog esatto è servito dal Next, le tassonomie /blog/category|tag|
    author restano su old.gleeye.eu.
    ———————————————————————————————————————————————————————————————— */
-
-const WP_API = 'https://old.gleeye.eu/wp-json/wp/v2';
 
 export const revalidate = 3600;
 
@@ -31,76 +31,7 @@ export const metadata: Metadata = {
   },
 };
 
-/* Il vecchio WordPress è su hosting condiviso fragile: sotto raffica chiude la
-   connessione. Ogni fetch ha un retry con backoff (stesso pattern di [slug]). */
-async function fetchJson<T>(url: string): Promise<T | null> {
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      const res = await fetch(url, { next: { revalidate: 3600 } });
-      if (res.ok) return (await res.json()) as T;
-    } catch {
-      /* rete ballerina: ritenta */
-    }
-    await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
-  }
-  return null;
-}
-
-type WpPost = {
-  id: number;
-  slug: string;
-  date: string;
-  title: { rendered: string };
-  content: { rendered: string };
-  excerpt: { rendered: string };
-  _embedded?: {
-    'wp:featuredmedia'?: { source_url?: string; alt_text?: string }[];
-    'wp:term'?: { taxonomy: string; name: string }[][];
-  };
-};
-
-/* Tutti i post, paginati e SEQUENZIALI (una pagina alla volta) così il vecchio
-   WP non chiude le connessioni sotto raffica. per_page=30: ogni pagina con
-   _embed pesa ~1.7MB, sotto il limite dei 2MB della data-cache di Next → viene
-   messa in cache (niente refetch inutili). ~120 articoli = 4 pagine. */
-const PER_PAGE = 30;
-
-async function getAllPosts(): Promise<WpPost[]> {
-  const all: WpPost[] = [];
-  for (let page = 1; page <= 8; page++) {
-    const posts = await fetchJson<WpPost[]>(
-      `${WP_API}/posts?per_page=${PER_PAGE}&page=${page}&_embed`,
-    );
-    if (!posts || posts.length === 0) break;
-    all.push(...posts);
-    if (posts.length < PER_PAGE) break;
-  }
-  return all;
-}
-
 /* ——— helpers (allineati a blog/[slug]/page.tsx) ——— */
-
-function decodeEntities(input: string): string {
-  return input
-    .replace(/&#8217;|&#039;|&#39;/g, '’')
-    .replace(/&#8216;/g, '‘')
-    .replace(/&#8220;/g, '“')
-    .replace(/&#8221;/g, '”')
-    .replace(/&#8211;/g, '–')
-    .replace(/&#8212;/g, '—')
-    .replace(/&#8230;/g, '…')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)));
-}
-
-function toLocalWpUrl(url?: string): string | undefined {
-  if (!url) return undefined;
-  return url.replace(/^https?:\/\/(old\.)?gleeye\.eu/, '');
-}
 
 function readingMinutes(html: string): number {
   const words = html
@@ -130,16 +61,6 @@ function tintFor(category: string | null): { c1: string; c2: string } {
   return { c1, c2 };
 }
 
-function pickCategory(post: WpPost): string | null {
-  const groups = post._embedded?.['wp:term'] ?? [];
-  for (const group of groups) {
-    const cat = group.find((t) => t.taxonomy === 'category');
-    if (cat) return decodeEntities(cat.name);
-  }
-  const first = groups.flat()[0];
-  return first ? decodeEntities(first.name) : null;
-}
-
 type CardData = {
   slug: string;
   title: string;
@@ -151,18 +72,17 @@ type CardData = {
   c2: string;
 };
 
-function toCard(post: WpPost): CardData {
-  const title = decodeEntities(post.title.rendered);
-  const media = post._embedded?.['wp:featuredmedia']?.[0];
-  const category = pickCategory(post);
+function toCard(post: BlogPost): CardData {
+  const title = post.title;
+  const category = post.category;
   const { c1, c2 } = tintFor(category);
   return {
     slug: post.slug,
     title,
-    cover: toLocalWpUrl(media?.source_url),
-    coverAlt: media?.alt_text || title,
+    cover: post.cover_url ?? undefined,
+    coverAlt: title,
     category,
-    minutes: readingMinutes(post.content.rendered),
+    minutes: post.reading_time_min ?? readingMinutes(post.content_html),
     c1,
     c2,
   };
