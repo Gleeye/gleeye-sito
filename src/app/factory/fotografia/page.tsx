@@ -4,6 +4,7 @@ import HeroSection from '@/components/factory/fotografia/HeroSection';
 import MarqueeSection from '@/components/factory/fotografia/MarqueeSection';
 import PositioningSection from '@/components/factory/fotografia/PositioningSection';
 import ServicesSection from '@/components/factory/fotografia/ServicesSection';
+import GallerySection from '@/components/factory/fotografia/GallerySection';
 import ProcessSection from '@/components/factory/fotografia/ProcessSection';
 import ForWhoSection from '@/components/factory/fotografia/ForWhoSection';
 import WhySection from '@/components/factory/fotografia/WhySection';
@@ -25,6 +26,7 @@ export default function FotografiaPage() {
         <MarqueeSection />
         <PositioningSection />
         <ServicesSection />
+        <GallerySection />
         <ProcessSection />
         <DarkBand>
           <ForWhoSection />

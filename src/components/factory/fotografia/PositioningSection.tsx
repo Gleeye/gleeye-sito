@@ -6,6 +6,10 @@ export default function FotografiaPositioningSection() {
   return (
     <ApproachSection
       data={{
+        video: {
+          src: '/upload/fotografia-hero.mp4',
+          poster: '/upload/fotografia-hero-poster.jpg',
+        },
         eyebrowRight: 'Fotografia · Genova',
         statement: {
           plain: 'Le immagini ci circondano.',
