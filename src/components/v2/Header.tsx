@@ -16,8 +16,16 @@ const PRIMARY = [
   { n: '01', label: 'Identity', href: '/identity', note: 'chi sei, reso visibile' },
   { n: '02', label: 'Digital', href: '/digital', note: "l'infrastruttura del brand" },
   { n: '03', label: 'Factory', href: '/factory', note: 'produzione d’élite' },
-  { n: '04', label: 'Lavora con noi', href: '/lavora-con-noi', note: 'unisciti al team' },
-  { n: '05', label: 'Contatti', href: '/contatti', note: 'parliamone' },
+  { n: '04', label: 'Eventi aziendali', href: '/events', note: 'comunicazione per eventi' },
+  { n: '05', label: 'Lavora con noi', href: '/lavora-con-noi', note: 'unisciti al team' },
+];
+
+/* Le istituzionali: peso leggero, una riga sola (due su mobile). */
+const ISTITUZIONALI = [
+  { label: 'Chi siamo', href: '/chi-siamo' },
+  { label: 'Mission e Vision', href: '/mission-e-vision' },
+  { label: 'Manifesto', href: '/manifesto' },
+  { label: 'Metodo', href: '/metodo' },
 ];
 
 /* Pannello a fianco.
@@ -52,11 +60,12 @@ const AREAS = [
     pages: [
       { label: 'Video', href: '/factory/video' },
       { label: 'Fotografia', href: '/factory/fotografia' },
+      { label: 'Podcast', href: '/factory/podcast' },
       { label: 'Copywriting', href: '/factory/copywriting' },
       { label: 'Grafica', href: '/factory/grafica' },
     ],
     landings: [
-      { label: 'Podcast', href: '/podcast' },
+      { label: 'Podcast da Remoto Essential', href: '/podcast' },
       { label: 'Video Explainer', href: '/video-explainer' },
     ],
   },
@@ -69,8 +78,8 @@ const MOBILE: { label: string; href: string; pages: SubLink[]; landings: SubLink
   { label: 'Identity', href: '/identity', pages: AREAS[0].pages, landings: AREAS[0].landings },
   { label: 'Digital', href: '/digital', pages: AREAS[1].pages, landings: AREAS[1].landings },
   { label: 'Factory', href: '/factory', pages: AREAS[2].pages, landings: AREAS[2].landings },
+  { label: 'Eventi aziendali', href: '/events', pages: [], landings: [] },
   { label: 'Lavora con noi', href: '/lavora-con-noi', pages: [], landings: [] },
-  { label: 'Contatti', href: '/contatti', pages: [], landings: [] },
 ];
 
 export default function Header() {
@@ -318,6 +327,19 @@ export default function Header() {
                   </div>
                 );
               })}
+
+              {/* Istituzionali: peso leggero, si dispongono su una-due righe */}
+              <div className="menu-link-row mt-7 flex flex-wrap gap-x-7 gap-y-3.5">
+                {ISTITUZIONALI.map((i) => (
+                  <Link
+                    key={i.href}
+                    href={i.href}
+                    className="font-jakarta text-[15px] font-medium text-white/55 transition-colors active:text-white"
+                  >
+                    {i.label}
+                  </Link>
+                ))}
+              </div>
             </div>
 
             {/* Primary nav — tutte le voci sullo stesso livello */}
@@ -400,7 +422,20 @@ export default function Header() {
           </div>
 
           {/* Footer strip */}
-          <div className="menu-foot flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-5">
+          <div className="menu-foot border-t border-white/10 pt-5">
+            {/* Istituzionali (desktop): una riga sola, peso leggero */}
+            <div className="mb-4 hidden flex-wrap gap-x-9 md:flex">
+              {ISTITUZIONALI.map((i) => (
+                <Link
+                  key={i.href}
+                  href={i.href}
+                  className="font-jakarta text-[15px] font-medium text-white/55 transition-colors duration-200 hover:text-white"
+                >
+                  {i.label}
+                </Link>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-4">
             <a
               href="mailto:info@gleeye.eu"
               className="font-satoshi text-sm font-bold text-white/80 transition-colors hover:text-[#9b7bff]"
@@ -423,6 +458,7 @@ export default function Header() {
                   {label}
                 </a>
               ))}
+            </div>
             </div>
           </div>
         </div>

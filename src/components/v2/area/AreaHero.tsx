@@ -81,7 +81,8 @@ export default function AreaHero({ area }: { area: AreaConfig }) {
         <div className="ah-fade mt-10">
           <Magnetic strength={0.25}>
             <Link
-              href="/contatti"
+              href="#parliamone"
+              scroll={false}
               className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-[#f8f9fa] px-8 py-4 font-satoshi text-sm font-bold uppercase tracking-wide text-[#0a0a10]"
             >
               <span

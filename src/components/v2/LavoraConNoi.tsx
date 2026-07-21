@@ -1,25 +1,10 @@
 'use client';
 
 import { useLayoutEffect, useRef } from 'react';
+import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Magnetic from '@/components/v2/Magnetic';
-
-type LenisLike = { scrollTo: (t: number, o?: { duration?: number }) => void };
-
-/* Scorre alla CTA candidatura in fondo (id="candidatura" nel footer). Su desktop
-   usa l'istanza Lenis esposta da SmoothScroll passando un target NUMERICO (come
-   l'handler in SmoothScroll: questa versione di Lenis non risolve gli HTMLElement).
-   Su touch (niente Lenis) il fallback nativo. Lo scarto -80 lascia spazio all'header. */
-function scrollToCandidatura(e: React.MouseEvent) {
-  e.preventDefault();
-  const el = document.getElementById('candidatura');
-  if (!el) return;
-  const top = el.getBoundingClientRect().top + window.scrollY - 80;
-  const lenis = (window as unknown as { __lenis?: LenisLike }).__lenis;
-  if (lenis) lenis.scrollTo(top, { duration: 1.2 });
-  else el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -219,13 +204,14 @@ export default function LavoraConNoi() {
             Se per te vale lo stesso, sei nel posto giusto.
           </p>
 
-          {/* Porta alla candidatura (unico CTA, in fondo). Anchor con scroll={false}:
-              la navigazione la fa Lenis via l'handler in SmoothScroll, senza salto. */}
+          {/* Porta alla candidatura (unico CTA, in fondo, id="parliamone").
+              Stesso pattern delle altre hero: Link hash con scroll={false}, la
+              planata la fa SmoothScroll via Lenis. */}
           <div className="lcn-hero-fade mt-10">
             <Magnetic strength={0.25}>
-              <a
-                href="#candidatura"
-                onClick={scrollToCandidatura}
+              <Link
+                href="#parliamone"
+                scroll={false}
                 className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-[#f8f9fa] px-8 py-4 font-satoshi text-sm font-bold uppercase tracking-wide text-[#0a0a10]"
               >
                 <span
@@ -238,7 +224,7 @@ export default function LavoraConNoi() {
                 <span className="relative transition-transform duration-500 group-hover:translate-y-0.5" aria-hidden>
                   ↓
                 </span>
-              </a>
+              </Link>
             </Magnetic>
           </div>
         </div>

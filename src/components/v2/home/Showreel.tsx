@@ -17,7 +17,6 @@ export default function Showreel({ clips = [] }: { clips?: string[] }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const progressRef = useRef<HTMLDivElement>(null);
   const hasClips = clips.length > 0;
 
   useEffect(() => {
@@ -57,23 +56,12 @@ export default function Showreel({ clips = [] }: { clips?: string[] }) {
       }
     }, root);
 
-    /* barra di avanzamento = tempo del video */
-    const onTime = () => {
-      if (video && progressRef.current && video.duration) {
-        progressRef.current.style.transform = `scaleX(${video.currentTime / video.duration})`;
-      }
-    };
-    video?.addEventListener('timeupdate', onTime);
-
-    return () => {
-      ctx.revert();
-      video?.removeEventListener('timeupdate', onTime);
-    };
+    return () => ctx.revert();
   }, [hasClips]);
 
   return (
-    <div ref={rootRef} className="relative overflow-hidden bg-[#f8f9fa] py-16 md:py-24">
-      <div className="mx-auto flex min-h-[70vh] items-center justify-center md:min-h-screen">
+    <div ref={rootRef} className="relative overflow-hidden bg-[#f8f9fa] py-6 md:py-10">
+      <div className="mx-auto flex min-h-[50vh] items-center justify-center md:min-h-[82vh]">
         <div ref={frameRef} className="relative aspect-video w-full max-w-[1600px] overflow-hidden bg-black will-change-transform">
           {/* Sempre muto: niente controllo audio, nessuno lo alzerebbe. */}
           {hasClips ? (
@@ -98,15 +86,6 @@ export default function Showreel({ clips = [] }: { clips?: string[] }) {
           )}
 
           <div className="grain pointer-events-none absolute inset-0" />
-
-          {/* barra: dove sei nel video */}
-          <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/10">
-            <div
-              ref={progressRef}
-              className="h-full w-full origin-left bg-gradient-to-r from-[#614aa2] to-[#4e92d8]"
-              style={{ transform: 'scaleX(0)' }}
-            />
-          </div>
         </div>
       </div>
     </div>

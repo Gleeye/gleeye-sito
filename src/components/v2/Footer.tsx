@@ -8,6 +8,11 @@ import { ArrowUpRight } from 'lucide-react';
    poi default. Rimpiazza le vecchie CTA per-pagina (ora rimosse). */
 const CTA_TITLES: Record<string, string> = {
   '/': "Raccontaci un'idea.",
+  /* Chiusa del viaggio di /mission-e-vision: riprende il titolo ("e perché")
+     e ricombina missione (vali/vede) e visione in un invito. */
+  '/mission-e-vision': 'Fatti vedere per ciò che vali.',
+  /* Chiusa del viaggio di /metodo: il caos del progetto → la linea retta. */
+  '/metodo': 'Portiamo ordine nel tuo progetto.',
   '/identity': 'Scopriamo chi sei davvero.',
   '/identity/brand-strategy': 'Partiamo dalla strategia.',
   '/identity/naming': 'Troviamo il nome giusto.',
@@ -66,21 +71,18 @@ export default function Footer() {
       <div className="grain absolute inset-0" />
       <div className="absolute left-1/2 top-0 h-[50vh] w-[80vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#614aa2]/20 blur-[160px]" />
 
-      {/* CTA di chiusura — su tutte le pagine. id: bersaglio dello scroll dai
-          CTA "vai in fondo" (es. il pulsante hero di /lavora-con-noi). */}
-      <div id="candidatura" className="relative mx-auto max-w-7xl scroll-mt-24 border-b border-white/10 px-5 py-28 md:px-10 md:py-40">
+      {/* CTA di chiusura — su tutte le pagine. id="parliamone": ci atterrano i
+          pulsanti "vai in fondo" delle hero (Parliamone, oppure Candidati su
+          /lavora-con-noi), via lo scroll-to-anchor di SmoothScroll. */}
+      <div id="parliamone" className="relative mx-auto max-w-7xl scroll-mt-24 border-b border-white/10 px-5 py-28 md:px-10 md:py-40">
         <div className="grid grid-cols-1 gap-14 md:grid-cols-[1.3fr_1fr] md:gap-20">
           {/* titolone — dinamico per pagina, va a capo da solo, responsive */}
           <h2 className="voice-display max-w-[15ch] text-[8.5vw] leading-[0.94] text-[#f8f9fa] sm:text-[6.5vw] md:text-[min(5vw,4.4rem)]">
             {ctaTitle}
           </h2>
 
-          {/* colonna destra: occhiello in alto (non su lavora-con-noi), testo +
-              pulsanti allineati in basso */}
-          <div className={`flex flex-col gap-12 md:pb-2 md:pt-3 ${isCareers ? 'justify-end' : 'justify-between'}`}>
-            {!isCareers && (
-              <span className="voice-mono text-white/40">[ Parliamone ]</span>
-            )}
+          {/* colonna destra: testo + pulsanti allineati in basso */}
+          <div className="flex flex-col justify-end gap-12 md:pb-2 md:pt-3">
             <div>
               <p className="mb-9 max-w-sm font-jakarta text-lg font-medium leading-relaxed text-white/65">
                 {isCareers

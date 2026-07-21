@@ -3,9 +3,9 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 
-// "CHE SERVE" in gradiente (le ultime due), non solo "SERVE"
-const WORDS = ['TUTTO', 'QUELLO', 'CHE', 'SERVE'];
-const GRADIENT_FROM = 2; // da questo indice in poi, gradiente
+const HEAD = { plain: ['TUTTO QUELLO CHE SERVE'], accent: 'al tuo evento.', inline: false, size: 'md' };
+const PLAIN_SIZE = { xl: 'text-[9vw] md:text-[min(7.4vw,6.6rem)]', lg: 'text-[7.6vw] md:text-[min(6.8vw,5.8rem)]', md: 'text-[6.2vw] md:text-[min(6vw,5.2rem)]' } as const;
+const ACCENT_SIZE = { xl: 'text-[13vw] md:text-[min(10vw,8.4rem)]', lg: 'text-[10vw] md:text-[min(8.2vw,6.8rem)]', md: 'text-[8.5vw] md:text-[min(7.4vw,6.2rem)]' } as const;
 
 export default function EventsHeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -63,34 +63,39 @@ export default function EventsHeroSection() {
       </div>
 
       <div className="relative z-10 flex flex-col items-center justify-center flex-1 py-12 text-center">
-        <div className="flex flex-wrap justify-center gap-x-4 md:gap-x-6 lg:gap-x-8">
-          {WORDS.slice(0, GRADIENT_FROM).map((word, i) => (
-            <div key={word} className="overflow-hidden">
-              <span
-                ref={el => { wordRefs.current[i] = el; }}
-                className="block font-satoshi font-black tracking-tight leading-none text-[13vw] md:text-[10vw] lg:text-[8vw] xl:text-[7rem] text-white"
-              >
-                {word}
-              </span>
-            </div>
-          ))}
-          {/* "CHE SERVE" resta un gruppo unico: va a capo insieme, mai spezzato */}
-          <div className="flex gap-x-4 md:gap-x-6 lg:gap-x-8 whitespace-nowrap">
-            {WORDS.slice(GRADIENT_FROM).map((word, j) => (
-              <div key={word} className="overflow-hidden">
+        <div className="flex flex-col items-center gap-y-1 text-center">
+          {HEAD.plain.map((line, i) => {
+            const isLast = i === HEAD.plain.length - 1;
+            return (
+              <div key={line} className="overflow-hidden pb-[0.14em]">
                 <span
-                  ref={el => { wordRefs.current[GRADIENT_FROM + j] = el; }}
-                  className="block font-satoshi font-black tracking-tight leading-none text-[13vw] md:text-[10vw] lg:text-[8vw] xl:text-[7rem] bg-gradient-to-r from-[#4e92d8] to-[#614aa2] bg-clip-text text-transparent"
+                  ref={el => { wordRefs.current[i] = el; }}
+                  className={`block font-satoshi font-black uppercase leading-[1.02] tracking-tight text-white ${PLAIN_SIZE[HEAD.size as keyof typeof PLAIN_SIZE]}`}
                 >
-                  {word}
+                  {line}
+                  {isLast && HEAD.inline && (
+                    <>
+                      {' '}
+                      <span className="text-gradient font-playfair italic font-medium normal-case tracking-[-0.01em]">
+                        {HEAD.accent}
+                      </span>
+                    </>
+                  )}
                 </span>
               </div>
-            ))}
-          </div>
+            );
+          })}
+          {!HEAD.inline && (
+            <div className="overflow-hidden pb-[0.22em]">
+              <span
+                ref={el => { wordRefs.current[HEAD.plain.length] = el; }}
+                className={`block text-gradient font-playfair italic font-medium normal-case leading-[1.12] tracking-[-0.01em] pr-[0.06em] ${ACCENT_SIZE[HEAD.size as keyof typeof ACCENT_SIZE]}`}
+              >
+                {HEAD.accent}
+              </span>
+            </div>
+          )}
         </div>
-        <p className="mt-3 font-satoshi font-black text-[13vw] md:text-[10vw] lg:text-[8vw] xl:text-[7rem] text-white leading-none tracking-tight">
-          AL TUO EVENTO.
-        </p>
 
         <p ref={subRef} className="mt-8 max-w-xl font-jakarta font-medium text-lg md:text-xl text-white/30 leading-relaxed">
           Dalla comunicazione pre-lancio al racconto post-evento.
@@ -101,7 +106,7 @@ export default function EventsHeroSection() {
 
       <div ref={ctaRef} className="relative z-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
         <a
-          href="#contatti"
+          href="#parliamone"
           className="group relative px-8 py-4 bg-white text-black rounded-full overflow-hidden flex items-center justify-center transition-all duration-700"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-[#4e92d8] to-[#614aa2] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
@@ -109,10 +114,6 @@ export default function EventsHeroSection() {
             Parliamo del tuo evento
           </span>
         </a>
-        <div className="flex items-center gap-4">
-          <div className="w-px h-8 bg-white/10" />
-          <span className="font-jakarta text-sm text-white/20">Foto · Video · Grafica · Digital · Media</span>
-        </div>
       </div>
     </section>
   );

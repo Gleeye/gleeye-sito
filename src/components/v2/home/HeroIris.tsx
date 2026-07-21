@@ -303,7 +303,8 @@ export default function HeroIris() {
           </p>
           <div className="flex flex-wrap gap-4">
             <Link
-              href="/contatti"
+              href="/#parliamone"
+              scroll={false}
               className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-[#f8f9fa] px-8 py-4 font-satoshi text-sm font-bold uppercase tracking-wide text-[#0a0a10]"
             >
               <span className="absolute inset-0 translate-y-full bg-gradient-to-r from-[#4e92d8] to-[#614aa2] transition-transform duration-500 ease-out group-hover:translate-y-0" />
@@ -313,11 +314,12 @@ export default function HeroIris() {
               <span className="relative h-1.5 w-1.5 rounded-full bg-[#614aa2] transition-colors duration-500 group-hover:bg-white animate-pulse-dot" />
             </Link>
             <Link
-              href="/#metodo"
+              href="/#manifesto"
+              scroll={false}
               className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-white/25 px-8 py-4 font-satoshi text-sm font-bold uppercase tracking-wide text-white/85 transition-colors duration-500 hover:border-transparent hover:text-white"
             >
               <span className="absolute inset-0 translate-y-full bg-gradient-to-r from-[#4e92d8] to-[#614aa2] transition-transform duration-500 ease-out group-hover:translate-y-0" />
-              <span className="relative">Scopri il metodo</span>
+              <span className="relative">Scopri di più</span>
             </Link>
           </div>
         </div>

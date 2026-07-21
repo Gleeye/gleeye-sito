@@ -64,12 +64,12 @@ export default function EventsPositioningSection() {
 
         {/* frase a sinistra, reel che entra da destra */}
         <div className="grid grid-cols-1 items-start gap-14 md:grid-cols-[1fr_300px] md:gap-16 lg:grid-cols-[1fr_340px] lg:gap-20">
-          <div className="order-2 md:order-1">
+          <div>
             <h2 className="epos-statement font-satoshi text-[8vw] font-black uppercase leading-[0.98] tracking-tight text-black md:text-[4.5vw] lg:text-[3.8vw]">
               Un evento ben comunicato
               <br />
               vale il doppio.
-              <span className="mt-3 block" style={gradientText}>
+              <span className="text-gradient-deep mt-3 block w-fit pb-[0.08em] pr-[0.05em] font-playfair text-[9vw] font-medium italic normal-case leading-[1.08] tracking-[-0.01em] md:text-[5vw] lg:text-[4.2vw]">
                 Uno comunicato male non vale niente.
               </span>
             </h2>
@@ -107,9 +107,9 @@ export default function EventsPositioningSection() {
             </div>
           </div>
 
-          {/* reel verticale */}
-          <div className="epos-reel order-1 mx-auto w-full max-w-[300px] md:order-2 md:-mt-2 lg:max-w-[340px]">
-            <div className="relative aspect-[9/16] overflow-hidden rounded-[1.5rem] bg-black shadow-[0_20px_50px_-20px_rgba(10,10,16,0.4)]">
+          {/* reel verticale — full-bleed su mobile (sotto il testo), card a destra su desktop */}
+          <div className="epos-reel -mx-6 w-[calc(100%+3rem)] md:mx-auto md:w-full md:max-w-[300px] md:-mt-2 lg:max-w-[340px]">
+            <div className="relative aspect-[9/16] overflow-hidden bg-black md:rounded-[1.5rem] md:shadow-[0_20px_50px_-20px_rgba(10,10,16,0.4)]">
               <video
                 ref={videoRef}
                 className="absolute inset-0 h-full w-full object-cover"

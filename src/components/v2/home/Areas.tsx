@@ -167,7 +167,7 @@ export default function Areas() {
   return (
     <section ref={rootRef} id="aree" className="relative flex flex-col overflow-hidden bg-[#f8f9fa]">
       {/* blocco di chiusura — spostato sotto le card via order */}
-      <div className="areas-title order-2 px-5 py-28 md:px-10 md:py-40">
+      <div className="areas-title order-2 px-5 pt-28 pb-14 md:px-10 md:pt-40 md:pb-16">
         <h2
           style={{ textTransform: 'none' }}
           className="voice-display text-5xl leading-[1] text-[#0a0a10] md:text-[min(6.4vw,6rem)]"
@@ -179,15 +179,7 @@ export default function Areas() {
               </span>
             ))}
           </span>
-          <span
-            className="areas-reveal mt-2 block w-fit font-playfair font-medium italic tracking-[-0.01em] md:ml-[14%]"
-            style={{
-              backgroundImage: 'linear-gradient(100deg, #4e92d8, #614aa2)',
-              WebkitBackgroundClip: 'text',
-              backgroundClip: 'text',
-              color: 'transparent',
-            }}
-          >
+          <span className="text-gradient-deep areas-reveal mt-2 block w-fit pr-[0.05em] font-playfair font-medium italic tracking-[-0.01em] md:ml-[14%]">
             Tutta la catena del valore.
           </span>
         </h2>

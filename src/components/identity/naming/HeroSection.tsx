@@ -3,7 +3,9 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 
-const HEAD = { plain: ["UN NOME"], accent: "che resta.", inline: false };
+const HEAD = { plain: ["UN NOME"], accent: "che resta.", inline: false, size: "xl" };
+const PLAIN_SIZE = { xl: 'text-[9vw] md:text-[min(7.4vw,6.6rem)]', lg: 'text-[7.6vw] md:text-[min(6.8vw,5.8rem)]', md: 'text-[6.2vw] md:text-[min(6vw,5.2rem)]' } as const;
+const ACCENT_SIZE = { xl: 'text-[13vw] md:text-[min(10vw,8.4rem)]', lg: 'text-[10vw] md:text-[min(8.2vw,6.8rem)]', md: 'text-[8.5vw] md:text-[min(7.4vw,6.2rem)]' } as const;
 
 export default function NamingHeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -80,7 +82,7 @@ export default function NamingHeroSection() {
               <div key={line} className="overflow-hidden pb-[0.14em]">
                 <span
                   ref={el => { wordRefs.current[i] = el; }}
-                  className="block font-satoshi font-black uppercase leading-[1.02] tracking-tight text-white text-[6vw] md:text-[min(6.4vw,5.2rem)]"
+                  className={`block font-satoshi font-black uppercase leading-[1.02] tracking-tight text-white ${PLAIN_SIZE[HEAD.size as keyof typeof PLAIN_SIZE]}`}
                 >
                   {line}
                   {isLast && HEAD.inline && (
@@ -99,7 +101,7 @@ export default function NamingHeroSection() {
             <div className="overflow-hidden pb-[0.22em]">
               <span
                 ref={el => { wordRefs.current[HEAD.plain.length] = el; }}
-                className="block text-gradient font-playfair italic font-medium normal-case leading-[1.12] tracking-[-0.01em] pr-[0.06em] text-[10vw] md:text-[min(8vw,6.6rem)]"
+                className={`block text-gradient font-playfair italic font-medium normal-case leading-[1.12] tracking-[-0.01em] pr-[0.06em] ${ACCENT_SIZE[HEAD.size as keyof typeof ACCENT_SIZE]}`}
               >
                 {HEAD.accent}
               </span>
@@ -115,7 +117,7 @@ export default function NamingHeroSection() {
       {/* Bottom CTA */}
       <div ref={ctaRef} className="relative z-10 flex items-center justify-center gap-6">
         <a
-          href="#contatti"
+          href="#parliamone"
           className="group relative px-8 py-4 bg-white text-black rounded-full overflow-hidden flex items-center justify-center transition-all duration-700"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-[#614aa2] to-[#4e92d8] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
@@ -123,10 +125,6 @@ export default function NamingHeroSection() {
             Parliamo del tuo progetto
           </span>
         </a>
-        <div className="flex items-center gap-4">
-          <div className="w-px h-8 bg-white/10" />
-          <span className="font-jakarta text-sm text-white/20">Brand naming · Prodotto · Dominio</span>
-        </div>
       </div>
     </section>
   );

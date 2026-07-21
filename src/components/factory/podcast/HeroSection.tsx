@@ -3,11 +3,11 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 
-const HEAD = { plain: ["PIATTAFORME AL SERVIZIO"], accent: "del tuo business.", inline: false, size: "md" };
+const HEAD = { plain: ['FATTI ASCOLTARE'], accent: 'quando nessuno guarda.', inline: false, size: 'lg' };
 const PLAIN_SIZE = { xl: 'text-[9vw] md:text-[min(7.4vw,6.6rem)]', lg: 'text-[7.6vw] md:text-[min(6.8vw,5.8rem)]', md: 'text-[6.2vw] md:text-[min(6vw,5.2rem)]' } as const;
 const ACCENT_SIZE = { xl: 'text-[13vw] md:text-[min(10vw,8.4rem)]', lg: 'text-[10vw] md:text-[min(8.2vw,6.8rem)]', md: 'text-[8.5vw] md:text-[min(7.4vw,6.2rem)]' } as const;
 
-export default function WebHeroSection() {
+export default function PodcastHeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const wordRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const badgeRef = useRef<HTMLDivElement>(null);
@@ -23,22 +23,14 @@ export default function WebHeroSection() {
   }, []);
 
   useEffect(() => {
-    gsap.to(orb1Ref.current, {
-      x: 60, y: -40, duration: 8, repeat: -1, yoyo: true, ease: 'sine.inOut',
-    });
-    gsap.to(orb2Ref.current, {
-      x: -50, y: 60, duration: 11, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 2,
-    });
-    gsap.to(orb3Ref.current, {
-      x: 30, y: 50, duration: 9, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 4,
-    });
+    gsap.to(orb1Ref.current, { x: 60, y: -40, duration: 8, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+    gsap.to(orb2Ref.current, { x: -50, y: 60, duration: 11, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 2 });
+    gsap.to(orb3Ref.current, { x: 30, y: 50, duration: 9, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 4 });
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ delay: 0.3 });
       tl.to(badgeRef.current, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' })
-        .to(wordRefs.current, {
-          yPercent: 0, opacity: 1, duration: 1.2, stagger: 0.1, ease: 'power4.out',
-        }, '-=0.4')
+        .to(wordRefs.current, { yPercent: 0, opacity: 1, duration: 1.2, stagger: 0.1, ease: 'power4.out' }, '-=0.4')
         .to(subRef.current, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }, '-=0.5')
         .to(ctaRef.current, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }, '-=0.7');
     }, sectionRef);
@@ -60,13 +52,13 @@ export default function WebHeroSection() {
           className="font-satoshi font-black text-[22vw] leading-none whitespace-nowrap"
           style={{ color: 'transparent', WebkitTextStroke: '1px rgba(255,255,255,0.04)' }}
         >
-          WEB
+          PODCAST
         </span>
       </div>
 
       <div ref={badgeRef} className="relative z-10 flex justify-center">
         <span className="inline-block text-[10px] md:text-xs font-bold uppercase tracking-[0.25em] text-white/35 font-satoshi border border-white/10 px-4 py-2 rounded-full">
-          Digital / Web Design &amp; Dev
+          Factory / Podcast
         </span>
       </div>
 
@@ -94,10 +86,10 @@ export default function WebHeroSection() {
             );
           })}
           {!HEAD.inline && (
-            <div className="overflow-hidden pb-[0.22em]">
+            <div className={`overflow-hidden leading-[0] ${ACCENT_SIZE[HEAD.size as keyof typeof ACCENT_SIZE]}`}>
               <span
                 ref={el => { wordRefs.current[HEAD.plain.length] = el; }}
-                className={`block text-gradient font-playfair italic font-medium normal-case leading-[1.12] tracking-[-0.01em] pr-[0.06em] ${ACCENT_SIZE[HEAD.size as keyof typeof ACCENT_SIZE]}`}
+                className="block text-gradient font-playfair italic font-medium normal-case leading-[1.12] tracking-[-0.01em] pr-[0.06em] pb-[0.16em]"
               >
                 {HEAD.accent}
               </span>
@@ -106,7 +98,7 @@ export default function WebHeroSection() {
         </div>
 
         <p ref={subRef} className="mt-8 max-w-xl font-jakarta font-medium text-lg md:text-xl text-white/30 leading-relaxed">
-          Il tuo sito è il tuo venditore più disponibile.<br />Lavora 24 ore su 24 — meglio che sia bravo.
+          Il podcast è l&apos;unico contenuto che il tuo pubblico consuma mentre fa altro.<br />In auto, in palestra, al lavoro. Un&apos;attenzione che nessuno schermo raggiunge.
         </p>
       </div>
 
@@ -117,7 +109,7 @@ export default function WebHeroSection() {
         >
           <div className="absolute inset-0 bg-gradient-to-r from-[#614aa2] to-[#4e92d8] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
           <span className="relative z-10 font-satoshi text-[10px] font-bold uppercase tracking-[0.2em] group-hover:text-white transition-colors duration-500">
-            Parliamo del tuo progetto
+            Parliamo del tuo podcast
           </span>
         </a>
       </div>

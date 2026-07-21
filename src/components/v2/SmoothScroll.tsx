@@ -37,9 +37,6 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       smoothWheel: true,
     });
     lenisRef.current = lenis;
-    // Esposto per lo scroll programmatico dai CTA "vai in fondo" (l'evento
-    // hashchange non scatta con i Link Next, che aggiornano l'hash via pushState).
-    (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
 
     lenis.on('scroll', ScrollTrigger.update);
 
@@ -53,7 +50,6 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       gsap.ticker.remove(raf);
       lenis.destroy();
       lenisRef.current = null;
-      delete (window as unknown as { __lenis?: Lenis }).__lenis;
     };
   }, []);
 

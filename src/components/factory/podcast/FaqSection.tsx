@@ -11,24 +11,24 @@ if (typeof window !== 'undefined') {
 
 const faqs = [
   {
-    q: 'Quante opzioni vengono presentate?',
-    a: 'Una shortlist di 5-10 nomi motivati. Non centinaia di opzioni non filtrate: poche scelte buone, ben spiegate.',
+    q: 'Devo avere già un’idea per il podcast?',
+    a: 'No. Possiamo partire da zero: definiamo insieme tema, format e struttura. Se invece hai già un progetto, lo prendiamo e lo portiamo a livello professionale.',
   },
   {
-    q: 'Il nome viene anche registrato come trademark?',
-    a: 'La verifica di disponibilità è inclusa. La registrazione effettiva del trademark è a carico del cliente (con un legale specializzato) — ma forniamo tutta la documentazione necessaria.',
+    q: 'Posso registrare senza venire in studio?',
+    a: 'Sì. Gestiamo registrazioni da remoto in qualità broadcast: tu e i tuoi ospiti vi collegate da dove volete, alla regia e all’audio pensiamo noi.',
   },
   {
-    q: 'Lavorate anche in inglese o solo in italiano?',
-    a: 'Entrambi. E per ogni nome verifichiamo sempre l\'assenza di problemi linguistici nelle principali lingue europee.',
+    q: 'Fate anche il video del podcast?',
+    a: 'Sì. Possiamo girare il podcast in multi-camera e ricavarne clip verticali per Instagram, TikTok e YouTube, oltre all’episodio completo.',
   },
   {
-    q: 'Quanto dura un progetto di naming?',
-    a: 'In media 3-5 settimane dalla firma del brief. Progetti più complessi (naming system per portfolio) richiedono più tempo.',
+    q: 'Vi occupate anche della pubblicazione?',
+    a: 'Sì. Copertina, note episodio, capitoli e upload su Spotify, Apple Podcasts e le altre piattaforme. Tu ricevi il podcast già online.',
   },
   {
-    q: 'Cosa succede se non piace nessuna delle opzioni presentate?',
-    a: 'È raro, ma previsto. Includiamo un round di revisione sulla base del feedback ricevuto.',
+    q: 'Ogni quanto si pubblica un episodio?',
+    a: 'Dipende dal format: c’è chi pubblica ogni settimana, chi a stagioni. Definiamo insieme una cadenza sostenibile e la rispettiamo.',
   },
 ];
 
@@ -39,13 +39,13 @@ export default function FaqSection() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from('.inam-faq-head', {
+      gsap.from('.gpod-faq-head', {
         opacity: 0, y: 24, duration: 0.9, ease: 'power3.out',
         scrollTrigger: { trigger: sectionRef.current, start: 'top 80%' },
       });
-      gsap.from('.inam-faq-item', {
+      gsap.from('.gpod-faq-item', {
         opacity: 0, y: 20, duration: 0.8, stagger: 0.08, ease: 'power3.out',
-        scrollTrigger: { trigger: '.inam-faq-item', start: 'top 85%' },
+        scrollTrigger: { trigger: '.gpod-faq-item', start: 'top 85%' },
       });
     }, sectionRef);
     return () => ctx.revert();
@@ -74,7 +74,7 @@ export default function FaqSection() {
     <section ref={sectionRef} className="w-full bg-[#F8F9FA] px-6 py-24 md:py-36">
       <div className="max-w-4xl mx-auto">
 
-        <div className="inam-faq-head mb-14">
+        <div className="gpod-faq-head mb-14">
           <span className="block font-satoshi text-[10px] font-bold uppercase tracking-[0.25em] text-black/25 mb-4">
             Domande frequenti
           </span>
@@ -85,7 +85,7 @@ export default function FaqSection() {
 
         <div className="divide-y divide-black/[0.07]">
           {faqs.map((faq, i) => (
-            <div key={i} className="inam-faq-item">
+            <div key={i} className="gpod-faq-item">
               <button
                 onClick={() => toggle(i)}
                 className="w-full flex items-center justify-between gap-6 py-7 text-left group"

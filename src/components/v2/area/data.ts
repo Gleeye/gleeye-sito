@@ -244,7 +244,7 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
         desc:
           'Contenuti audio per presidiare i momenti di ascolto del target: autorità costruita sulla voce e sulla narrazione profonda.',
         deliverables: ['Podcast branded', 'Produzione audio', 'Distribuzione', 'Audio identity'],
-        href: '/podcast',
+        href: '/factory/podcast',
       },
       {
         n: '05',

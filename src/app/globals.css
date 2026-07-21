@@ -107,6 +107,15 @@ h1, h2, h3, h4, h5, h6 {
   color: transparent;
 }
 
+/* Corsivo gradiente su fondo CHIARO: blu/viola pieni del brand (il fluo è
+   nato per il dark — sul bianco risulta slavato/troppo acceso). */
+.text-gradient-deep {
+  background: linear-gradient(100deg, #4e92d8 0%, #614aa2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 /* Gradiente vivo: la luce scorre dentro il testo, in loop */
 .text-gradient-flow {
   background: linear-gradient(100deg,
