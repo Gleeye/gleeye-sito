@@ -18,6 +18,15 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReduced) return;
     if (new URLSearchParams(window.location.search).has('nolenis')) return;
+    // Su dispositivi touch (mobile/tablet) niente Lenis: lo scroll nativo è più
+    // fluido e non si blocca mai. Lenis in combinazione con le sezioni pinnate
+    // (ScrollTrigger) può incollare lo scroll al touch. ScrollTrigger continua
+    // a funzionare col listener di scroll nativo.
+    const isTouch =
+      window.matchMedia('(pointer: coarse)').matches ||
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0;
+    if (isTouch) return;
 
     const lenis = new Lenis({
       duration: 1.15,
