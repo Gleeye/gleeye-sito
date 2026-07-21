@@ -66,23 +66,27 @@ export default function CookieBanner() {
                             </div>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-auto shrink-0">
+                        <div className="flex flex-col gap-3 w-full md:w-auto shrink-0">
                             <button
                                 onClick={acceptAll}
-                                className="px-8 py-3 bg-[#F5F3EE] text-[#111111] font-bold text-sm tracking-widest uppercase rounded-full hover:bg-white transition-colors duration-300 w-full"
+                                className="px-8 py-3 bg-[#F5F3EE] text-[#111111] font-bold text-sm tracking-widest uppercase rounded-full hover:bg-white transition-colors duration-300 w-full whitespace-nowrap"
                             >
                                 Accetta Tutti
                             </button>
-                            <div className="flex gap-3 w-full">
+                            {/* Su mobile i due secondari stanno impilati a tutta larghezza:
+                                affiancati a 375px andavano a capo e finivano sotto il widget
+                                chat (angolo in basso a destra, z-index massimo). Side-by-side
+                                solo da md in su. */}
+                            <div className="flex flex-col md:flex-row gap-3 w-full">
                                 <button
                                     onClick={rejectAll}
-                                    className="flex-1 px-4 py-3 bg-white/5 border border-white/10 text-white font-bold text-xs tracking-widest uppercase rounded-full hover:bg-white/10 transition-colors duration-300"
+                                    className="flex-1 px-4 py-3 bg-white/5 border border-white/10 text-white font-bold text-xs tracking-widest uppercase rounded-full hover:bg-white/10 transition-colors duration-300 whitespace-nowrap"
                                 >
                                     Solo Necessari
                                 </button>
                                 <button
                                     onClick={() => setShowDetails(true)}
-                                    className="flex-1 px-4 py-3 bg-transparent text-white/60 font-bold text-xs tracking-widest uppercase rounded-full hover:text-white transition-colors duration-300"
+                                    className="flex-1 px-4 py-3 bg-transparent text-white/60 font-bold text-xs tracking-widest uppercase rounded-full hover:text-white transition-colors duration-300 whitespace-nowrap"
                                 >
                                     Personalizza
                                 </button>
