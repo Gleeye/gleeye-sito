@@ -110,6 +110,56 @@ function BlockVideo({ vimeo_id, caption }: { vimeo_id: string; caption?: string 
   );
 }
 
+function YouTubeEmbed({ youtubeId }: { youtubeId: string }) {
+  const [playing, setPlaying] = useState(false);
+  const thumb = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+
+  if (playing) {
+    return (
+      <div className="relative w-full bg-black" style={{ aspectRatio: '16/9' }}>
+        <iframe
+          src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+          className="absolute inset-0 w-full h-full"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+    );
+  }
+  return (
+    <div
+      className="relative w-full bg-black cursor-pointer group/video"
+      style={{ aspectRatio: '16/9' }}
+      onClick={() => setPlaying(true)}
+    >
+      <img
+        src={thumb}
+        alt="Video thumbnail"
+        className="w-full h-full object-cover opacity-60 group-hover/video:opacity-80 transition-opacity duration-500"
+      />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-24 h-24 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover/video:scale-110 group-hover/video:border-white/40 transition-all duration-300">
+          <Play className="w-9 h-9 text-white fill-white ml-1" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// youtube block
+function BlockYouTube({ youtube_id, caption }: { youtube_id: string; caption?: string }) {
+  return (
+    <div className="px-8 md:px-14 py-10 max-w-7xl mx-auto">
+      <div className="overflow-hidden rounded-2xl shadow-[0_32px_80px_rgba(0,0,0,0.7)]">
+        <YouTubeEmbed youtubeId={youtube_id} />
+      </div>
+      {caption && (
+        <p className="text-white/25 text-sm font-jakarta mt-4 text-center">{caption}</p>
+      )}
+    </div>
+  );
+}
+
 // photo full-width block
 function BlockPhotoFull({ url, alt, caption }: { url: string; alt?: string; caption?: string }) {
   return (
@@ -302,6 +352,8 @@ function renderBlock(block: ContentBlock, index: number, accentColor: string) {
   switch (block.type) {
     case 'video':
       return <BlockVideo key={index} {...block.data} />;
+    case 'youtube':
+      return <BlockYouTube key={index} {...block.data} />;
     case 'photo_full':
       return <BlockPhotoFull key={index} {...block.data} />;
     case 'gallery':

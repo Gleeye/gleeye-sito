@@ -8,6 +8,10 @@ export type ContentBlockVideo = {
   type: 'video';
   data: { vimeo_id: string; caption?: string };
 };
+export type ContentBlockYouTube = {
+  type: 'youtube';
+  data: { youtube_id: string; caption?: string };
+};
 export type ContentBlockPhotoFull = {
   type: 'photo_full';
   data: { url: string; alt?: string; caption?: string };
@@ -35,6 +39,7 @@ export type ContentBlockQuote = {
 
 export type ContentBlock =
   | ContentBlockVideo
+  | ContentBlockYouTube
   | ContentBlockPhotoFull
   | ContentBlockGallery
   | ContentBlockText
