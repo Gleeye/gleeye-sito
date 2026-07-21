@@ -11,10 +11,12 @@ if (typeof window !== 'undefined') {
 
 /* ————————————————————————————————————————————————————————————————
    CONCEPT — "La linea".
-   Il metodo trasforma l'incertezza in una linea retta. Quindi la pagina
-   lo fa davvero: una linea attraversa lo schermo dall'inizio alla fine —
-   parte come uno scarabocchio nervoso (il caos) e, scrollando, si
-   raddrizza fase dopo fase, fino alla chiusura: "una linea retta."
+   Un filo aggrovigliato attraversa lo schermo e, scrollando, si srotola
+   fino a diventare una retta. I testi vivono SOLO sopra la linea: tutto
+   ciò che sta sotto la sua quota è tagliato via (clip), in discesa e in
+   risalita. Alla chiusura la linea mobile si scambia con una linea REALE
+   nel flusso della pagina, ferma sotto "una linea retta." — da lì non
+   può più sparire: è contenuto, scrolla con la pagina.
    ———————————————————————————————————————————————————————————————— */
 
 const FASI = [
@@ -53,50 +55,51 @@ function Accent({ children }: { children: React.ReactNode }) {
   );
 }
 
+const LINE_QUOTA = 0.78; /* quota della linea in viewport */
+
 export default function Metodo() {
   const rootRef = useRef<HTMLElement>(null);
-  const pathRef = useRef<SVGPathElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const pathRef = useRef<SVGPathElement>(null);
+  const worldRef = useRef<HTMLDivElement>(null);
+  const parkRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef(0);
 
   useEffect(() => {
     const root = rootRef.current;
-    const path = pathRef.current;
     const svg = svgRef.current;
-    if (!root || !path || !svg) return;
+    const path = pathRef.current;
+    const world = worldRef.current;
+    const parkEl = parkRef.current;
+    if (!root || !svg || !path || !world || !parkEl) return;
 
     let W = window.innerWidth;
     let H = window.innerHeight;
-    let parkY = 0; /* coordinata di pagina dove la linea si ferma (sotto la chiusura) */
-    let rootTop = 0;
-    let parkAlways = false; /* touch: parcheggiata sempre, mai fixed */
+    let worldTop = 0;
+    let worldH = 1;
+    let parked = false;
     const N = 420;
 
-    const measurePark = () => {
-      const closeH2 = root.querySelector('.mt-close h2');
-      if (!closeH2) return;
+    const measure = () => {
       const sy = window.scrollY;
-      rootTop = root.getBoundingClientRect().top + sy;
-      parkY = closeH2.getBoundingClientRect().bottom + sy + 64;
+      worldTop = world.getBoundingClientRect().top + sy;
+      worldH = world.offsetHeight;
     };
 
-    /* La linea segue la viewport (fixed) finché il punto di parcheggio non la
-       raggiunge: da lì si aggancia alla pagina e resta sotto la scritta. */
-    const setMode = () => {
-      const lineY = H * 0.78;
-      /* si parcheggia quando il punto d'ancoraggio la raggiunge — o comunque
-         a fine scroll (viewport alti): mai più sparita, mai sul footer */
-      if (parkAlways || progressRef.current >= 0.985 || window.scrollY + lineY >= parkY) {
-        svg.style.position = 'absolute';
-        svg.style.top = `${parkY - rootTop - lineY}px`;
-        svg.style.bottom = 'auto';
-        svg.style.height = `${H}px`;
-      } else {
-        svg.style.position = 'fixed';
-        svg.style.top = '0px';
-        svg.style.bottom = '0px';
-        svg.style.height = '';
-      }
+    /* i testi vivono solo sopra la linea: taglia tutto ciò che sta sotto */
+    const clipNow = () => {
+      if (parked) return;
+      const cut = window.scrollY + H * LINE_QUOTA - worldTop;
+      world.style.clipPath = `inset(0px 0px ${Math.max(0, worldH - cut).toFixed(0)}px 0px)`;
+    };
+
+    /* lo scambio: linea mobile ↔ linea reale in flusso (stessa quota a schermo) */
+    const swap = (toParked: boolean) => {
+      parked = toParked;
+      svg.style.display = toParked ? 'none' : '';
+      parkEl.style.opacity = toParked ? '1' : '0';
+      if (toParked) world.style.clipPath = 'none';
+      else clipNow();
     };
 
     const draw = (p: number) => {
@@ -105,7 +108,7 @@ export default function Metodo() {
          l'ampiezza è alta la x oscilla anche all'indietro e il filo si
          avvolge su sé stesso (riccioli sovrapposti); calando, si srotola. */
       const amp = H * 0.14 * Math.pow(1 - p, 1.6);
-      const base = H * 0.78;
+      const base = H * LINE_QUOTA;
       const span = W + 40;
       let d = '';
       for (let i = 0; i <= N; i++) {
@@ -117,20 +120,20 @@ export default function Metodo() {
         d += (i === 0 ? 'M ' : ' L ') + x.toFixed(1) + ' ' + y.toFixed(1);
       }
       path.setAttribute('d', d);
-      setMode();
+      clipNow();
     };
 
     const onResize = () => {
       W = window.innerWidth;
       H = window.innerHeight;
-      measurePark();
+      measure();
       draw(progressRef.current);
     };
     window.addEventListener('resize', onResize);
-    measurePark();
-    /* rimisura quando i font sono pronti: la posizione della chiusura si assesta */
+    measure();
+    /* rimisura quando i font sono pronti: il layout si assesta */
     const remeasure = window.setTimeout(() => {
-      measurePark();
+      measure();
       draw(progressRef.current);
     }, 700);
 
@@ -148,11 +151,10 @@ export default function Metodo() {
           { clipPath: 'inset(0 0% 0 0)', duration: 1.0, ease: 'power3.inOut' },
           '-=0.65');
 
-      /* Su touch: niente scrub — la linea è già retta e parcheggiata sotto
-         la chiusura (niente fixed: senza onUpdate resterebbe sul footer). */
+      /* Su touch: niente scrub — linea già retta e parcheggiata in flusso. */
       if (isTouchDevice()) {
-        parkAlways = true;
         draw(1);
+        swap(true);
         return;
       }
 
@@ -165,10 +167,9 @@ export default function Metodo() {
         onUpdate: (self) => draw(self.progress),
       });
 
-      /* I testi appartengono al mondo SOPRA la linea: compaiono quando la
-         attraversano (top della fase alla quota della linea, 78% viewport)
-         e scompaiono se tornano sotto. Sequenza: numero, label, tesi
-         (maschera), corpo. */
+      /* I testi appartengono al mondo SOPRA la linea: oltre al clip continuo,
+         ogni fase entra in sequenza quando attraversa la quota della linea
+         e fa il percorso inverso se torna sotto. */
       gsap.utils.toArray<HTMLElement>('.mt-fase', root).forEach((fase) => {
         const num = fase.querySelector('.mt-f-num');
         const label = fase.querySelector('.mt-f-label');
@@ -185,22 +186,32 @@ export default function Metodo() {
           .to(body, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.6');
         ScrollTrigger.create({
           trigger: fase,
-          start: 'top 78%',
+          start: `top ${LINE_QUOTA * 100}%`,
           onEnter: () => tl.play(),
           onLeaveBack: () => tl.reverse(),
         });
       });
 
-      /* chiusura: stesso patto con la linea — emerge attraversandola */
+      /* chiusura: emerge attraversando la linea */
       const closeLines = gsap.utils.toArray<HTMLElement>('.mt-close-line', root);
       gsap.set(closeLines, { yPercent: 115 });
       const closeTl = gsap.timeline({ paused: true })
         .to(closeLines, { yPercent: 0, duration: 1.2, stagger: 0.14, ease: 'power4.out' });
       ScrollTrigger.create({
         trigger: '.mt-close',
-        start: 'top 78%',
+        start: `top ${LINE_QUOTA * 100}%`,
         onEnter: () => closeTl.play(),
         onLeaveBack: () => closeTl.reverse(),
+      });
+
+      /* lo scambio: quando la linea reale raggiunge la quota della linea
+         mobile, le due coincidono a schermo — swap istantaneo, invisibile.
+         Da lì la retta è contenuto in flusso: non può più sparire. */
+      ScrollTrigger.create({
+        trigger: parkEl,
+        start: `top ${LINE_QUOTA * 100}%`,
+        onEnter: () => swap(true),
+        onLeaveBack: () => swap(false),
       });
     }, root);
 
@@ -215,7 +226,7 @@ export default function Metodo() {
     <section ref={rootRef} className="relative overflow-hidden bg-[#0a0a10] text-[#f8f9fa]">
       <div className="grain absolute inset-0" />
 
-      {/* ————— la linea: dal caos alla retta, sempre in scena ————— */}
+      {/* ————— la linea mobile: dal groviglio alla retta ————— */}
       <svg ref={svgRef} className="pointer-events-none fixed inset-0 z-0 h-full w-full" aria-hidden="true">
         <defs>
           <linearGradient id="mtLine" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -235,62 +246,75 @@ export default function Metodo() {
         />
       </svg>
 
-      {/* ————— hero ————— */}
-      <div className="relative z-10 flex min-h-svh flex-col justify-center px-5 md:px-10">
-        <h1>
-          <span className="block overflow-hidden py-[0.04em]">
-            <span className="mt-hero-line voice-display block text-[12vw] leading-[0.92] md:text-[8.5vw]">Il caos non è</span>
-          </span>
-          <span className="block overflow-hidden pt-[0.03em] pb-[0.2em]">
-            <span className="mt-hero-line text-gradient block w-fit font-playfair italic font-medium normal-case leading-[1.02] tracking-[-0.01em] pb-[0.14em] pr-[0.05em] text-[13vw] md:text-[9vw]">
-              un metodo.
-            </span>
-          </span>
-        </h1>
-        <p className="mt-hero-sub mt-8 max-w-xl font-jakarta text-lg font-medium leading-relaxed text-white/55 md:text-xl">
-          Quattro fasi, una direzione. Ogni progetto entra come una domanda ed esce come una certezza.
-        </p>
-      </div>
+      {/* ————— il mondo sopra la linea (clippato alla sua quota) ————— */}
+      <div ref={worldRef} className="relative z-10" style={{ willChange: 'clip-path' }}>
 
-      {/* ————— le quattro fasi ————— */}
-      {FASI.map((f, i) => (
-        <div
-          key={f.num}
-          className="relative z-10 flex min-h-[70vh] items-center px-5 py-16 md:min-h-[85vh] md:px-10 md:py-24"
-        >
-          <div className={`mt-fase w-full max-w-2xl ${i % 2 === 1 ? 'md:ml-auto' : ''}`}>
-            <span
-              className="mt-f-num voice-display block text-7xl leading-none md:text-9xl"
-              style={{ color: 'transparent', WebkitTextStroke: '1.5px rgba(255,255,255,0.22)' }}
-            >
-              {f.num}
+        {/* hero */}
+        <div className="relative flex min-h-svh flex-col justify-center px-5 md:px-10">
+          <h1>
+            <span className="block overflow-hidden py-[0.04em]">
+              <span className="mt-hero-line voice-display block text-[12vw] leading-[0.92] md:text-[8.5vw]">Il caos non è</span>
             </span>
-            <p className="mt-f-label voice-mono mb-6 mt-5 text-white/40">{f.label}</p>
-            {/* maschera con pb generoso (discendenti dell'accento) compensato dal -mb */}
-            <span className="block overflow-hidden pb-[0.22em] -mb-[0.22em]">
-              <h2 className="mt-f-tesi voice-display text-3xl leading-[1.08] md:text-5xl">
-                {f.tesi.plain} <Accent>{f.tesi.accent}</Accent>
-              </h2>
+            <span className="block overflow-hidden pt-[0.03em] pb-[0.2em]">
+              <span className="mt-hero-line text-gradient block w-fit font-playfair italic font-medium normal-case leading-[1.02] tracking-[-0.01em] pb-[0.14em] pr-[0.05em] text-[13vw] md:text-[9vw]">
+                un metodo.
+              </span>
             </span>
-            <p className="mt-f-body mt-6 max-w-xl font-jakarta text-base font-medium leading-relaxed text-white/55 md:text-xl">
-              {f.body}
-            </p>
-          </div>
+          </h1>
+          <p className="mt-hero-sub mt-8 max-w-xl font-jakarta text-lg font-medium leading-relaxed text-white/55 md:text-xl">
+            Quattro fasi, una direzione. Ogni progetto entra come una domanda ed esce come una certezza.
+          </p>
         </div>
-      ))}
 
-      {/* ————— chiusura: il payoff della linea ————— */}
-      <div className="mt-close relative z-10 flex min-h-[60vh] flex-col items-center justify-center px-5 pb-40 text-center">
-        <h2 className="voice-display text-3xl leading-[1.1] md:text-6xl">
-          <span className="block overflow-hidden py-[0.05em]">
-            <span className="mt-close-line block">Dal primo dubbio alla consegna:</span>
-          </span>
-          <span className="block overflow-hidden pt-[0.03em] pb-[0.2em]">
-            <span className="mt-close-line text-gradient mx-auto mt-3 block w-fit pb-[0.16em] pr-[0.05em] font-playfair italic font-medium normal-case leading-[1.05] tracking-[-0.01em]">
-              una linea retta.
+        {/* le quattro fasi */}
+        {FASI.map((f, i) => (
+          <div
+            key={f.num}
+            className="relative flex min-h-[70vh] items-center px-5 py-16 md:min-h-[85vh] md:px-10 md:py-24"
+          >
+            <div className={`mt-fase w-full max-w-2xl ${i % 2 === 1 ? 'md:ml-auto' : ''}`}>
+              <span
+                className="mt-f-num voice-display block text-7xl leading-none md:text-9xl"
+                style={{ color: 'transparent', WebkitTextStroke: '1.5px rgba(255,255,255,0.22)' }}
+              >
+                {f.num}
+              </span>
+              <p className="mt-f-label voice-mono mb-6 mt-5 text-white/40">{f.label}</p>
+              {/* maschera con pb generoso (discendenti dell'accento) compensato dal -mb */}
+              <span className="block overflow-hidden pb-[0.22em] -mb-[0.22em]">
+                <h2 className="mt-f-tesi voice-display text-3xl leading-[1.08] md:text-5xl">
+                  {f.tesi.plain} <Accent>{f.tesi.accent}</Accent>
+                </h2>
+              </span>
+              <p className="mt-f-body mt-6 max-w-xl font-jakarta text-base font-medium leading-relaxed text-white/55 md:text-xl">
+                {f.body}
+              </p>
+            </div>
+          </div>
+        ))}
+
+        {/* chiusura: il payoff — e la linea reale, ferma sotto la scritta */}
+        <div className="mt-close relative flex min-h-[60vh] flex-col items-center justify-center px-5 pb-40 text-center">
+          <h2 className="voice-display text-3xl leading-[1.1] md:text-6xl">
+            <span className="block overflow-hidden py-[0.05em]">
+              <span className="mt-close-line block">Dal primo dubbio alla consegna:</span>
             </span>
-          </span>
-        </h2>
+            <span className="block overflow-hidden pt-[0.03em] pb-[0.2em]">
+              <span className="mt-close-line text-gradient mx-auto mt-3 block w-fit pb-[0.16em] pr-[0.05em] font-playfair italic font-medium normal-case leading-[1.05] tracking-[-0.01em]">
+                una linea retta.
+              </span>
+            </span>
+          </h2>
+          <div
+            ref={parkRef}
+            aria-hidden="true"
+            className="mt-16 h-[2px] w-screen opacity-0"
+            style={{
+              background: 'linear-gradient(90deg, #6db5ff, #9b7bff)',
+              boxShadow: '0 0 8px rgba(109,181,255,0.35)',
+            }}
+          />
+        </div>
       </div>
     </section>
   );
