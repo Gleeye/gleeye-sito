@@ -198,7 +198,7 @@ export default function PageWidgetOverlay() {
   // Sorgente iframe: usata per la prenotazione, e come FALLBACK del form protetto.
   const iframeSrc =
     open === "booking"
-      ? `${ERP_APP}/prenota?embed=true`
+      ? `${ERP_APP}/prenota?embed=true${w?.booking_item_id ? `&servizio=${w.booking_item_id}` : ""}`
       : open === "form" && formFallback && w?.contact_form_id
         ? `${ERP_APP}/form/${w.contact_form_id}?embed=true`
         : null;
@@ -342,26 +342,12 @@ export default function PageWidgetOverlay() {
 
       {/* Overlay */}
       {open && (
-        <div
-          onClick={close}
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 2147483600,
-            background: "rgba(10,10,16,0.6)",
-            backdropFilter: "blur(6px)",
-            WebkitBackdropFilter: "blur(6px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "min(4vw, 32px)",
-          }}
-        >
+        <div onClick={close} className="gl-modal-overlay">
           {showNativeForm ? (
             // ── Renderer NATIVO: card del sito, niente iframe ──
             <div
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-[560px] overflow-y-auto rounded-[2rem] bg-white p-6 shadow-[0_30px_90px_rgba(2,6,23,0.35)] sm:p-8 md:p-10"
+              className="gl-sheet relative w-full max-w-[560px] overflow-y-auto rounded-[2rem] bg-white p-6 shadow-[0_30px_90px_rgba(2,6,23,0.35)] sm:p-8 md:p-10"
               style={{ maxHeight: "92vh" }}
             >
               <CloseButton onClick={close} />
@@ -376,6 +362,7 @@ export default function PageWidgetOverlay() {
             iframeSrc && (
               <div
                 onClick={(e) => e.stopPropagation()}
+                className="gl-sheet gl-sheet-iframe"
                 style={{
                   position: "relative",
                   width: "min(560px, 96vw)",
@@ -481,6 +468,41 @@ function FabStyles() {
       .gl-fab:focus-visible { outline: 3px solid rgba(109,181,255,0.7); outline-offset: 3px; }
       .gl-fab-icon { display: flex; transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
       .gl-fab-icon.open { transform: rotate(90deg); }
+
+      /* ── Modal (desktop) / bottom-sheet (mobile) ── */
+      .gl-modal-overlay {
+        position: fixed; inset: 0; z-index: 2147483600;
+        background: rgba(10,10,16,0.6);
+        backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+        display: flex; align-items: center; justify-content: center;
+        padding: min(4vw, 32px);
+        animation: gl-fade-in .2s ease;
+      }
+      @keyframes gl-fade-in { from { opacity: 0; } to { opacity: 1; } }
+      .gl-sheet { animation: gl-pop-in .32s cubic-bezier(.22,1,.36,1); }
+      @keyframes gl-pop-in { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: none; } }
+
+      /* Su mobile i pop-up salgono dal basso (bottom-sheet), come l'app di Argie. */
+      @media (max-width: 640px) {
+        .gl-modal-overlay { align-items: flex-end; padding: 0; }
+        .gl-sheet {
+          width: 100% !important;
+          max-width: 100% !important;
+          border-radius: 24px 24px 0 0 !important;
+          max-height: 92vh !important;
+          animation: gl-sheet-up .4s cubic-bezier(.22,1,.36,1);
+        }
+        .gl-sheet:not(.gl-sheet-iframe) { padding-top: 28px; }
+        .gl-sheet-iframe { height: 90vh !important; }
+        .gl-sheet::after {
+          content: ""; position: absolute; top: 9px; left: 50%;
+          transform: translateX(-50%);
+          width: 40px; height: 4px; border-radius: 999px;
+          background: rgba(10,10,16,0.2); z-index: 6; pointer-events: none;
+        }
+        .gl-sheet-iframe::after { background: rgba(10,10,16,0.3); }
+      }
+      @keyframes gl-sheet-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
       .gl-fan-item {
         display: inline-flex; align-items: center; justify-content: flex-end;

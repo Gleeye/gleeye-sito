@@ -117,7 +117,7 @@ export default function BrandStrategyHeroSection() {
       {/* Bottom CTA */}
       <div ref={ctaRef} className="relative z-10 flex items-center justify-center gap-6">
         <a
-          href="#contatti"
+          href="#parliamone"
           className="group relative px-8 py-4 bg-white text-black rounded-full overflow-hidden flex items-center justify-center transition-all duration-700"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-[#614aa2] to-[#4e92d8] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />

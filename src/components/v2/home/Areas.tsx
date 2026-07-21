@@ -167,7 +167,7 @@ export default function Areas() {
   return (
     <section ref={rootRef} id="aree" className="relative flex flex-col overflow-hidden bg-[#f8f9fa]">
       {/* blocco di chiusura — spostato sotto le card via order */}
-      <div className="areas-title order-2 px-5 py-28 md:px-10 md:py-40">
+      <div className="areas-title order-2 px-5 pt-28 pb-14 md:px-10 md:pt-40 md:pb-16">
         <h2
           style={{ textTransform: 'none' }}
           className="voice-display text-5xl leading-[1] text-[#0a0a10] md:text-[min(6.4vw,6rem)]"

@@ -250,7 +250,7 @@ export default function HeroSection() {
             <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center md:items-end gap-10 px-4 md:px-0">
                 {/* Buttons Left */}
                 <div ref={buttonsRef} className="w-full md:w-auto flex justify-center md:justify-start">
-                    <a href="#contact-form" className="group relative px-10 py-5 bg-white text-black rounded-full overflow-hidden flex items-center justify-center min-w-[220px] transition-all duration-700">
+                    <a href="#parliamone" className="group relative px-10 py-5 bg-white text-black rounded-full overflow-hidden flex items-center justify-center min-w-[220px] transition-all duration-700">
                         <div className="absolute inset-0 bg-gradient-to-r from-[#3b82f6] to-[#60a5fa] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                         <span className="relative z-10 tech-label text-[10px] font-bold group-hover:text-white transition-colors duration-500 uppercase tracking-[0.2em]">Inizia il tuo racconto</span>
                     </a>
