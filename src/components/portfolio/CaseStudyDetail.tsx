@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { CaseStudy, ContentBlock } from '@/lib/portfolio';
 import { ArrowLeft, ArrowUpRight, Play } from 'lucide-react';
 
@@ -157,6 +157,141 @@ function BlockYouTube({ youtube_id, caption }: { youtube_id: string; caption?: s
         <p className="text-white/25 text-sm font-jakarta mt-4 text-center">{caption}</p>
       )}
     </div>
+  );
+}
+
+// ─── EDITORIAL: immagine che ruota (showcase prodotto) ──────────────────────
+function RotatingImage({ images }: { images: string[] }) {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    if (images.length < 2) return;
+    const t = setInterval(() => setI((x) => (x + 1) % images.length), 2400);
+    return () => clearInterval(t);
+  }, [images.length]);
+  return (
+    <div className="relative w-full" style={{ aspectRatio: '3/4' }}>
+      {images.map((u, idx) => (
+        <img
+          key={idx}
+          src={u}
+          alt=""
+          className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-[900ms] ${idx === i ? 'opacity-100' : 'opacity-0'}`}
+        />
+      ))}
+    </div>
+  );
+}
+
+function BlockShowcase({
+  heading, body, images, side = 'left', light = true,
+}: { heading?: string; body: string; images: string[]; side?: 'left' | 'right'; light?: boolean }) {
+  const text = (
+    <div className="flex items-center px-8 md:px-16 py-16 md:py-24">
+      <div className="max-w-md">
+        {heading && (
+          <h3 className={`font-satoshi font-black text-3xl md:text-4xl uppercase tracking-tight leading-[1.05] mb-6 ${light ? 'text-[#0a0a10]' : 'text-white'}`}>{heading}</h3>
+        )}
+        <p className={`font-jakarta text-base md:text-lg leading-[1.85] ${light ? 'text-black/60' : 'text-white/55'}`}>{body}</p>
+      </div>
+    </div>
+  );
+  const img = (
+    <div className="flex items-center justify-center px-8 py-12 md:py-16">
+      <div className="w-full max-w-sm"><RotatingImage images={images} /></div>
+    </div>
+  );
+  return (
+    <section className={`grid md:grid-cols-2 ${light ? 'bg-[#F8F9FA]' : 'bg-[#07070f]'}`}>
+      {side === 'left' ? <>{text}{img}</> : <>{img}{text}</>}
+    </section>
+  );
+}
+
+// ─── EDITORIAL: foto a tutta altezza + testo, alternate ─────────────────────
+function BlockEditorial({
+  heading, body, image, alt, side = 'left',
+}: { heading?: string; body: string; image: string; alt?: string; side?: 'left' | 'right' }) {
+  const img = (
+    <div className="relative min-h-[56vh] md:min-h-[86vh] bg-[#0d0d1a]">
+      <img
+        src={image}
+        alt={alt ?? ''}
+        className="absolute inset-0 w-full h-full object-cover"
+        onError={(e) => { (e.currentTarget as HTMLImageElement).style.visibility = 'hidden'; }}
+      />
+    </div>
+  );
+  const text = (
+    <div className="flex items-center px-8 md:px-16 py-16 md:py-0 bg-[#07070f]">
+      <div className="max-w-md">
+        {heading && (
+          <h3 className="font-satoshi font-black text-3xl md:text-5xl uppercase tracking-tight text-white leading-[1] mb-7">{heading}</h3>
+        )}
+        <p className="font-jakarta text-white/55 text-base md:text-lg leading-[1.85]">{body}</p>
+      </div>
+    </div>
+  );
+  return (
+    <section className="grid md:grid-cols-2 bg-[#07070f]">
+      {side === 'left' ? <>{img}{text}</> : <>{text}{img}</>}
+    </section>
+  );
+}
+
+// ─── EDITORIAL: carosello video a scorrimento ───────────────────────────────
+function BlockVideoCarousel({
+  heading, body, label, items,
+}: { heading?: string; body?: string; label?: string; items: { youtube_id?: string; vimeo_id?: string; caption?: string }[] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+  const onScroll = () => {
+    const el = ref.current;
+    if (!el) return;
+    const card = el.scrollWidth / items.length;
+    setActive(Math.round(el.scrollLeft / card));
+  };
+  const go = (i: number) => {
+    const el = ref.current;
+    if (!el) return;
+    const card = el.scrollWidth / items.length;
+    el.scrollTo({ left: card * i, behavior: 'smooth' });
+  };
+  return (
+    <section className="py-14 md:py-20 bg-[#07070f]">
+      <div className="px-8 md:px-14 max-w-7xl mx-auto mb-9">
+        {label && (
+          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-white/20 font-jakarta block mb-4">{label}</span>
+        )}
+        {heading && (
+          <h3 className="font-satoshi font-black text-3xl md:text-4xl uppercase tracking-tight text-white leading-[1.05] mb-5">{heading}</h3>
+        )}
+        {body && <p className="font-jakarta text-white/55 text-base md:text-lg leading-[1.85] max-w-2xl">{body}</p>}
+      </div>
+      <div
+        ref={ref}
+        onScroll={onScroll}
+        className="flex gap-5 overflow-x-auto snap-x snap-mandatory px-8 md:px-14 pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {items.map((it, i) => (
+          <div key={i} className="snap-center shrink-0 w-[85%] md:w-[62%] lg:w-[48%]">
+            <div className="overflow-hidden rounded-2xl shadow-[0_24px_60px_rgba(0,0,0,0.6)]">
+              {it.youtube_id ? <YouTubeEmbed youtubeId={it.youtube_id} /> : it.vimeo_id ? <VimeoEmbed vimeoId={it.vimeo_id} /> : null}
+            </div>
+            {it.caption && <p className="text-white/25 text-sm font-jakarta mt-3">{it.caption}</p>}
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-center gap-2.5 mt-7">
+        {items.map((_, i) => (
+          <button
+            key={i}
+            aria-label={`Vai al video ${i + 1}`}
+            onClick={() => go(i)}
+            className={`h-1.5 rounded-full transition-all duration-300 ${i === active ? 'w-7 bg-white/80' : 'w-1.5 bg-white/25 hover:bg-white/40'}`}
+          />
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -354,6 +489,12 @@ function renderBlock(block: ContentBlock, index: number, accentColor: string) {
       return <BlockVideo key={index} {...block.data} />;
     case 'youtube':
       return <BlockYouTube key={index} {...block.data} />;
+    case 'showcase':
+      return <BlockShowcase key={index} {...block.data} />;
+    case 'editorial':
+      return <BlockEditorial key={index} {...block.data} />;
+    case 'video_carousel':
+      return <BlockVideoCarousel key={index} {...block.data} />;
     case 'photo_full':
       return <BlockPhotoFull key={index} {...block.data} />;
     case 'gallery':
