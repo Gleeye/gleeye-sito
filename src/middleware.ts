@@ -76,6 +76,7 @@ const ROUTES = new Set([
   '/admin/copy',
   '/admin/dashboard',
   '/admin/visuals',
+  '/blog',
   '/chi-siamo',
   '/contatti',
   '/cookie-policy',
@@ -105,6 +106,15 @@ const ROUTES = new Set([
   '/proposte',
   '/video-explainer',
 ]);
+
+/* Sotto /blog il vecchio WordPress tiene, oltre agli articoli, le tassonomie e
+   la paginazione. Questi primi segmenti NON sono slug di articolo: vanno lasciati
+   a old.gleeye.eu (URL identici, restano indicizzati lì). */
+const BLOG_RESERVED_SEGMENTS = new Set(['category', 'tag', 'author', 'page']);
+
+/* Pagine WP isolate che vivono sotto /blog/<slug> ma NON sono articoli del blog
+   (stanno nel page-sitemap del vecchio WP). Restano su old.gleeye.eu. */
+const BLOG_OLD_PATHS = new Set(['/blog/eventi-aziendali']);
 
 export function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
@@ -148,15 +158,29 @@ export function middleware(req: NextRequest) {
   }
 
   // ——— blog nativo ———
-  // Tutti gli articoli /blog/<slug> sono serviti dal Next (rotta /blog/[slug],
-  // con generateStaticParams che pesca gli slug dalla REST di WP). L'indice
-  // /blog senza slug NON è ancora una pagina nostra: cade nel catch-all e
-  // resta sul blog del vecchio WordPress finché non lo costruiamo.
+  // L'indice /blog e i singoli articoli /blog/<slug> sono serviti dal Next
+  // (indice: /blog/page.tsx — già gestito da ROUTES qui sopra; articolo: rotta
+  // /blog/[slug]). MA il vecchio WordPress tiene sotto /blog anche le tassonomie
+  // e alcune pagine legacy, che devono restare su old.gleeye.eu invariate:
+  //   /blog/category/<slug>/  /blog/tag/<slug>/  /blog/author/<slug>/
+  //   /blog/page/<n>/  (paginazione)  + qualche pagina isolata (BLOG_OLD_PATHS)
+  // Quelle NON sono articoli: se le servissimo dalla rotta [slug] darebbero 404.
+  // Le lasciamo cadere nel catch-all (301 → old.gleeye.eu, stesso percorso).
   if (clean.startsWith('/blog/') && clean.length > '/blog/'.length) {
-    if (clean !== pathname) {
-      return NextResponse.redirect(new URL(clean + search, req.url), 301);
+    const rest = clean.slice('/blog/'.length); // es. "mio-slug" o "category/x"
+    const firstSeg = rest.split('/')[0];
+    const isTaxonomyOrPaged =
+      rest.includes('/') || BLOG_RESERVED_SEGMENTS.has(firstSeg);
+    const isLegacyPage = BLOG_OLD_PATHS.has(clean);
+
+    if (!isTaxonomyOrPaged && !isLegacyPage) {
+      // articolo nativo → Next (normalizzando l'eventuale slash finale con 301)
+      if (clean !== pathname) {
+        return NextResponse.redirect(new URL(clean + search, req.url), 301);
+      }
+      return NextResponse.next();
     }
-    return NextResponse.next();
+    // tassonomie / paginazione / pagine legacy → cadono nel catch-all (old WP)
   }
 
   // ——— 3. tutto il resto vive su old.gleeye.eu, stesso percorso ———
