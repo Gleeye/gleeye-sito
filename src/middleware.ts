@@ -147,16 +147,6 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // ——— portfolio: index + dettagli dinamici /portfolio/[slug] → sito nuovo ———
-  // Le rotte dettaglio sono dinamiche, quindi non stanno in ROUTES: le lasciamo
-  // passare per prefisso (normalizzando l'eventuale slash finale come sopra).
-  if (clean === '/portfolio' || clean.startsWith('/portfolio/')) {
-    if (clean !== pathname) {
-      return NextResponse.redirect(new URL(clean + search, req.url), 301);
-    }
-    return NextResponse.next();
-  }
-
   // ——— 3. tutto il resto vive su old.gleeye.eu, stesso percorso ———
   return NextResponse.redirect(new URL(pathname + search, OLD_HOST), 301);
 }
