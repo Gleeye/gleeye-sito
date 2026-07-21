@@ -197,10 +197,10 @@ export default function ChiSiamo() {
             </div>
 
             {/* testo */}
-            <div className={`relative w-full md:w-1/2 ${c.align === 'right' ? '' : 'md:ml-auto'}`}>
+            <div className={`relative w-full md:w-1/2 ${c.align === 'right' ? 'md:pr-16' : 'md:ml-auto md:pl-16'}`}>
               <p
                 className="voice-mono mb-6"
-                style={{ backgroundImage: 'linear-gradient(90deg, #4e92d8, #614aa2)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}
+                style={{ backgroundImage: 'linear-gradient(100deg, #6db5ff, #9b7bff)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}
               >
                 {c.label}
               </p>
