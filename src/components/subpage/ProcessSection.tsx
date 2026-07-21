@@ -86,7 +86,11 @@ export default function ProcessSection({
             Come lavoriamo
           </span>
           <h2 className="max-w-3xl font-satoshi text-3xl font-black uppercase leading-[1.02] tracking-tight text-[#0a0a10] md:text-4xl lg:text-5xl">
-            {subtitle}
+            {subtitle.split(/(?<=\.)\s+/).map((s, i) => (
+              <span key={i} className="block">
+                {s}
+              </span>
+            ))}
           </h2>
         </div>
 
