@@ -119,7 +119,7 @@ export default function SpecialUnits() {
           <h2 className="voice-display col-span-full text-[2.7rem] leading-[1.02] text-[#0a0a10] md:col-span-7 md:text-[min(5.6vw,4.8rem)] md:leading-[0.9]">
             <span className="block overflow-hidden">
               <span
-                className="su-line block font-newsreader italic uppercase pb-[0.12em] [margin-bottom:-0.12em]"
+                className="su-line block font-playfair italic normal-case pb-[0.12em] [margin-bottom:-0.12em]"
                 style={{ fontWeight: 700, letterSpacing: '-0.01em' }}
               >
                 Verticali.
