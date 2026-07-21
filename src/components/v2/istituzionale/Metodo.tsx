@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { isTouchDevice } from '@/lib/isTouch';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -151,12 +150,8 @@ export default function Metodo() {
           { clipPath: 'inset(0 0% 0 0)', duration: 1.0, ease: 'power3.inOut' },
           '-=0.65');
 
-      /* Su touch: niente scrub — linea già retta e parcheggiata in flusso. */
-      if (isTouchDevice()) {
-        draw(1);
-        swap(true);
-        return;
-      }
+      /* Anche su touch: niente pin qui, solo scrub e trigger — lo scroll
+         nativo li guida e lo swap parcheggia la retta come su desktop. */
 
       draw(0);
       ScrollTrigger.create({

@@ -34,13 +34,6 @@ export default function ShowreelSection({ data }: { data: ShowreelData }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (
-      window.matchMedia('(pointer: coarse)').matches ||
-      'ontouchstart' in window ||
-      navigator.maxTouchPoints > 0
-    ) {
-      return;
-    }
     const ctx = gsap.context(() => {
       gsap.set('.sub-reel-head', { opacity: 0, y: 22 });
       gsap.set('.sub-reel-media', { opacity: 0 });

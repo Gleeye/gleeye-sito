@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { isTouchDevice } from '@/lib/isTouch';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -54,20 +53,8 @@ export default function ChiSiamo() {
          le altre parole entrano dopo (dal basso). */
       gsap.set(['.cs-n', '.cs-s', '.cs-g'], { opacity: 0, yPercent: 90 });
 
-      /* Su touch: niente pin (su iOS blocca/desincronizza lo scroll) né scrub.
-         La sequenza hero parte in autoplay al load; i capitoli allo stato finale. */
-      if (isTouchDevice()) {
-        gsap.set('.cs-word', { opacity: 1 });
-        gsap.set('.cs-ghost-fill', { clipPath: 'inset(0% 0 0 0)' });
-        gsap.set('.cs-thread', { scaleY: 1 });
-        gsap.set('.cs-p', { scale: 1.7, y: () => -window.innerHeight * 0.06, transformOrigin: '50% 50%' });
-        gsap.timeline({ delay: 0.25 })
-          .to('.cs-p', { scale: 1, y: 0, duration: 1.2, ease: 'power2.inOut' })
-          .to('.cs-n', { opacity: 1, yPercent: 0, duration: 0.5, ease: 'power3.out' }, '-=0.15')
-          .to('.cs-s', { opacity: 1, yPercent: 0, duration: 0.5, ease: 'power3.out' }, '-=0.2')
-          .to('.cs-g', { opacity: 1, yPercent: 0, duration: 0.6, ease: 'power3.out' }, '-=0.2');
-        return;
-      }
+      /* Anche su touch: il pin usa position:fixed con lo scroll nativo e la
+         sequenza PIACERE è guidata dallo scroll come su desktop. */
 
       /* Desktop: hero pinnata. "Piacere," è GIGANTE — alto quanto lo schermo —
          e all'inizio se ne vede solo l'inizio; scrollando STRISCIA in orizzontale

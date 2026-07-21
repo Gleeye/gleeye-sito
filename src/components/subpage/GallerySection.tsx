@@ -32,13 +32,6 @@ export default function GallerySection({ data }: { data: GalleryData }) {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (
-      window.matchMedia('(pointer: coarse)').matches ||
-      'ontouchstart' in window ||
-      navigator.maxTouchPoints > 0
-    ) {
-      return;
-    }
     const ctx = gsap.context(() => {
       gsap.set('.sub-gal-head', { opacity: 0, y: 22 });
       gsap.set('.sub-gal-card', { opacity: 0, y: 40 });

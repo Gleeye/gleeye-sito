@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { isTouchDevice } from '@/lib/isTouch';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -82,17 +81,8 @@ export default function Manifesto() {
     if (!root) return;
 
     const ctx = gsap.context(() => {
-      /* Su touch: niente scrub (su iOS post-navigazione lascerebbero le righe
-         a yPercent 110 — spinte fuori dal wrapper overflow-hidden, invisibili —
-         e le note a opacity 0). Portiamo tutto allo stato finale. */
-      if (isTouchDevice()) {
-        gsap.set('.mfp-line', { yPercent: 0 });
-        gsap.set('.mfp-statement', { rotate: 0, scale: 1 });
-        gsap.set('.mfp-note', { opacity: 1, y: 0 });
-        gsap.from('.mf-hero-line', { yPercent: 110, duration: 1.1, stagger: 0.1, ease: 'power4.out', delay: 0.15 });
-        return;
-      }
-
+      /* Anche su touch: solo scrub e reveal (niente pin) — lo scroll nativo
+         li guida; il refresh post-navigazione rimisura i trigger. */
       gsap.from('.mf-hero-line', {
         yPercent: 110, duration: 1.3, stagger: 0.1, ease: 'power4.out', delay: 0.2,
       });

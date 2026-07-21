@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { isTouchDevice } from '@/lib/isTouch';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -76,19 +75,8 @@ export default function MissionVision() {
       const len = path.getTotalLength();
       path.style.strokeDasharray = String(len);
 
-      /* Su touch niente scrub: rotta già tracciata, punto a destinazione,
-         frase già ripulita, tutto leggibile. */
-      if (isTouchDevice()) {
-        path.style.strokeDashoffset = '0';
-        /* niente puntino fermo: non può posarsi sulla CTA del footer */
-        gsap.set(dot, { opacity: 0 });
-        gsap.set(clean, { clipPath: 'none' });
-        gsap.set(deg, { clipPath: 'inset(0 0 0 100%)' });
-        gsap.set('.mv-word', { opacity: 1 });
-        gsap.set('.mv-vis-title', { opacity: 1, y: 0 });
-        gsap.set('.mv-vis-glow', { opacity: 1, scale: 1 });
-        return;
-      }
+      /* Anche su touch: scroll nativo + ScrollTrigger funzionano (niente pin
+         qui); il refresh post-navigazione di SmoothScroll rimisura i trigger. */
 
       /* ————— la rotta si disegna e il punto la percorre ————— */
       path.style.strokeDashoffset = String(len);

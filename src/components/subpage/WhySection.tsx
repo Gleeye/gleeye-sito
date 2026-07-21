@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { isTouchDevice } from '@/lib/isTouch';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -30,9 +29,6 @@ export default function WhySection({
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    // Su touch niente reveal/pin: contenuto sempre visibile, scroll nativo.
-    // (su iOS i trigger post-navigazione misurano male e lasciano tutto invisibile)
-    if (isTouchDevice()) return;
     const ctx = gsap.context(() => {
       gsap.from('.why-head', {
         opacity: 0, y: 24, duration: 1, ease: 'power3.out', clearProps: 'transform',
