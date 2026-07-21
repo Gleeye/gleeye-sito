@@ -3,7 +3,7 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 
-const WORDS = ['TROVATI,', 'NON', 'SOLO', 'CERCATI'];
+const HEAD = { plain: ["SEO"], accent: "in buone mani.", inline: false };
 
 export default function SeoHeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -69,21 +69,38 @@ export default function SeoHeroSection() {
       </div>
 
       <div className="relative z-10 flex flex-col items-center justify-center flex-1 py-12 text-center">
-        <div className="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1 md:gap-x-5 lg:gap-x-6">
-          {WORDS.map((word, i) => (
-            <div key={word} className="overflow-hidden pb-[0.12em]">
+        <div className="flex flex-col items-center gap-y-1 text-center">
+          {HEAD.plain.map((line, i) => {
+            const isLast = i === HEAD.plain.length - 1;
+            return (
+              <div key={line} className="overflow-hidden pb-[0.14em]">
+                <span
+                  ref={el => { wordRefs.current[i] = el; }}
+                  className="block font-satoshi font-black uppercase leading-[1.02] tracking-tight text-white text-[6vw] md:text-[min(6.4vw,5.2rem)]"
+                >
+                  {line}
+                  {isLast && HEAD.inline && (
+                    <>
+                      {' '}
+                      <span className="text-gradient font-playfair italic font-medium normal-case tracking-[-0.01em]">
+                        {HEAD.accent}
+                      </span>
+                    </>
+                  )}
+                </span>
+              </div>
+            );
+          })}
+          {!HEAD.inline && (
+            <div className="overflow-hidden pb-[0.22em]">
               <span
-                ref={el => { wordRefs.current[i] = el; }}
-                className={`block ${
-                  i === WORDS.length - 1
-                    ? 'text-gradient font-playfair italic font-medium lowercase leading-[1.15] tracking-[-0.01em] pb-[0.22em] pr-[0.06em] text-[11.5vw] md:text-[9vw] lg:text-[7.5vw] xl:text-[6.8rem]'
-                    : 'font-satoshi font-black leading-[0.95] tracking-tight text-white text-[10vw] md:text-[8.2vw] lg:text-[6.8vw] xl:text-[6rem]'
-                }`}
+                ref={el => { wordRefs.current[HEAD.plain.length] = el; }}
+                className="block text-gradient font-playfair italic font-medium normal-case leading-[1.12] tracking-[-0.01em] pr-[0.06em] text-[10vw] md:text-[min(8vw,6.6rem)]"
               >
-                {word}
+                {HEAD.accent}
               </span>
             </div>
-          ))}
+          )}
         </div>
 
         <p ref={subRef} className="mt-8 max-w-xl font-jakarta font-medium text-lg md:text-xl text-white/30 leading-relaxed">
