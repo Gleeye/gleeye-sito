@@ -92,7 +92,7 @@ export default function MissionVision() {
 
       {/* ------- atto I: la missione ------- */}
       <div className="relative px-5 py-20 md:px-10 md:py-40">
-        <p className="voice-mono mb-8 text-black/40">Atto I — La missione</p>
+        <p className="voice-mono mb-8 text-black/40">La missione</p>
         <h2 className="mv-act-title voice-display max-w-5xl text-4xl leading-[1.02] md:text-7xl">
           Ridurre l&apos;attrito tra ciò che <span style={accentGrad}>vali</span> e ciò che si <span style={accentGrad}>vede</span>.
         </h2>
@@ -108,7 +108,7 @@ export default function MissionVision() {
 
       {/* ------- atto II: la visione ------- */}
       <div className="relative px-5 py-20 pb-32 md:px-10 md:py-40">
-        <p className="voice-mono mb-8 text-black/40">Atto II — La visione</p>
+        <p className="voice-mono mb-8 text-black/40">La visione</p>
         <h2 className="mv-act-title voice-display max-w-5xl text-4xl leading-[1.02] md:ml-[18%] md:text-7xl">
           Un mercato dove la forma non tradisce più il <span style={accentGrad}>valore</span>.
         </h2>
