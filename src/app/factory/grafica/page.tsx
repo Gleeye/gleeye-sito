@@ -4,10 +4,10 @@ import HeroSection from '@/components/factory/grafica/HeroSection';
 import MarqueeSection from '@/components/factory/grafica/MarqueeSection';
 import PositioningSection from '@/components/factory/grafica/PositioningSection';
 import ServicesSection from '@/components/factory/grafica/ServicesSection';
-import StatsSection from '@/components/factory/grafica/StatsSection';
 import ProcessSection from '@/components/factory/grafica/ProcessSection';
 import ForWhoSection from '@/components/factory/grafica/ForWhoSection';
 import WhySection from '@/components/factory/grafica/WhySection';
+import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/factory/grafica/FaqSection';
 import CtaSection from '@/components/factory/grafica/CtaSection';
 
@@ -25,10 +25,11 @@ export default function GraficaPage() {
         <MarqueeSection />
         <PositioningSection />
         <ServicesSection />
-        <StatsSection />
         <ProcessSection />
-        <ForWhoSection />
-        <WhySection />
+        <DarkBand>
+          <ForWhoSection />
+          <WhySection />
+        </DarkBand>
         <FaqSection />
         <CtaSection />
       </main>

@@ -4,10 +4,10 @@ import HeroSection from '@/components/identity/visual-identity/HeroSection';
 import MarqueeSection from '@/components/identity/visual-identity/MarqueeSection';
 import PositioningSection from '@/components/identity/visual-identity/PositioningSection';
 import ServicesSection from '@/components/identity/visual-identity/ServicesSection';
-import StatsSection from '@/components/identity/visual-identity/StatsSection';
 import ProcessSection from '@/components/identity/visual-identity/ProcessSection';
 import ForWhoSection from '@/components/identity/visual-identity/ForWhoSection';
 import WhySection from '@/components/identity/visual-identity/WhySection';
+import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/identity/visual-identity/FaqSection';
 import CtaSection from '@/components/identity/visual-identity/CtaSection';
 
@@ -25,10 +25,11 @@ export default function VisualIdentityPage() {
         <MarqueeSection />
         <PositioningSection />
         <ServicesSection />
-        <StatsSection />
         <ProcessSection />
-        <ForWhoSection />
-        <WhySection />
+        <DarkBand>
+          <ForWhoSection />
+          <WhySection />
+        </DarkBand>
         <FaqSection />
         <CtaSection />
       </main>

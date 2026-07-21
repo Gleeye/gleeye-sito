@@ -4,12 +4,12 @@ import HeroSection from '@/components/digital/social/HeroSection';
 import MarqueeSection from '@/components/digital/social/MarqueeSection';
 import PositioningSection from '@/components/digital/social/PositioningSection';
 import ServicesSection from '@/components/digital/social/ServicesSection';
-import StatsSection from '@/components/digital/social/StatsSection';
 import ProcessSection from '@/components/digital/social/ProcessSection';
 import ForWhoSection from '@/components/digital/social/ForWhoSection';
 import WhySection from '@/components/digital/social/WhySection';
 import FaqSection from '@/components/digital/social/FaqSection';
 import CtaSection from '@/components/digital/social/CtaSection';
+import DarkBand from '@/components/subpage/DarkBand';
 
 export const metadata = {
   title: 'Social Media — Gleeye Digital',
@@ -25,10 +25,11 @@ export default function SocialPage() {
         <MarqueeSection />
         <PositioningSection />
         <ServicesSection />
-        <StatsSection />
         <ProcessSection />
-        <ForWhoSection />
-        <WhySection />
+        <DarkBand>
+          <ForWhoSection />
+          <WhySection />
+        </DarkBand>
         <FaqSection />
         <CtaSection />
       </main>

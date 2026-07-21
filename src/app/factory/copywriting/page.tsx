@@ -4,10 +4,10 @@ import HeroSection from '@/components/factory/copywriting/HeroSection';
 import MarqueeSection from '@/components/factory/copywriting/MarqueeSection';
 import PositioningSection from '@/components/factory/copywriting/PositioningSection';
 import ServicesSection from '@/components/factory/copywriting/ServicesSection';
-import StatsSection from '@/components/factory/copywriting/StatsSection';
 import ProcessSection from '@/components/factory/copywriting/ProcessSection';
 import ForWhoSection from '@/components/factory/copywriting/ForWhoSection';
 import WhySection from '@/components/factory/copywriting/WhySection';
+import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/factory/copywriting/FaqSection';
 import CtaSection from '@/components/factory/copywriting/CtaSection';
 
@@ -25,10 +25,11 @@ export default function CopywritingPage() {
         <MarqueeSection />
         <PositioningSection />
         <ServicesSection />
-        <StatsSection />
         <ProcessSection />
-        <ForWhoSection />
-        <WhySection />
+        <DarkBand>
+          <ForWhoSection />
+          <WhySection />
+        </DarkBand>
         <FaqSection />
         <CtaSection />
       </main>

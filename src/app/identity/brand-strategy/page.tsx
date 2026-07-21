@@ -1,6 +1,15 @@
-import Header from '@/components/v2/Header';
-import Footer from '@/components/v2/Footer';
-import BrandStrategy from '@/components/v2/identity/BrandStrategy';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import HeroSection from '@/components/identity/brand-strategy/HeroSection';
+import MarqueeSection from '@/components/identity/brand-strategy/MarqueeSection';
+import PositioningSection from '@/components/identity/brand-strategy/PositioningSection';
+import ServicesSection from '@/components/identity/brand-strategy/ServicesSection';
+import ProcessSection from '@/components/identity/brand-strategy/ProcessSection';
+import ForWhoSection from '@/components/identity/brand-strategy/ForWhoSection';
+import WhySection from '@/components/identity/brand-strategy/WhySection';
+import DarkBand from '@/components/subpage/DarkBand';
+import FaqSection from '@/components/identity/brand-strategy/FaqSection';
+import CtaSection from '@/components/identity/brand-strategy/CtaSection';
 
 export const metadata = {
   title: 'Brand Strategy — Gleeye Identity',
@@ -13,7 +22,17 @@ export default function BrandStrategyPage() {
     <>
       <Header />
       <main>
-        <BrandStrategy />
+        <HeroSection />
+        <MarqueeSection />
+        <PositioningSection />
+        <ServicesSection />
+        <ProcessSection />
+        <DarkBand>
+          <ForWhoSection />
+          <WhySection />
+        </DarkBand>
+        <FaqSection />
+        <CtaSection />
       </main>
       <Footer />
     </>

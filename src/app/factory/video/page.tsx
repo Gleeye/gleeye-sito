@@ -4,10 +4,10 @@ import HeroSection from '@/components/factory/video/HeroSection';
 import MarqueeSection from '@/components/factory/video/MarqueeSection';
 import PositioningSection from '@/components/factory/video/PositioningSection';
 import ServicesSection from '@/components/factory/video/ServicesSection';
-import StatsSection from '@/components/factory/video/StatsSection';
 import ProcessSection from '@/components/factory/video/ProcessSection';
 import ForWhoSection from '@/components/factory/video/ForWhoSection';
 import WhySection from '@/components/factory/video/WhySection';
+import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/factory/video/FaqSection';
 import CtaSection from '@/components/factory/video/CtaSection';
 
@@ -25,10 +25,11 @@ export default function VideoPage() {
         <MarqueeSection />
         <PositioningSection />
         <ServicesSection />
-        <StatsSection />
         <ProcessSection />
-        <ForWhoSection />
-        <WhySection />
+        <DarkBand>
+          <ForWhoSection />
+          <WhySection />
+        </DarkBand>
         <FaqSection />
         <CtaSection />
       </main>

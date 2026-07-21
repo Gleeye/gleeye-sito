@@ -4,10 +4,10 @@ import HeroSection from '@/components/digital/web/HeroSection';
 import MarqueeSection from '@/components/digital/web/MarqueeSection';
 import PositioningSection from '@/components/digital/web/PositioningSection';
 import ServicesSection from '@/components/digital/web/ServicesSection';
-import StatsSection from '@/components/digital/web/StatsSection';
 import ProcessSection from '@/components/digital/web/ProcessSection';
 import ForWhoSection from '@/components/digital/web/ForWhoSection';
 import WhySection from '@/components/digital/web/WhySection';
+import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/digital/web/FaqSection';
 import CtaSection from '@/components/digital/web/CtaSection';
 
@@ -25,10 +25,11 @@ export default function WebPage() {
         <MarqueeSection />
         <PositioningSection />
         <ServicesSection />
-        <StatsSection />
         <ProcessSection />
-        <ForWhoSection />
-        <WhySection />
+        <DarkBand>
+          <ForWhoSection />
+          <WhySection />
+        </DarkBand>
         <FaqSection />
         <CtaSection />
       </main>

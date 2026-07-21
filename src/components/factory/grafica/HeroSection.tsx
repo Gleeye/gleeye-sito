@@ -68,7 +68,7 @@ export default function GraficaHeroSection() {
       {/* Badge */}
       <div ref={badgeRef} className="relative z-10 flex justify-center">
         <span className="inline-block text-[10px] md:text-xs font-bold uppercase tracking-[0.25em] text-white/35 font-satoshi border border-white/10 px-4 py-2 rounded-full">
-          Gleeye Factory — Graphic Design
+          Factory / Grafica
         </span>
       </div>
 

@@ -4,10 +4,10 @@ import HeroSection from '@/components/identity/brand-guidelines/HeroSection';
 import MarqueeSection from '@/components/identity/brand-guidelines/MarqueeSection';
 import PositioningSection from '@/components/identity/brand-guidelines/PositioningSection';
 import ServicesSection from '@/components/identity/brand-guidelines/ServicesSection';
-import StatsSection from '@/components/identity/brand-guidelines/StatsSection';
 import ProcessSection from '@/components/identity/brand-guidelines/ProcessSection';
 import ForWhoSection from '@/components/identity/brand-guidelines/ForWhoSection';
 import WhySection from '@/components/identity/brand-guidelines/WhySection';
+import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/identity/brand-guidelines/FaqSection';
 import CtaSection from '@/components/identity/brand-guidelines/CtaSection';
 
@@ -25,10 +25,11 @@ export default function BrandGuidelinesPage() {
         <MarqueeSection />
         <PositioningSection />
         <ServicesSection />
-        <StatsSection />
         <ProcessSection />
-        <ForWhoSection />
-        <WhySection />
+        <DarkBand>
+          <ForWhoSection />
+          <WhySection />
+        </DarkBand>
         <FaqSection />
         <CtaSection />
       </main>

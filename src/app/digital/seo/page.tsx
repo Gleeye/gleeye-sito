@@ -4,12 +4,12 @@ import HeroSection from '@/components/digital/seo/HeroSection';
 import MarqueeSection from '@/components/digital/seo/MarqueeSection';
 import PositioningSection from '@/components/digital/seo/PositioningSection';
 import ServicesSection from '@/components/digital/seo/ServicesSection';
-import StatsSection from '@/components/digital/seo/StatsSection';
 import ProcessSection from '@/components/digital/seo/ProcessSection';
 import ForWhoSection from '@/components/digital/seo/ForWhoSection';
 import WhySection from '@/components/digital/seo/WhySection';
 import FaqSection from '@/components/digital/seo/FaqSection';
 import CtaSection from '@/components/digital/seo/CtaSection';
+import DarkBand from '@/components/subpage/DarkBand';
 
 export const metadata = {
   title: 'SEO — Gleeye Digital',
@@ -25,10 +25,11 @@ export default function SeoPage() {
         <MarqueeSection />
         <PositioningSection />
         <ServicesSection />
-        <StatsSection />
         <ProcessSection />
-        <ForWhoSection />
-        <WhySection />
+        <DarkBand>
+          <ForWhoSection />
+          <WhySection />
+        </DarkBand>
         <FaqSection />
         <CtaSection />
       </main>
