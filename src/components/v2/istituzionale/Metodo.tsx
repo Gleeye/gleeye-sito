@@ -67,10 +67,38 @@ export default function Metodo() {
 
     let W = window.innerWidth;
     let H = window.innerHeight;
+    let parkY = 0; /* coordinata di pagina dove la linea si ferma (sotto la chiusura) */
+    let rootTop = 0;
+    let parkAlways = false; /* touch: parcheggiata sempre, mai fixed */
     const N = 72;
     /* rumore deterministico: somma di seni, niente Math.random */
     const noise = (i: number) =>
       Math.sin(i * 0.9) * 0.45 + Math.sin(i * 0.37 + 2.1) * 0.35 + Math.sin(i * 2.3 + 4.7) * 0.2;
+
+    const measurePark = () => {
+      const closeH2 = root.querySelector('.mt-close h2');
+      if (!closeH2) return;
+      const sy = window.scrollY;
+      rootTop = root.getBoundingClientRect().top + sy;
+      parkY = closeH2.getBoundingClientRect().bottom + sy + 64;
+    };
+
+    /* La linea segue la viewport (fixed) finché il punto di parcheggio non la
+       raggiunge: da lì si aggancia alla pagina e resta sotto la scritta. */
+    const setMode = () => {
+      const lineY = H * 0.78;
+      if (parkAlways || window.scrollY + lineY >= parkY) {
+        svg.style.position = 'absolute';
+        svg.style.top = `${parkY - rootTop - lineY}px`;
+        svg.style.bottom = 'auto';
+        svg.style.height = `${H}px`;
+      } else {
+        svg.style.position = 'fixed';
+        svg.style.top = '0px';
+        svg.style.bottom = '0px';
+        svg.style.height = '';
+      }
+    };
 
     const draw = (p: number) => {
       progressRef.current = p;
@@ -82,25 +110,32 @@ export default function Metodo() {
         d += ` L ${x.toFixed(1)} ${(base + noise(i) * amp).toFixed(1)}`;
       }
       path.setAttribute('d', d);
-      /* la linea è fixed: resta in scena fino al payoff, sfuma solo
-         sull'ultimissimo tratto prima del footer */
-      svg.style.opacity = p > 0.975 ? String(Math.max(0, (1 - p) / 0.025)) : '1';
+      setMode();
     };
 
     const onResize = () => {
       W = window.innerWidth;
       H = window.innerHeight;
+      measurePark();
       draw(progressRef.current);
     };
     window.addEventListener('resize', onResize);
+    measurePark();
+    /* rimisura quando i font sono pronti: la posizione della chiusura si assesta */
+    const remeasure = window.setTimeout(() => {
+      measurePark();
+      draw(progressRef.current);
+    }, 700);
 
     const ctx = gsap.context(() => {
       /* entrata hero: sempre */
       gsap.from('.mt-hero-line', { yPercent: 110, duration: 1.2, stagger: 0.1, ease: 'power4.out', delay: 0.15 });
       gsap.from('.mt-hero-sub', { opacity: 0, y: 20, duration: 0.9, ease: 'power3.out', delay: 0.7 });
 
-      /* Su touch: niente scrub — la linea è già retta, i contenuti visibili. */
+      /* Su touch: niente scrub — la linea è già retta e parcheggiata sotto
+         la chiusura (niente fixed: senza onUpdate resterebbe sul footer). */
       if (isTouchDevice()) {
+        parkAlways = true;
         draw(1);
         return;
       }
@@ -153,6 +188,7 @@ export default function Metodo() {
     return () => {
       ctx.revert();
       window.removeEventListener('resize', onResize);
+      window.clearTimeout(remeasure);
     };
   }, []);
 
