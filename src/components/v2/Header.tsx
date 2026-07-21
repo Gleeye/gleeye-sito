@@ -52,11 +52,12 @@ const AREAS = [
     pages: [
       { label: 'Video', href: '/factory/video' },
       { label: 'Fotografia', href: '/factory/fotografia' },
+      { label: 'Podcast', href: '/factory/podcast' },
       { label: 'Copywriting', href: '/factory/copywriting' },
       { label: 'Grafica', href: '/factory/grafica' },
     ],
     landings: [
-      { label: 'Podcast', href: '/podcast' },
+      { label: 'Podcast da Remoto Essential', href: '/podcast' },
       { label: 'Video Explainer', href: '/video-explainer' },
     ],
   },

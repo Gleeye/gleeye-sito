@@ -91,6 +91,7 @@ const ROUTES = new Set([
   '/factory/copywriting',
   '/factory/fotografia',
   '/factory/grafica',
+  '/factory/podcast',
   '/factory/video',
   '/identity',
   '/identity/brand-guidelines',
