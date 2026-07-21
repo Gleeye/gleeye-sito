@@ -326,3 +326,23 @@ h1, h2, h3, h4, h5, h6 {
     transition: none;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* MOBILE GPU DIET — su dispositivi touch le decorazioni più costose   */
+/* vengono spente: il grain (filtro SVG feTurbulence) e gli orb        */
+/* sfocati con blur enormi (100-160px) causano jank pesante su iPhone: */
+/* sezioni che compaiono in ritardo, tap lenti, scroll che scatta.     */
+/* Sono decorazioni pure: nasconderle non toglie contenuto.            */
+/* ------------------------------------------------------------------ */
+@media (pointer: coarse) {
+  .grain,
+  .grain::after,
+  .blueprint,
+  .blueprint-ink {
+    display: none !important;
+  }
+  /* orb decorativi: div rotondi con blur arbitrario, sempre decorativi */
+  div[class*="rounded-full"][class*="blur-["] {
+    display: none !important;
+  }
+}
