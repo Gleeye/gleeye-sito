@@ -66,7 +66,7 @@ export default function AreaHero({ area }: { area: AreaConfig }) {
           <span className="block overflow-hidden">
             {/* w-fit: il gradiente si estende sulla larghezza del testo, non del
                 blocco — altrimenti un claim corto cattura solo il blu iniziale */}
-            <span className="ah-line-inner text-gradient block w-fit pr-[0.08em] font-playfair italic font-medium normal-case tracking-[-0.01em] text-[10vw] leading-[1.02] md:text-[min(8vw,6.6rem)]">
+            <span className="ah-line-inner text-gradient block w-fit pb-[0.18em] pr-[0.08em] font-playfair italic font-medium normal-case leading-[1.12] tracking-[-0.01em] text-[10vw] md:text-[min(8vw,6.6rem)]">
               {area.claim.serif}
             </span>
           </span>

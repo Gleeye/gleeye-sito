@@ -74,10 +74,10 @@ export default function AdvHeroSection() {
             <div key={word} className="overflow-hidden pb-[0.12em]">
               <span
                 ref={el => { wordRefs.current[i] = el; }}
-                className={`block leading-[0.95] ${
+                className={`block ${
                   i === WORDS.length - 1
-                    ? 'text-gradient font-playfair italic font-medium lowercase tracking-[-0.01em] pr-[0.06em] text-[11.5vw] md:text-[9vw] lg:text-[7.5vw] xl:text-[6.8rem]'
-                    : 'font-satoshi font-black tracking-tight text-white text-[10vw] md:text-[8.2vw] lg:text-[6.8vw] xl:text-[6rem]'
+                    ? 'text-gradient font-playfair italic font-medium lowercase leading-[1.15] tracking-[-0.01em] pb-[0.22em] pr-[0.06em] text-[11.5vw] md:text-[9vw] lg:text-[7.5vw] xl:text-[6.8rem]'
+                    : 'font-satoshi font-black leading-[0.95] tracking-tight text-white text-[10vw] md:text-[8.2vw] lg:text-[6.8vw] xl:text-[6rem]'
                 }`}
               >
                 {word}
