@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import Image from 'next/image';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -70,17 +71,18 @@ export default function GallerySection({ data }: { data: GalleryData }) {
           </h2>
         </div>
 
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-6 sm:grid-cols-2 md:px-16 lg:max-w-none lg:grid-cols-4 lg:gap-6 lg:px-8">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-6 md:gap-5 md:px-16 lg:max-w-none lg:grid-cols-4 lg:gap-6 lg:px-8">
           {data.items.map((it) => (
             <article
               key={it.label}
               className="sub-gal-card group relative aspect-[2/3] overflow-hidden rounded-[1.25rem] bg-black/[0.03] shadow-[0_20px_50px_-25px_rgba(10,10,16,0.4)] ring-1 ring-black/[0.06] will-change-transform lg:aspect-[3/5]"
             >
-              <img
+              <Image
                 src={it.img}
                 alt={it.label}
-                loading="lazy"
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.06]"
+                fill
+                sizes="(min-width: 1024px) 25vw, 50vw"
+                className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.06]"
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
