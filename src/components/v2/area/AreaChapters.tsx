@@ -12,6 +12,7 @@ import {
   Circle, type LucideIcon,
 } from 'lucide-react';
 import type { AreaConfig } from './data';
+import { isTouchDevice } from '@/lib/isTouch';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -34,6 +35,9 @@ export default function AreaChapters({ area }: { area: AreaConfig }) {
   const [open, setOpen] = useState(0);
 
   useEffect(() => {
+    // Su touch niente reveal/pin: contenuto sempre visibile, scroll nativo.
+    // (su iOS i trigger post-navigazione misurano male e lasciano tutto invisibile)
+    if (isTouchDevice()) return;
     const root = rootRef.current;
     if (!root) return;
     const ctx = gsap.context(() => {

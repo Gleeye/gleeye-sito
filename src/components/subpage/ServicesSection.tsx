@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { LucideIcon } from 'lucide-react';
+import { isTouchDevice } from '@/lib/isTouch';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -22,6 +23,9 @@ export default function ServicesSection({ services }: { services: ServiceItem[] 
   const [active, setActive] = useState(-1);
 
   useEffect(() => {
+    // Su touch niente reveal/pin: contenuto sempre visibile, scroll nativo.
+    // (su iOS i trigger post-navigazione misurano male e lasciano tutto invisibile)
+    if (isTouchDevice()) return;
     const ctx = gsap.context(() => {
       gsap.from('.sub-svc-header > *', {
         opacity: 0, y: 20, duration: 0.9, stagger: 0.1, ease: 'power3.out',
