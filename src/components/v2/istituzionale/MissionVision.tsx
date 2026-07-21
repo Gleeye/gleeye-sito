@@ -73,15 +73,15 @@ export default function MissionVision() {
           <span className="block overflow-hidden py-[0.04em]">
             <span className="mv-hero-line voice-display block text-[13vw] leading-[0.9] md:text-[9vw]">Dove siamo</span>
           </span>
-          <span className="block overflow-hidden py-[0.04em]">
-            <span className="mv-hero-line voice-display block text-[13vw] leading-[0.9] md:text-[9vw]">diretti,</span>
-          </span>
-          <span className="block overflow-hidden py-[0.06em]">
-            <span
-              className="mv-hero-line block font-playfair text-[15vw] font-medium normal-case italic leading-[1.08] pb-[0.16em] md:text-[10vw]"
-              style={accentGrad}
-            >
-              e perché.
+          <span className="block overflow-hidden py-[0.08em]">
+            <span className="mv-hero-line voice-display block text-[13vw] leading-[1.02] md:text-[9vw]">
+              diretti,{' '}
+              <span
+                className="inline-block align-baseline font-playfair font-medium normal-case italic leading-none pb-[0.12em] -mb-[0.1em]"
+                style={accentGrad}
+              >
+                e perché.
+              </span>
             </span>
           </span>
         </h1>
@@ -112,7 +112,7 @@ export default function MissionVision() {
         <h2 className="mv-act-title voice-display max-w-5xl text-4xl leading-[1.02] md:ml-[18%] md:text-7xl">
           Un mercato dove la forma non tradisce più il <span style={accentGrad}>valore</span>.
         </h2>
-        <p className="mv-body mt-14 max-w-2xl font-satoshi text-xl font-black leading-snug tracking-tight md:text-3xl">
+        <p className="mv-body mt-14 max-w-2xl font-satoshi text-xl font-black leading-snug tracking-tight md:ml-[18%] md:text-3xl">
           {visionBody.split(' ').map((w, i) => (
             <span key={i} className="mv-word inline-block" style={{ marginRight: '0.28em' }}>{w}</span>
           ))}
