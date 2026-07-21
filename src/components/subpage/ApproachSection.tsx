@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Play } from 'lucide-react';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -158,34 +157,14 @@ export default function ApproachSection({ data }: { data: ApproachData }) {
       <div className="mx-auto max-w-7xl">
         {eyebrow}
 
-        <div className="grid grid-cols-1 items-start gap-14 md:grid-cols-[1fr_300px] md:gap-16 lg:grid-cols-[1fr_340px] lg:gap-20">
-          <div className="order-2 md:order-1">
-            {statement}
-            <div className="mt-12 grid grid-cols-1 gap-10 border-t border-black/10 pt-8 md:grid-cols-2 md:gap-14">
-              <p className="sub-pos-body font-jakarta text-base font-medium leading-relaxed text-black/50 md:text-lg">
-                {data.body[0]}
-              </p>
-              <p className="sub-pos-body font-jakarta text-base font-medium leading-relaxed text-black/50 md:text-lg">
-                {data.body[1]}
-              </p>
-            </div>
-          </div>
-
-          <div className="sub-pos-media order-1 mx-auto w-full max-w-[300px] md:order-2 md:-mt-2 lg:max-w-[340px]">
-            <div className="relative aspect-[9/16] overflow-hidden rounded-[1.5rem] bg-[#0a0a10] shadow-[0_20px_50px_-20px_rgba(10,10,16,0.4)]">
-              <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#4e92d8]/25 blur-[70px]" />
-              <div className="pointer-events-none absolute -bottom-12 -left-12 h-40 w-40 rounded-full bg-[#614aa2]/25 blur-[70px]" />
-              <div className="grain pointer-events-none absolute inset-0" />
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-                <span className="flex h-14 w-14 items-center justify-center rounded-full border border-white/20 bg-white/5 backdrop-blur">
-                  <Play className="h-5 w-5 translate-x-[1px] text-white/80" fill="currentColor" />
-                </span>
-                <span className="font-satoshi text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
-                  Reel · presto
-                </span>
-              </div>
-            </div>
-          </div>
+        {statement}
+        <div className="mt-12 grid grid-cols-1 gap-10 border-t border-black/10 pt-8 md:grid-cols-2 md:gap-14">
+          <p className="sub-pos-body font-jakarta text-base font-medium leading-relaxed text-black/50 md:text-lg">
+            {data.body[0]}
+          </p>
+          <p className="sub-pos-body font-jakarta text-base font-medium leading-relaxed text-black/50 md:text-lg">
+            {data.body[1]}
+          </p>
         </div>
       </div>
     </section>
