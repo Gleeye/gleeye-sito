@@ -149,7 +149,7 @@ export default function Manifesto() {
             </span>
           </span>
           <span className="block overflow-hidden pt-[0.03em] pb-[0.18em]">
-            <span className="mf-hero-line text-gradient block font-playfair italic font-medium normal-case leading-[0.95] tracking-[-0.01em] pb-[0.16em] pr-[0.05em] text-[15vw] md:text-[11vw]">eye.</span>
+            <span className="mf-hero-line text-gradient block w-fit font-playfair italic font-medium normal-case leading-[0.95] tracking-[-0.01em] pb-[0.16em] pr-[0.05em] text-[15vw] md:text-[11vw]">eye.</span>
           </span>
         </h1>
         <p className="mf-hero-line mt-10 max-w-xl font-jakarta text-lg font-medium leading-relaxed text-white/55 md:text-xl">
@@ -176,8 +176,13 @@ export default function Manifesto() {
                   className={`mfp-line block text-[6.5vw] md:text-[clamp(2.6rem,7.5vw,7rem)] ${
                     l.style === 'gradient'
                       ? /* corsivo gradiente del sito; pb sulla span = il box del
-                           gradiente copre i discendenti (g di guarda, q di boutique) */
-                        'text-gradient font-playfair italic font-medium normal-case leading-[1.02] tracking-[-0.01em] pb-[0.2em] pr-[0.05em]'
+                           gradiente copre i discendenti (g di guarda, q di boutique).
+                           w-fit: il gradiente si stende sul testo, non sul blocco —
+                           sennò le righe corte pescano solo il blu iniziale e i
+                           corsivi sembrano avere gradienti diversi tra loro */
+                        `text-gradient w-fit font-playfair italic font-medium normal-case leading-[1.02] tracking-[-0.01em] pb-[0.2em] pr-[0.05em] ${
+                          s.align === 'right' ? 'ml-auto' : s.align === 'center' ? 'mx-auto' : ''
+                        }`
                       : 'voice-display leading-[0.92]'
                   }`}
                   style={styleFor(l.style)}
