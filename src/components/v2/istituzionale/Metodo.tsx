@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { isTouchDevice } from '@/lib/isTouch';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -197,6 +198,19 @@ export default function Metodo() {
     raf = requestAnimationFrame(draw);
 
     const ctx = gsap.context(() => {
+      /* Su touch: niente pin (su iOS il pin dell'hero blocca/desincronizza lo
+         scroll) e niente scrub (lascerebbe fasi e riga finale invisibili). Il
+         caos→ordine del canvas parte da solo al load, senza scroll. */
+      if (isTouchDevice()) {
+        gsap.set('.mt-hero-out', { opacity: 1, y: 0 });
+        gsap.set('.mt-fase-reveal', { opacity: 1, y: 0 });
+        gsap.set('.metodo-viz-draw', { strokeDashoffset: 0 });
+        gsap.set('.mt-thread', { scaleY: 1 });
+        gsap.from('.mt-hero-line', { yPercent: 110, duration: 1.1, stagger: 0.1, ease: 'power4.out', delay: 0.15 });
+        gsap.to(orderRef.current, { value: 1, duration: 2.4, ease: 'power2.inOut', delay: 0.4 });
+        return;
+      }
+
       gsap.from('.mt-hero-line', {
         yPercent: 110, duration: 1.3, stagger: 0.1, ease: 'power4.out', delay: 0.2,
       });
@@ -286,7 +300,7 @@ export default function Metodo() {
           const Viz = VIZ[f.viz as keyof typeof VIZ];
           const invert = i % 2 === 1;
           return (
-            <div key={f.nome} className="mt-fase relative grid min-h-[80vh] grid-cols-1 items-center gap-10 px-5 py-20 md:grid-cols-2 md:gap-0 md:px-10">
+            <div key={f.nome} className="mt-fase relative grid min-h-[62vh] grid-cols-1 items-center gap-10 px-5 py-16 md:min-h-[80vh] md:py-20 md:grid-cols-2 md:gap-0 md:px-10">
               {/* viz */}
               <div className={`mt-fase-reveal relative mx-auto h-56 w-56 md:h-80 md:w-80 ${invert ? 'md:order-2' : ''}`}>
                 <div className="absolute inset-0 scale-125 rounded-full blur-3xl" style={{ background: `radial-gradient(closest-side, ${f.accent}22, transparent)` }} />
