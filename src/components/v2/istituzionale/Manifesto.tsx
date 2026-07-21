@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { isTouchDevice } from '@/lib/isTouch';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -81,6 +82,17 @@ export default function Manifesto() {
     if (!root) return;
 
     const ctx = gsap.context(() => {
+      /* Su touch: niente scrub (su iOS post-navigazione lascerebbero le righe
+         a yPercent 110 — spinte fuori dal wrapper overflow-hidden, invisibili —
+         e le note a opacity 0). Portiamo tutto allo stato finale. */
+      if (isTouchDevice()) {
+        gsap.set('.mfp-line', { yPercent: 0 });
+        gsap.set('.mfp-statement', { rotate: 0, scale: 1 });
+        gsap.set('.mfp-note', { opacity: 1, y: 0 });
+        gsap.from('.mf-hero-line', { yPercent: 110, duration: 1.1, stagger: 0.1, ease: 'power4.out', delay: 0.15 });
+        return;
+      }
+
       gsap.from('.mf-hero-line', {
         yPercent: 110, duration: 1.3, stagger: 0.1, ease: 'power4.out', delay: 0.2,
       });
@@ -149,7 +161,7 @@ export default function Manifesto() {
       {STATEMENTS.map((s, i) => (
         <div
           key={i}
-          className={`mfp-statement relative flex min-h-[85vh] flex-col justify-center px-5 py-20 md:px-10 ${
+          className={`mfp-statement relative flex min-h-[60vh] flex-col justify-center px-5 py-16 md:min-h-[85vh] md:py-20 md:px-10 ${
             s.align === 'right' ? 'items-end text-right' : s.align === 'center' ? 'items-center text-center' : 'items-start'
           }`}
           data-tilt={s.tilt}
@@ -158,8 +170,8 @@ export default function Manifesto() {
             {s.lines.map((l, j) => (
               <span key={j} className="block overflow-hidden py-[0.03em]">
                 <span
-                  className={`mfp-line voice-display block leading-[0.92] ${l.style === 'gradient' ? 'text-gradient-flow' : ''}`}
-                  style={{ fontSize: 'clamp(2.6rem, 7.5vw, 7rem)', ...styleFor(l.style) }}
+                  className={`mfp-line voice-display block leading-[0.92] text-[6.5vw] md:text-[clamp(2.6rem,7.5vw,7rem)] ${l.style === 'gradient' ? 'text-gradient-flow' : ''}`}
+                  style={styleFor(l.style)}
                 >
                   {l.t}
                 </span>
