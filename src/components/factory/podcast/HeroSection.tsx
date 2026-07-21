@@ -86,10 +86,10 @@ export default function PodcastHeroSection() {
             );
           })}
           {!HEAD.inline && (
-            <div className="overflow-hidden pb-[0.34em]">
+            <div className={`overflow-hidden pb-[0.34em] leading-[0] ${ACCENT_SIZE[HEAD.size as keyof typeof ACCENT_SIZE]}`}>
               <span
                 ref={el => { wordRefs.current[HEAD.plain.length] = el; }}
-                className={`block text-gradient font-playfair italic font-medium normal-case leading-[1.12] tracking-[-0.01em] pr-[0.06em] ${ACCENT_SIZE[HEAD.size as keyof typeof ACCENT_SIZE]}`}
+                className="block text-gradient font-playfair italic font-medium normal-case leading-[1.12] tracking-[-0.01em] pr-[0.06em]"
               >
                 {HEAD.accent}
               </span>
