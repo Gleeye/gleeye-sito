@@ -36,6 +36,18 @@ export type ContentBlockQuote = {
   type: 'quote';
   data: { text: string; author?: string };
 };
+export type ContentBlockShowcase = {
+  type: 'showcase';
+  data: { heading?: string; body: string; images: string[]; side?: 'left' | 'right'; light?: boolean };
+};
+export type ContentBlockEditorial = {
+  type: 'editorial';
+  data: { heading?: string; body: string; image: string; alt?: string; side?: 'left' | 'right' };
+};
+export type ContentBlockVideoCarousel = {
+  type: 'video_carousel';
+  data: { heading?: string; body?: string; label?: string; items: { youtube_id?: string; vimeo_id?: string; caption?: string }[] };
+};
 
 export type ContentBlock =
   | ContentBlockVideo
@@ -45,7 +57,10 @@ export type ContentBlock =
   | ContentBlockText
   | ContentBlockSplitTextPhoto
   | ContentBlockSplitPhotoText
-  | ContentBlockQuote;
+  | ContentBlockQuote
+  | ContentBlockShowcase
+  | ContentBlockEditorial
+  | ContentBlockVideoCarousel;
 
 export type CaseStudy = {
   id: string;

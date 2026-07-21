@@ -17,9 +17,16 @@
  * collocazione è una scelta di design ancora aperta.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { MessageCircle, X, Mail, Calendar, Phone } from "lucide-react";
 import NativeForm from "@/components/form/NativeForm";
+
+// Canali diretti Gleeye (sempre presenti nel ventaglio).
+const WHATSAPP_URL = "https://wa.me/393351624363";
+const PHONE_TEL = "tel:+393351624363";
+const EMAIL_MAILTO = "mailto:info@gleeye.eu";
+const WHATSAPP_GREEN = "#25D366";
 
 type Widgets = {
   route: string;
@@ -41,6 +48,9 @@ export default function PageWidgetOverlay() {
   const [open, setOpen] = useState<null | "form" | "booking">(null);
   // Modulo protetto (reCAPTCHA): il renderer nativo rimanda all'embed ERP.
   const [formFallback, setFormFallback] = useState(false);
+  // Ventaglio dei canali (trigger collassato/aperto).
+  const [fanOpen, setFanOpen] = useState(false);
+  const fabRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!ERP_URL || !ERP_KEY) return;
@@ -93,6 +103,28 @@ export default function PageWidgetOverlay() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
+  // Ventaglio: chiudi cliccando fuori, o con ESC.
+  useEffect(() => {
+    if (!fanOpen) return;
+    const onDown = (e: PointerEvent) => {
+      if (!fabRef.current?.contains(e.target as Node)) setFanOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setFanOpen(false);
+    };
+    document.addEventListener("pointerdown", onDown);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [fanOpen]);
+
+  // Quando si apre un modal (form/prenota), richiudi il ventaglio.
+  useEffect(() => {
+    if (open) setFanOpen(false);
+  }, [open]);
+
   // ── Aggancio dei CTA editoriali DENTRO la pagina ──────────────────────────
   // I pulsanti di contatto del sito ("Parliamone / Scrivici / Contattaci" →
   // /contatti, oppure "Scrivici una mail" / l'indirizzo → mailto:info@gleeye.eu)
@@ -142,67 +174,161 @@ export default function PageWidgetOverlay() {
   }, [w?.contact_form_id, w?.booking_item_id]);
 
   // Apertura programmatica: qualsiasi elemento può fare
-  // window.dispatchEvent(new Event("gleeye:open-contact-form")) per il modulo di
-  // contatto, oppure "gleeye:open-booking" per la prenotazione. Usato dai CTA
-  // del footer, che vive fuori da <main> e non viene intercettato dai click.
+  // window.dispatchEvent(new Event("gleeye:open-contact-form")).
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const openForm = () => {
+    const opener = () => {
       if (!w?.contact_form_id) return;
       setFormFallback(false);
       setOpen("form");
     };
-    const openBooking = () => {
-      if (!w?.booking_item_id) return;
-      setOpen("booking");
-    };
-    window.addEventListener("gleeye:open-contact-form", openForm);
-    window.addEventListener("gleeye:open-booking", openBooking);
-    return () => {
-      window.removeEventListener("gleeye:open-contact-form", openForm);
-      window.removeEventListener("gleeye:open-booking", openBooking);
-    };
-  }, [w?.contact_form_id, w?.booking_item_id]);
-
-  if (!w) return null;
+    window.addEventListener("gleeye:open-contact-form", opener);
+    return () => window.removeEventListener("gleeye:open-contact-form", opener);
+  }, [w?.contact_form_id]);
 
   // Sorgente iframe: usata per la prenotazione, e come FALLBACK del form protetto.
   const iframeSrc =
     open === "booking"
       ? `${ERP_APP}/prenota?embed=true`
-      : open === "form" && formFallback && w.contact_form_id
+      : open === "form" && formFallback && w?.contact_form_id
         ? `${ERP_APP}/form/${w.contact_form_id}?embed=true`
         : null;
 
-  const showNativeForm = open === "form" && !formFallback && !!w.contact_form_id;
+  const showNativeForm = open === "form" && !formFallback && !!w?.contact_form_id;
+
+  // ── Voci del ventaglio ────────────────────────────────────────────────────
+  // 1-2 (Scrivici / Prenota) solo se assegnate dall'ERP; 3-5 (canali diretti)
+  // sempre presenti. Ordine: dall'alto verso il FAB.
+  const items: FanItem[] = [];
+  if (w?.contact_form_id)
+    items.push({
+      key: "form",
+      label: w.contact_button_label || "Scrivici",
+      icon: <MessageCircle size={20} strokeWidth={2} />,
+      iconColor: "#4e92d8",
+      onClick: () => setOpen("form"),
+    });
+  if (w?.booking_item_id)
+    items.push({
+      key: "booking",
+      label: w.booking_button_label || "Prenota",
+      icon: <Calendar size={19} strokeWidth={2} />,
+      iconColor: "#614aa2",
+      onClick: () => setOpen("booking"),
+    });
+  items.push({
+    key: "whatsapp",
+    label: "WhatsApp",
+    icon: <WhatsAppIcon />,
+    iconColor: "#fff",
+    bg: WHATSAPP_GREEN,
+    href: WHATSAPP_URL,
+    target: "_blank",
+  });
+  items.push({
+    key: "phone",
+    label: "Chiamaci",
+    icon: <Phone size={18} strokeWidth={2} />,
+    iconColor: "#614aa2",
+    href: PHONE_TEL,
+  });
+  items.push({
+    key: "email",
+    label: "Email",
+    icon: <Mail size={19} strokeWidth={2} />,
+    iconColor: "#4e92d8",
+    href: EMAIL_MAILTO,
+  });
+
+  const count = items.length;
 
   return (
     <>
-      {/* Pulsanti flottanti (trigger attuale, invariato) */}
+      {/* Trigger: FAB gradiente che si apre a ventaglio verticale */}
+      <FabStyles />
       <div
+        ref={fabRef}
         style={{
           position: "fixed",
-          right: "24px",
-          bottom: "24px",
+          right: "20px",
+          bottom: "20px",
           zIndex: 2147483000,
           display: "flex",
           flexDirection: "column",
-          gap: "10px",
           alignItems: "flex-end",
         }}
       >
-        {w.contact_form_id && (
-          <button onClick={() => setOpen("form")} style={pillStyle("#2563eb")}>
-            <span aria-hidden>✉</span>
-            {w.contact_button_label || "Contattaci"}
-          </button>
-        )}
-        {w.booking_item_id && (
-          <button onClick={() => setOpen("booking")} style={pillStyle("#0f172a")}>
-            <span aria-hidden>📅</span>
-            {w.booking_button_label || "Prenota"}
-          </button>
-        )}
+        {/* Ventaglio (sopra il FAB) */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-end",
+            gap: "12px",
+            marginBottom: "14px",
+          }}
+        >
+          {items.map((it, i) => {
+            // Il tondo più vicino al FAB (ultimo) entra per primo.
+            const delay = fanOpen ? (count - 1 - i) * 45 : 0;
+            const common = {
+              className: `gl-fan-item${fanOpen ? " open" : ""}`,
+              style: { transitionDelay: `${delay}ms` } as React.CSSProperties,
+              tabIndex: fanOpen ? 0 : -1,
+              "aria-hidden": !fanOpen,
+              "aria-label": it.label,
+              title: it.label,
+            };
+            const inner = (
+              <>
+                <span className="gl-fan-label">{it.label}</span>
+                <span
+                  className="gl-fan-dot"
+                  style={{ background: it.bg || "#fff", color: it.iconColor }}
+                >
+                  {it.icon}
+                </span>
+              </>
+            );
+            return it.href ? (
+              <a
+                key={it.key}
+                href={it.href}
+                target={it.target}
+                rel={it.target === "_blank" ? "noopener noreferrer" : undefined}
+                onClick={() => setFanOpen(false)}
+                {...common}
+              >
+                {inner}
+              </a>
+            ) : (
+              <button
+                key={it.key}
+                type="button"
+                onClick={() => {
+                  it.onClick?.();
+                  setFanOpen(false);
+                }}
+                {...common}
+              >
+                {inner}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* FAB */}
+        <button
+          type="button"
+          onClick={() => setFanOpen((v) => !v)}
+          aria-expanded={fanOpen}
+          aria-label={fanOpen ? "Chiudi i contatti" : "Contattaci"}
+          className="gl-fab"
+        >
+          <span className={`gl-fab-icon${fanOpen ? " open" : ""}`}>
+            {fanOpen ? <X size={24} strokeWidth={2.4} /> : <ChatBubbleIcon />}
+          </span>
+        </button>
       </div>
 
       {/* Overlay */}
@@ -231,7 +357,7 @@ export default function PageWidgetOverlay() {
             >
               <CloseButton onClick={close} />
               <NativeForm
-                formId={w.contact_form_id!}
+                formId={w!.contact_form_id!}
                 onDone={close}
                 onProtectedFallback={() => setFormFallback(true)}
               />
@@ -295,19 +421,103 @@ function CloseButton({ onClick }: { onClick: () => void }) {
   );
 }
 
-function pillStyle(bg: string): React.CSSProperties {
-  return {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "8px",
-    padding: "12px 20px",
-    borderRadius: "999px",
-    border: "none",
-    cursor: "pointer",
-    background: bg,
-    color: "#fff",
-    fontWeight: 600,
-    fontSize: "15px",
-    boxShadow: "0 8px 24px rgba(2,6,23,0.28)",
-  };
+type FanItem = {
+  key: string;
+  label: string;
+  icon: React.ReactNode;
+  iconColor: string;
+  bg?: string;
+  onClick?: () => void;
+  href?: string;
+  target?: string;
+};
+
+/** Bolla-chat custom del FAB: bolla morbida con tre puntini "typing" ritagliati. */
+function ChatBubbleIcon() {
+  return (
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M6 3h12a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4h-8l-3 3.2a.8.8 0 0 1-1.35-.62L5.8 17A4 4 0 0 1 2 13V7a4 4 0 0 1 4-4Zm2 8.35a1.35 1.35 0 1 0 0-2.7 1.35 1.35 0 0 0 0 2.7Zm4 0a1.35 1.35 0 1 0 0-2.7 1.35 1.35 0 0 0 0 2.7Zm4 0a1.35 1.35 0 1 0 0-2.7 1.35 1.35 0 0 0 0 2.7Z"
+      />
+    </svg>
+  );
+}
+
+function WhatsAppIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
+  );
+}
+
+/** CSS del trigger: FAB gradiente + ventaglio a stagger. Scoped via prefisso gl-. */
+function FabStyles() {
+  return (
+    <style>{`
+      .gl-fab {
+        width: 58px; height: 58px;
+        display: flex; align-items: center; justify-content: center;
+        border: none; cursor: pointer; padding: 0;
+        border-radius: 50%;
+        color: #fff;
+        background: linear-gradient(135deg, #4e92d8 0%, #614aa2 100%);
+        box-shadow: 0 10px 30px rgba(78,74,140,0.42), 0 2px 8px rgba(10,10,16,0.18);
+        transition: transform .28s cubic-bezier(.34,1.56,.64,1), box-shadow .28s ease;
+      }
+      .gl-fab:hover { transform: scale(1.06); box-shadow: 0 14px 38px rgba(78,74,140,0.5), 0 3px 10px rgba(10,10,16,0.2); }
+      .gl-fab:active { transform: scale(0.96); }
+      .gl-fab:focus-visible { outline: 3px solid rgba(109,181,255,0.7); outline-offset: 3px; }
+      .gl-fab-icon { display: flex; transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
+      .gl-fab-icon.open { transform: rotate(90deg); }
+
+      .gl-fan-item {
+        display: inline-flex; align-items: center; justify-content: flex-end;
+        gap: 10px; text-decoration: none; background: none; border: none;
+        padding: 0; cursor: pointer;
+        opacity: 0; transform: translateY(14px) scale(0.5);
+        pointer-events: none;
+        transition: opacity .26s cubic-bezier(.22,1,.36,1),
+                    transform .32s cubic-bezier(.34,1.56,.64,1);
+      }
+      .gl-fan-item.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+
+      .gl-fan-dot {
+        width: 48px; height: 48px; flex: 0 0 48px;
+        display: flex; align-items: center; justify-content: center;
+        border-radius: 50%;
+        box-shadow: 0 6px 18px rgba(10,10,16,0.16), 0 1px 3px rgba(10,10,16,0.12);
+        transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s ease;
+      }
+      .gl-fan-item:hover .gl-fan-dot,
+      .gl-fan-item:focus-visible .gl-fan-dot {
+        transform: scale(1.1);
+        box-shadow: 0 8px 22px rgba(10,10,16,0.22), 0 2px 5px rgba(10,10,16,0.14);
+      }
+      .gl-fan-item:focus-visible { outline: none; }
+      .gl-fan-item:focus-visible .gl-fan-dot { outline: 3px solid rgba(109,181,255,0.7); outline-offset: 2px; }
+
+      .gl-fan-label {
+        font-family: var(--font-jakarta, system-ui), sans-serif;
+        font-size: 13px; font-weight: 600; letter-spacing: -0.01em;
+        color: #fff; background: rgba(10,10,16,0.88);
+        padding: 6px 12px; border-radius: 999px; white-space: nowrap;
+        box-shadow: 0 4px 14px rgba(10,10,16,0.2);
+        opacity: 0; transform: translateX(8px);
+        transition: opacity .2s ease, transform .2s ease;
+        pointer-events: none;
+      }
+      .gl-fan-item:hover .gl-fan-label,
+      .gl-fan-item:focus-visible .gl-fan-label { opacity: 1; transform: translateX(0); }
+
+      @media (max-width: 420px) {
+        .gl-fan-label { opacity: 1; transform: translateX(0); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .gl-fab, .gl-fab-icon, .gl-fan-item, .gl-fan-dot, .gl-fan-label { transition-duration: .01ms !important; }
+      }
+    `}</style>
+  );
 }
