@@ -15,6 +15,7 @@
   --font-satoshi: var(--font-satoshi-local), 'Satoshi', sans-serif;
   --font-jakarta: var(--font-jakarta-next), 'Plus Jakarta Sans', sans-serif;
   --font-newsreader: var(--font-newsreader-next), 'Newsreader', serif;
+  --font-playfair: var(--font-playfair-next), 'Playfair Display', serif;
   --font-mono: var(--font-plex-mono), 'IBM Plex Mono', monospace;
 }
 

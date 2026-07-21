@@ -137,14 +137,19 @@ export default function Areas() {
     if (!root) return;
 
     const ctx = gsap.context(() => {
-      gsap.from('.areas-title > *', {
-        y: 26,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.1,
-        ease: 'power3.out',
-        scrollTrigger: { trigger: root, start: 'top 78%', once: true },
-      });
+      // reveal parola-per-parola guidato dallo scroll: il testo si accende
+      // mentre scorri. Opacità soltanto (niente transform: la riga in gradiente
+      // si romperebbe con background-clip:text).
+      gsap.fromTo(
+        '.areas-reveal',
+        { opacity: 0.1 },
+        {
+          opacity: 1,
+          ease: 'none',
+          stagger: { amount: 1 },
+          scrollTrigger: { trigger: '.areas-title', start: 'top 85%', end: 'center 55%', scrub: 0.8 },
+        },
+      );
       gsap.from('.area-panel', {
         y: 50,
         opacity: 0,
@@ -160,17 +165,45 @@ export default function Areas() {
   }, []);
 
   return (
-    <section ref={rootRef} id="aree" className="relative overflow-hidden bg-[#f8f9fa] py-20 md:py-32">
-      {/* titolo */}
-      <div className="areas-title px-5 pb-12 md:px-10 md:pb-16">
-        <h2 className="voice-display text-4xl leading-tight text-[#0a0a10] md:text-6xl">
-          Un solo interlocutore.<br />
-          <span className="text-gradient-flow">Tutta la catena del valore.</span>
+    <section ref={rootRef} id="aree" className="relative flex flex-col overflow-hidden bg-[#f8f9fa]">
+      {/* blocco di chiusura — spostato sotto le card via order */}
+      <div className="areas-title order-2 px-5 py-28 md:px-10 md:py-40">
+        <h2
+          style={{ textTransform: 'none' }}
+          className="voice-display text-5xl leading-[1] text-[#0a0a10] md:text-[min(6.4vw,6rem)]"
+        >
+          <span className="block">
+            {'Un solo interlocutore.'.split(' ').map((w, i) => (
+              <span key={i} className="areas-reveal inline-block" style={{ marginRight: '0.22em' }}>
+                {w}
+              </span>
+            ))}
+          </span>
+          <span
+            className="areas-reveal mt-2 block w-fit font-playfair font-medium italic tracking-[-0.01em] md:ml-[14%]"
+            style={{
+              backgroundImage: 'linear-gradient(100deg, #4e92d8, #614aa2)',
+              WebkitBackgroundClip: 'text',
+              backgroundClip: 'text',
+              color: 'transparent',
+            }}
+          >
+            Tutta la catena del valore.
+          </span>
         </h2>
+        <p className="mt-12 max-w-2xl font-jakarta text-lg font-medium leading-relaxed text-[#0a0a10] md:mt-16 md:ml-auto md:mr-[6%] md:text-xl">
+          {"Identità, Digital e Factory lavorano sotto un'unica regia. Niente rimbalzi tra fornitori, niente traduzioni perse tra chi pensa la strategia e chi la mette a terra. Dalla prima idea alla produzione finale segui il progetto con un solo interlocutore che presidia l'intera filiera — e ne risponde."
+            .split(' ')
+            .map((w, i) => (
+              <span key={i} className="areas-reveal inline-block" style={{ marginRight: '0.22em' }}>
+                {w}
+              </span>
+            ))}
+        </p>
       </div>
 
       {/* trittico: il pannello sotto il mouse si apre */}
-      <div className="areas-strip flex flex-col border-y border-black/10 md:h-[68vh] md:flex-row">
+      <div className="areas-strip order-1 flex flex-col border-y border-black/10 md:h-[68vh] md:flex-row">
         {AREAS.map((area, i) => (
           <div
             key={area.name}
@@ -207,18 +240,13 @@ export default function Areas() {
               }}
             />
 
-            {/* Icona: nascosta a card chiusa, compare all'apertura (vedi CSS). */}
-            <span aria-hidden="true" className="area-ico">
-              {area.icon}
-            </span>
-
             <div className="relative">
               <p className="area-tag voice-mono mb-4 text-white/60">{area.tag}</p>
               <h3 className="area-name voice-display leading-none text-white" style={{ fontSize: 'clamp(2.2rem, 4.6vw, 5rem)' }}>
                 {area.name}
                 <span className="area-dot bg-[linear-gradient(100deg,#4e92d8_0%,#614aa2_100%)] bg-clip-text [-webkit-text-fill-color:#fff]">.</span>
               </h3>
-              <p className="area-claim mt-3 bg-[linear-gradient(100deg,#4e92d8_0%,#614aa2_100%)] bg-clip-text font-newsreader text-[1.6rem] font-medium italic normal-case leading-tight tracking-[-0.01em] [-webkit-text-fill-color:#fff] md:text-[1.9rem]">
+              <p className="area-claim mt-3 w-fit bg-[linear-gradient(100deg,#4e92d8_0%,#614aa2_100%)] bg-clip-text font-playfair text-[1.6rem] font-medium italic normal-case leading-tight tracking-[-0.01em] [-webkit-text-fill-color:#fff] md:text-[1.9rem]">
                 {area.claim}
               </p>
 

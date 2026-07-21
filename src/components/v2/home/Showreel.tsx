@@ -72,7 +72,7 @@ export default function Showreel({ clips = [] }: { clips?: string[] }) {
   }, [hasClips]);
 
   return (
-    <div ref={rootRef} className="relative overflow-hidden bg-[#0a0a10] py-16 md:py-24">
+    <div ref={rootRef} className="relative overflow-hidden bg-[#f8f9fa] py-16 md:py-24">
       <div className="mx-auto flex min-h-[70vh] items-center justify-center md:min-h-screen">
         <div ref={frameRef} className="relative aspect-video w-full max-w-[1600px] overflow-hidden bg-black will-change-transform">
           {/* Sempre muto: niente controllo audio, nessuno lo alzerebbe. */}
