@@ -3,6 +3,23 @@
 import { useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Magnetic from '@/components/v2/Magnetic';
+
+type LenisLike = { scrollTo: (t: number, o?: { duration?: number }) => void };
+
+/* Scorre alla CTA candidatura in fondo (id="candidatura" nel footer). Su desktop
+   usa l'istanza Lenis esposta da SmoothScroll passando un target NUMERICO (come
+   l'handler in SmoothScroll: questa versione di Lenis non risolve gli HTMLElement).
+   Su touch (niente Lenis) il fallback nativo. Lo scarto -80 lascia spazio all'header. */
+function scrollToCandidatura(e: React.MouseEvent) {
+  e.preventDefault();
+  const el = document.getElementById('candidatura');
+  if (!el) return;
+  const top = el.getBoundingClientRect().top + window.scrollY - 80;
+  const lenis = (window as unknown as { __lenis?: LenisLike }).__lenis;
+  if (lenis) lenis.scrollTo(top, { duration: 1.2 });
+  else el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -156,8 +173,11 @@ export default function LavoraConNoi() {
 
   return (
     <div ref={rootRef}>
-      {/* ——— HERO — stesso impianto degli hero del sito (AreaHero) ——— */}
-      <section className="relative flex min-h-[calc(100svh-4rem)] flex-col justify-center overflow-hidden bg-[#0a0a10] px-5 py-20 text-[#f8f9fa] md:min-h-[calc(100svh-5rem)] md:px-10">
+      {/* ——— HERO — stesso impianto degli hero del sito (AreaHero) ———
+          min-h-svh e sfondo full-bleed sotto l'header trasparente: il padding
+          per l'header sta nel contenuto (pt-32), non sul <main>, così in cima
+          non resta la striscia nera. */}
+      <section className="relative flex min-h-svh flex-col justify-center overflow-hidden bg-[#0a0a10] px-5 pb-20 pt-32 text-[#f8f9fa] md:px-10 md:pt-36">
         <div className="grain absolute inset-0" />
         <div className="pointer-events-none absolute right-[-15%] top-[8%] h-[60vh] w-[60vh] rounded-full bg-[#614aa2]/20 blur-[140px]" />
         <div className="pointer-events-none absolute bottom-[4%] left-[-10%] h-[50vh] w-[50vh] rounded-full bg-[#4e92d8]/15 blur-[130px]" />
@@ -198,6 +218,29 @@ export default function LavoraConNoi() {
             gente con il tuo stesso fuoco dentro. Per noi lavorare è questo.
             Se per te vale lo stesso, sei nel posto giusto.
           </p>
+
+          {/* Porta alla candidatura (unico CTA, in fondo). Anchor con scroll={false}:
+              la navigazione la fa Lenis via l'handler in SmoothScroll, senza salto. */}
+          <div className="lcn-hero-fade mt-10">
+            <Magnetic strength={0.25}>
+              <a
+                href="#candidatura"
+                onClick={scrollToCandidatura}
+                className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-[#f8f9fa] px-8 py-4 font-satoshi text-sm font-bold uppercase tracking-wide text-[#0a0a10]"
+              >
+                <span
+                  className="absolute inset-0 translate-y-full transition-transform duration-500 ease-out group-hover:translate-y-0"
+                  style={{ background: 'linear-gradient(90deg, #4e92d8, #614aa2)' }}
+                />
+                <span className="relative transition-colors duration-500 group-hover:text-white">
+                  Candidati
+                </span>
+                <span className="relative transition-transform duration-500 group-hover:translate-y-0.5" aria-hidden>
+                  ↓
+                </span>
+              </a>
+            </Magnetic>
+          </div>
         </div>
       </section>
 

@@ -13,7 +13,7 @@ export default function LavoraConNoiPage() {
     return (
         <>
             <Header />
-            <main className="bg-[#0a0a10] pt-16 md:pt-20">
+            <main className="bg-[#0a0a10]">
                 <LavoraConNoi />
             </main>
             <Footer />
