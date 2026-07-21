@@ -70,10 +70,7 @@ export default function Metodo() {
     let parkY = 0; /* coordinata di pagina dove la linea si ferma (sotto la chiusura) */
     let rootTop = 0;
     let parkAlways = false; /* touch: parcheggiata sempre, mai fixed */
-    const N = 72;
-    /* rumore deterministico: somma di seni, niente Math.random */
-    const noise = (i: number) =>
-      Math.sin(i * 0.9) * 0.45 + Math.sin(i * 0.37 + 2.1) * 0.35 + Math.sin(i * 2.3 + 4.7) * 0.2;
+    const N = 420;
 
     const measurePark = () => {
       const closeH2 = root.querySelector('.mt-close h2');
@@ -87,7 +84,9 @@ export default function Metodo() {
        raggiunge: da lì si aggancia alla pagina e resta sotto la scritta. */
     const setMode = () => {
       const lineY = H * 0.78;
-      if (parkAlways || window.scrollY + lineY >= parkY) {
+      /* si parcheggia quando il punto d'ancoraggio la raggiunge — o comunque
+         a fine scroll (viewport alti): mai più sparita, mai sul footer */
+      if (parkAlways || progressRef.current >= 0.985 || window.scrollY + lineY >= parkY) {
         svg.style.position = 'absolute';
         svg.style.top = `${parkY - rootTop - lineY}px`;
         svg.style.bottom = 'auto';
@@ -102,12 +101,20 @@ export default function Metodo() {
 
     const draw = (p: number) => {
       progressRef.current = p;
-      const amp = H * 0.16 * Math.pow(1 - p, 1.7); /* caos che si spegne */
+      /* filo aggrovigliato → retta: curva PARAMETRICA, non y(x). Quando
+         l'ampiezza è alta la x oscilla anche all'indietro e il filo si
+         avvolge su sé stesso (riccioli sovrapposti); calando, si srotola. */
+      const amp = H * 0.14 * Math.pow(1 - p, 1.6);
       const base = H * 0.78;
-      let d = `M -20 ${(base + noise(0) * amp).toFixed(1)}`;
-      for (let i = 1; i <= N; i++) {
-        const x = (i / N) * (W + 40) - 20;
-        d += ` L ${x.toFixed(1)} ${(base + noise(i) * amp).toFixed(1)}`;
+      const span = W + 40;
+      let d = '';
+      for (let i = 0; i <= N; i++) {
+        const t = i / N;
+        const cx = Math.sin(t * 29 + 1.3) * 0.55 + Math.sin(t * 13.7 + 4.1) * 0.45;
+        const cy = Math.cos(t * 23 + 0.7) * 0.5 + Math.sin(t * 31.3 + 2.9) * 0.35 + Math.sin(t * 7.9) * 0.15;
+        const x = -20 + t * span + cx * amp * 1.2;
+        const y = base + cy * amp;
+        d += (i === 0 ? 'M ' : ' L ') + x.toFixed(1) + ' ' + y.toFixed(1);
       }
       path.setAttribute('d', d);
       setMode();
@@ -128,9 +135,18 @@ export default function Metodo() {
     }, 700);
 
     const ctx = gsap.context(() => {
-      /* entrata hero: sempre */
-      gsap.from('.mt-hero-line', { yPercent: 110, duration: 1.2, stagger: 0.1, ease: 'power4.out', delay: 0.15 });
-      gsap.from('.mt-hero-sub', { opacity: 0, y: 20, duration: 0.9, ease: 'power3.out', delay: 0.7 });
+      /* entrata hero: le righe salgono dalla maschera con una leggera
+         inclinazione che si raddrizza (il tema della pagina, in piccolo),
+         il sottotitolo si svela con un wipe da sinistra */
+      gsap.timeline({ delay: 0.15 })
+        .from('.mt-hero-line', {
+          yPercent: 120, skewY: 5, transformOrigin: '0% 100%',
+          duration: 1.3, stagger: 0.14, ease: 'power4.out',
+        })
+        .fromTo('.mt-hero-sub',
+          { clipPath: 'inset(0 100% 0 0)' },
+          { clipPath: 'inset(0 0% 0 0)', duration: 1.0, ease: 'power3.inOut' },
+          '-=0.65');
 
       /* Su touch: niente scrub — la linea è già retta e parcheggiata sotto
          la chiusura (niente fixed: senza onUpdate resterebbe sul footer). */
@@ -149,8 +165,10 @@ export default function Metodo() {
         onUpdate: (self) => draw(self.progress),
       });
 
-      /* entrata delle fasi: sequenza per elemento — il numero sale, la label
-         scivola da sinistra, la tesi emerge da una maschera, il corpo segue */
+      /* I testi appartengono al mondo SOPRA la linea: compaiono quando la
+         attraversano (top della fase alla quota della linea, 78% viewport)
+         e scompaiono se tornano sotto. Sequenza: numero, label, tesi
+         (maschera), corpo. */
       gsap.utils.toArray<HTMLElement>('.mt-fase', root).forEach((fase) => {
         const num = fase.querySelector('.mt-f-num');
         const label = fase.querySelector('.mt-f-label');
@@ -160,28 +178,29 @@ export default function Metodo() {
         gsap.set(label, { opacity: 0, x: -24 });
         gsap.set(tesi, { yPercent: 115 });
         gsap.set(body, { opacity: 0, y: 26 });
+        const tl = gsap.timeline({ paused: true })
+          .to(num, { opacity: 1, y: 0, scale: 1, duration: 0.9, ease: 'power3.out' })
+          .to(label, { opacity: 1, x: 0, duration: 0.6, ease: 'power3.out' }, '-=0.55')
+          .to(tesi, { yPercent: 0, duration: 1.1, ease: 'power4.out' }, '-=0.45')
+          .to(body, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.6');
         ScrollTrigger.create({
           trigger: fase,
-          start: 'top 80%',
-          once: true,
-          onEnter: () => {
-            gsap.timeline()
-              .to(num, { opacity: 1, y: 0, scale: 1, duration: 0.9, ease: 'power3.out' })
-              .to(label, { opacity: 1, x: 0, duration: 0.6, ease: 'power3.out' }, '-=0.55')
-              .to(tesi, { yPercent: 0, duration: 1.1, ease: 'power4.out' }, '-=0.45')
-              .to(body, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.6');
-          },
+          start: 'top 78%',
+          onEnter: () => tl.play(),
+          onLeaveBack: () => tl.reverse(),
         });
       });
 
-      /* chiusura: le due righe emergono dalla maschera, in sequenza */
+      /* chiusura: stesso patto con la linea — emerge attraversandola */
       const closeLines = gsap.utils.toArray<HTMLElement>('.mt-close-line', root);
       gsap.set(closeLines, { yPercent: 115 });
+      const closeTl = gsap.timeline({ paused: true })
+        .to(closeLines, { yPercent: 0, duration: 1.2, stagger: 0.14, ease: 'power4.out' });
       ScrollTrigger.create({
         trigger: '.mt-close',
-        start: 'top 80%',
-        once: true,
-        onEnter: () => gsap.to(closeLines, { yPercent: 0, duration: 1.2, stagger: 0.14, ease: 'power4.out' }),
+        start: 'top 78%',
+        onEnter: () => closeTl.play(),
+        onLeaveBack: () => closeTl.reverse(),
       });
     }, root);
 
