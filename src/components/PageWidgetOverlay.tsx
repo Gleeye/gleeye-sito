@@ -174,17 +174,26 @@ export default function PageWidgetOverlay() {
   }, [w?.contact_form_id, w?.booking_item_id]);
 
   // Apertura programmatica: qualsiasi elemento può fare
-  // window.dispatchEvent(new Event("gleeye:open-contact-form")).
+  // window.dispatchEvent(new Event("gleeye:open-contact-form")) per il contatto,
+  // oppure "gleeye:open-booking" per la prenotazione. Usato dai CTA del footer.
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const opener = () => {
+    const openForm = () => {
       if (!w?.contact_form_id) return;
       setFormFallback(false);
       setOpen("form");
     };
-    window.addEventListener("gleeye:open-contact-form", opener);
-    return () => window.removeEventListener("gleeye:open-contact-form", opener);
-  }, [w?.contact_form_id]);
+    const openBooking = () => {
+      if (!w?.booking_item_id) return;
+      setOpen("booking");
+    };
+    window.addEventListener("gleeye:open-contact-form", openForm);
+    window.addEventListener("gleeye:open-booking", openBooking);
+    return () => {
+      window.removeEventListener("gleeye:open-contact-form", openForm);
+      window.removeEventListener("gleeye:open-booking", openBooking);
+    };
+  }, [w?.contact_form_id, w?.booking_item_id]);
 
   // Sorgente iframe: usata per la prenotazione, e come FALLBACK del form protetto.
   const iframeSrc =
