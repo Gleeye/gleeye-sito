@@ -71,7 +71,7 @@ const styleFor = (style: string) =>
   style === 'outline'
     ? { color: 'transparent', WebkitTextStroke: '1.5px rgba(255,255,255,0.5)' }
     : style === 'gradient'
-      ? undefined /* usa la classe text-gradient-flow */
+      ? undefined /* corsivo gradiente del sito: classi sulla riga */
       : { color: '#f8f9fa' };
 
 export default function Manifesto() {
@@ -148,11 +148,11 @@ export default function Manifesto() {
               to
             </span>
           </span>
-          <span className="block overflow-hidden py-[0.03em]">
-            <span className="mf-hero-line voice-display text-gradient-flow block text-[15vw] leading-[0.88] md:text-[11vw]">eye.</span>
+          <span className="block overflow-hidden pt-[0.03em] pb-[0.18em]">
+            <span className="mf-hero-line text-gradient block font-playfair italic font-medium normal-case leading-[0.95] tracking-[-0.01em] pb-[0.16em] pr-[0.05em] text-[15vw] md:text-[11vw]">eye.</span>
           </span>
         </h1>
-        <p className="mf-hero-line mt-10 max-w-lg font-jakarta text-base font-medium leading-relaxed text-white/50 md:text-lg">
+        <p className="mf-hero-line mt-10 max-w-xl font-jakarta text-lg font-medium leading-relaxed text-white/55 md:text-xl">
           Il nostro nome è la nostra tesi: il piacere per gli occhi non è un fine artistico — è un parametro di efficacia. Quello che segue è ciò in cui crediamo.
         </p>
       </div>
@@ -168,16 +168,25 @@ export default function Manifesto() {
         >
           <div>
             {s.lines.map((l, j) => (
-              <span key={j} className="block overflow-hidden py-[0.03em]">
+              <span
+                key={j}
+                className={`block overflow-hidden ${l.style === 'gradient' ? 'pt-[0.03em] pb-[0.24em]' : 'py-[0.03em]'}`}
+              >
                 <span
-                  className={`mfp-line voice-display block leading-[0.92] text-[6.5vw] md:text-[clamp(2.6rem,7.5vw,7rem)] ${l.style === 'gradient' ? 'text-gradient-flow' : ''}`}
+                  className={`mfp-line block text-[6.5vw] md:text-[clamp(2.6rem,7.5vw,7rem)] ${
+                    l.style === 'gradient'
+                      ? /* corsivo gradiente del sito; pb sulla span = il box del
+                           gradiente copre i discendenti (g di guarda, q di boutique) */
+                        'text-gradient font-playfair italic font-medium normal-case leading-[1.02] tracking-[-0.01em] pb-[0.2em] pr-[0.05em]'
+                      : 'voice-display leading-[0.92]'
+                  }`}
                   style={styleFor(l.style)}
                 >
                   {l.t}
                 </span>
               </span>
             ))}
-            <p className={`mfp-note mt-8 max-w-md font-jakarta text-sm font-medium leading-relaxed text-white/45 md:text-base ${s.align === 'center' ? 'mx-auto' : s.align === 'right' ? 'ml-auto' : ''}`}>
+            <p className={`mfp-note mt-8 max-w-xl font-jakarta text-base font-medium leading-relaxed text-white/55 md:text-xl ${s.align === 'center' ? 'mx-auto' : s.align === 'right' ? 'ml-auto' : ''}`}>
               {s.note}
             </p>
           </div>
@@ -187,7 +196,10 @@ export default function Manifesto() {
       {/* ------- chiusura ------- */}
       <div className="relative flex min-h-[60vh] flex-col items-center justify-center px-5 pb-32 text-center">
         <p className="voice-display text-3xl md:text-5xl">
-          Questo è il <span className="text-gradient-flow">Gleeye Way</span>.
+          Questo è il{' '}
+          <span className="text-gradient inline-block align-baseline font-playfair italic font-medium normal-case pb-[0.14em] -mb-[0.12em] pr-[0.04em]">
+            Gleeye Way
+          </span>.
         </p>
         <a
           href="/metodo"
