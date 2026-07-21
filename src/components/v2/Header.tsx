@@ -111,9 +111,14 @@ export default function Header() {
     }
   }, []);
 
-  /* Close on navigation */
+  /* Close on navigation — SEMPRE sblocca lo scroll e chiudi il menu.
+     Il vecchio `if (open) toggle(false)` a volte non scattava (open già false)
+     e lasciava document.body.style.overflow = 'hidden': su iOS lo scroll touch
+     restava bloccato sulla pagina nuova finché non si ricaricava a mano. */
   useEffect(() => {
-    if (open) toggle(false);
+    setOpen(false);
+    document.body.style.overflow = '';
+    tlRef.current?.timeScale(1.5).reverse();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
