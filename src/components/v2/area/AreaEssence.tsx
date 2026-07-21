@@ -1,10 +1,9 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { AreaConfig } from './data';
-import { isTouchDevice } from '@/lib/isTouch';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -12,50 +11,68 @@ if (typeof window !== 'undefined') {
 
 /**
  * "Cosa ottieni": tre benefici come affermazioni editoriali. Ognuno sotto una
- * linea che si disegna, con un numerone fantasma dietro che vaga piano.
- * L'ultimo — il beneficio più forte — è in gradiente. Sfondo non piatto.
+ * linea, con un numerone fantasma dietro che vaga piano. A scorrimento un solo
+ * faretto acceso alla volta scorre 01 → 02 → 03: la card "attiva" passa al
+ * gradiente brand (linea + titolo), le altre restano nere. L'highlight è legato
+ * alla posizione di scroll (scrub), quindi va avanti e indietro col movimento.
+ * Lo stato di riposo è sempre leggibile (nero) — niente sparisce se un trigger
+ * non scatta.
  */
 export default function AreaEssence({ area }: { area: AreaConfig }) {
   const rootRef = useRef<HTMLElement>(null);
+  // indice dell'unica card accesa in questo momento (faretto singolo)
+  const [active, setActive] = useState(0);
 
   useEffect(() => {
-    // Su touch niente reveal/pin: contenuto sempre visibile, scroll nativo.
-    // (su iOS i trigger post-navigazione misurano male e lasciano tutto invisibile)
-    if (isTouchDevice()) return;
     const root = rootRef.current;
     if (!root) return;
+    const n = area.outcomes.length;
 
     const ctx = gsap.context(() => {
-      gsap.set('.es-label', { opacity: 0, y: 20 });
-      ScrollTrigger.create({
-        trigger: root, start: 'top 80%', once: true,
-        onEnter: () => gsap.to('.es-label', { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }),
+      const cards = gsap.utils.toArray<HTMLElement>('.es-card', root);
+      const mm = gsap.matchMedia();
+
+      // ── Reveal d'entrata solo su desktop (su mobile il contenuto resta ──
+      //    visibile: iOS misura male i trigger post-navigazione e lascerebbe
+      //    tutto invisibile).
+      mm.add('(min-width: 768px)', () => {
+        gsap.set('.es-label', { opacity: 0, y: 20 });
+        ScrollTrigger.create({
+          trigger: root, start: 'top 88%', once: true,
+          onEnter: () => gsap.to('.es-label', { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }),
+        });
+
+        gsap.set(cards, { opacity: 0, y: 40 });
+        ScrollTrigger.create({
+          trigger: '.es-grid', start: 'top 85%', once: true,
+          onEnter: () => gsap.to(cards, {
+            opacity: 1, y: 0, stagger: 0.1, duration: 0.7, ease: 'power3.out',
+            clearProps: 'transform',
+          }),
+        });
       });
 
-      const cards = gsap.utils.toArray<HTMLElement>('.es-card', root);
-      gsap.set(cards, { opacity: 0, y: 50 });
-      gsap.set('.es-line', { scaleX: 0 });
+      // ── Faretto singolo legato allo scroll (desktop + mobile): mentre la ──
+      //    sezione attraversa lo schermo, l'unica card accesa passa 01→02→03.
+      //    scrub = segue il movimento in entrambi i versi.
       ScrollTrigger.create({
-        trigger: '.es-grid', start: 'top 78%', once: true,
-        onEnter: () => {
-          gsap.to(cards, {
-            opacity: 1, y: 0, stagger: 0.14, duration: 0.9, ease: 'power3.out',
-            // i titoli possono essere in gradiente: clearProps evita che un
-            // transform residuo rompa background-clip:text in Chrome
-            clearProps: 'transform',
-          });
-          gsap.to('.es-line', { scaleX: 1, stagger: 0.14, duration: 0.9, ease: 'power2.inOut', delay: 0.1 });
+        trigger: root, start: 'top 75%', end: 'bottom 55%', scrub: true,
+        onUpdate: (self) => {
+          const idx = Math.min(n - 1, Math.floor(self.progress * n));
+          setActive((prev) => (prev === idx ? prev : idx));
         },
       });
 
       // numeri fantasma che vagano piano
-      gsap.utils.toArray<HTMLElement>('.es-ghost').forEach((g, i) => {
+      gsap.utils.toArray<HTMLElement>('.es-ghost', root).forEach((g, i) => {
         gsap.to(g, { y: i % 2 ? 24 : -24, duration: 8 + i * 2, repeat: -1, yoyo: true, ease: 'sine.inOut' });
       });
     }, root);
 
     return () => ctx.revert();
-  }, []);
+  }, [area.outcomes]);
+
+  const gradient = `linear-gradient(100deg, ${area.accent1}, ${area.accent2})`;
 
   return (
     <section ref={rootRef} className="relative overflow-hidden bg-[#f8f9fa] py-28 md:py-36">
@@ -70,40 +87,44 @@ export default function AreaEssence({ area }: { area: AreaConfig }) {
 
         <div className="es-grid grid grid-cols-1 gap-x-8 gap-y-16 md:grid-cols-3">
           {area.outcomes.map((o, i) => {
-            const isLast = i === area.outcomes.length - 1;
+            const on = i === active; // un solo faretto acceso alla volta
             return (
               <div key={o.title} className="es-card relative">
-                {/* numerone fantasma dietro */}
+                {/* numerone fantasma dietro — si tinge appena quando la card si accende */}
                 <span
-                  className="es-ghost voice-display pointer-events-none absolute -top-12 right-2 select-none text-[7rem] leading-none opacity-[0.06] md:text-[9rem]"
-                  style={{ color: isLast ? area.accent2 : '#0a0a10' }}
+                  className="es-ghost voice-display pointer-events-none absolute -top-12 right-2 select-none text-[7rem] leading-none md:text-[9rem]"
+                  style={{
+                    color: on ? area.accent2 : '#0a0a10',
+                    opacity: on ? 0.1 : 0.06,
+                    transition: 'color 0.5s ease, opacity 0.5s ease',
+                  }}
                   aria-hidden="true"
                 >
                   {String(i + 1).padStart(2, '0')}
                 </span>
 
-                {/* linea che si disegna */}
-                <div
-                  className="es-line h-[3px] w-full origin-left"
-                  style={{
-                    background: isLast
-                      ? `linear-gradient(90deg, ${area.accent1}, ${area.accent2})`
-                      : '#0a0a10',
-                  }}
-                />
+                {/* linea: nera a riposo, il gradiente ci sale sopra quando è attiva */}
+                <div className="es-line relative h-[3px] w-full overflow-hidden bg-[#0a0a10]">
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      backgroundImage: `linear-gradient(90deg, ${area.accent1}, ${area.accent2})`,
+                      opacity: on ? 1 : 0,
+                      transition: 'opacity 0.5s ease',
+                    }}
+                  />
+                </div>
 
+                {/* titolo: nero a riposo, sfuma al gradiente quando è attivo */}
                 <h3
                   className="voice-display mt-6 text-2xl leading-[1.02] md:text-[1.7rem]"
-                  style={
-                    isLast
-                      ? {
-                          backgroundImage: `linear-gradient(100deg, ${area.accent1}, ${area.accent2})`,
-                          WebkitBackgroundClip: 'text',
-                          backgroundClip: 'text',
-                          color: 'transparent',
-                        }
-                      : { color: '#0a0a10' }
-                  }
+                  style={{
+                    backgroundImage: gradient,
+                    WebkitBackgroundClip: 'text',
+                    backgroundClip: 'text',
+                    color: on ? 'transparent' : '#0a0a10',
+                    transition: 'color 0.5s ease',
+                  }}
                 >
                   {o.title}
                 </h3>
