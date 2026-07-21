@@ -57,12 +57,14 @@ export default function AreaHero({ area }: { area: AreaConfig }) {
           </span>
         </p>
 
-        <h1 className="voice-display max-w-5xl">
-          <span className="block overflow-hidden">
-            <span className="ah-line-inner block text-[8.5vw] leading-[0.95] md:text-[min(6.6vw,5.6rem)]">
-              {area.claim.plain}
+        <h1 className="voice-display max-w-none">
+          {area.claim.plain.map((line) => (
+            <span key={line} className="block overflow-hidden">
+              <span className="ah-line-inner block text-[8.5vw] leading-[0.98] md:text-[min(6vw,4rem)]">
+                {line}
+              </span>
             </span>
-          </span>
+          ))}
           <span className="block overflow-hidden">
             {/* w-fit: il gradiente si estende sulla larghezza del testo, non del
                 blocco — altrimenti un claim corto cattura solo il blu iniziale */}

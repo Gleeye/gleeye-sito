@@ -28,7 +28,7 @@ export interface AreaConfig {
   index: string;
   name: string;
   soul: string;
-  claim: { plain: string; serif: string };
+  claim: { plain: string[]; serif: string };
   intro: string;
   bgImage?: string;
   accent1: string;
@@ -47,7 +47,7 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
     index: '01',
     name: 'Identity',
     soul: 'Boutique — strategia e genesi',
-    claim: { plain: "L'identità non si inventa.", serif: 'Si scopre.' },
+    claim: { plain: ["L'identità", 'non si inventa.'], serif: 'Si scopre.' },
     intro:
       "È la fase in cui si risponde alla domanda: chi siamo e come vogliamo essere percepiti? Senza questa base, ogni investimento in marketing è un potenziale spreco di budget. Qui il tuo brand trova DNA, nome e volto.",
     accent1: '#4e92d8',
@@ -120,7 +120,7 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
     index: '02',
     name: 'Digital',
     soul: 'Infrastruttura — presenza e conversione',
-    claim: { plain: 'La tua presenza online non è un sito.', serif: "È un'infrastruttura." },
+    claim: { plain: ['La tua presenza online non è un sito.'], serif: "È un'infrastruttura." },
     intro:
       "Quest'area costruisce il posto dove il brand vive e si relaziona con il mercato. La strategia si traduce in tecnologia e flussi di marketing: siti velocissimi, ecosistemi social presidiati, autorità sui motori di ricerca, advertising monitorato senza fuffa.",
     accent1: '#4e92d8',
@@ -193,7 +193,7 @@ export const AREAS: Record<'identity' | 'digital' | 'factory', AreaConfig> = {
     index: '03',
     name: 'Factory',
     soul: 'Produzione — artigianato scalabile',
-    claim: { plain: "L'eccellenza come", serif: 'output prevedibile.' },
+    claim: { plain: ["L'eccellenza come"], serif: 'output prevedibile.' },
     intro:
       "Il braccio produttivo che trasforma la strategia in oggetti digitali tangibili. È il luogo dell'artigianato scalabile, dove la qualità d'agenzia incontra l'efficienza di un processo industriale: tempi certi, standard costante, anche su volumi elevati.",
     accent1: '#4e92d8',
