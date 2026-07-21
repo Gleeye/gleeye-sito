@@ -8,12 +8,7 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const gradientText = {
-  backgroundImage: 'linear-gradient(90deg, #614aa2, #4e92d8)',
-  WebkitBackgroundClip: 'text',
-  backgroundClip: 'text',
-  color: 'transparent',
-} as const;
+/* Corsivo gradiente: la classe .text-gradient, la stessa di tutto il sito. */
 
 export type ApproachData = {
   /** etichetta in alto a destra, es. "Web Design & Dev · Genova" */
@@ -94,10 +89,8 @@ export default function ApproachSection({ data }: { data: ApproachData }) {
   const statement = (
     <h2 className="sub-pos-statement font-satoshi text-[8vw] font-black leading-[1.06] tracking-tight text-black md:text-[3.6vw] lg:text-[3vw]">
       {data.statement.plain}
-      <span
-        className="mt-2 block pb-[0.14em] font-playfair text-[9vw] font-medium italic normal-case tracking-[-0.01em] md:text-[4vw] lg:text-[3.4vw]"
-        style={gradientText}
-      >
+      {/* w-fit: il gradiente si estende sulla larghezza del testo, non del blocco */}
+      <span className="text-gradient mt-2 block w-fit pb-[0.14em] pr-[0.05em] font-playfair text-[9vw] font-medium italic normal-case tracking-[-0.01em] md:text-[4vw] lg:text-[3.4vw]">
         {data.statement.accent}
       </span>
     </h2>

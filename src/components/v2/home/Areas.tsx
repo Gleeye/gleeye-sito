@@ -179,15 +179,7 @@ export default function Areas() {
               </span>
             ))}
           </span>
-          <span
-            className="areas-reveal mt-2 block w-fit font-playfair font-medium italic tracking-[-0.01em] md:ml-[14%]"
-            style={{
-              backgroundImage: 'linear-gradient(100deg, #4e92d8, #614aa2)',
-              WebkitBackgroundClip: 'text',
-              backgroundClip: 'text',
-              color: 'transparent',
-            }}
-          >
+          <span className="text-gradient areas-reveal mt-2 block w-fit pr-[0.05em] font-playfair font-medium italic tracking-[-0.01em] md:ml-[14%]">
             Tutta la catena del valore.
           </span>
         </h2>

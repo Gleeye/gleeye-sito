@@ -19,17 +19,10 @@ if (typeof window !== 'undefined') {
    che su questa pagina risponde al titolo ("Fatti vedere per ciò che vali.").
    ———————————————————————————————————————————————————————————————— */
 
-/* Corsivo gradiente del sito. */
-const accentGrad = {
-  backgroundImage: 'linear-gradient(100deg, #4e92d8, #614aa2)',
-  WebkitBackgroundClip: 'text',
-  backgroundClip: 'text',
-  color: 'transparent',
-} as const;
-
+/* Corsivo gradiente del sito: la classe .text-gradient, la stessa ovunque. */
 function Accent({ children }: { children: React.ReactNode }) {
   return (
-    <span className="font-playfair italic font-medium normal-case" style={accentGrad}>
+    <span className="text-gradient font-playfair italic font-medium normal-case">
       {children}
     </span>
   );
@@ -223,10 +216,7 @@ export default function MissionVision() {
           <span className="block overflow-hidden text-[13vw] leading-[0] pb-[0.22em] md:text-[9vw]">
             <span className="mv-hero-line voice-display block leading-[1.05]">
               diretti,{' '}
-              <span
-                className="inline-block align-baseline font-playfair font-medium normal-case italic leading-none pb-[0.34em] -mb-[0.3em]"
-                style={accentGrad}
-              >
+              <span className="text-gradient inline-block align-baseline font-playfair font-medium normal-case italic leading-none pb-[0.34em] -mb-[0.3em]">
                 e perché.
               </span>
             </span>
