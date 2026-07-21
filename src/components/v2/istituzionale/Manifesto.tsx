@@ -193,21 +193,8 @@ export default function Manifesto() {
         </div>
       ))}
 
-      {/* ------- chiusura ------- */}
-      <div className="relative flex min-h-[60vh] flex-col items-center justify-center px-5 pb-32 text-center">
-        <p className="voice-display text-3xl md:text-5xl">
-          Questo è il{' '}
-          <span className="text-gradient inline-block align-baseline font-playfair italic font-medium normal-case pb-[0.14em] -mb-[0.12em] pr-[0.04em]">
-            Gleeye Way
-          </span>.
-        </p>
-        <a
-          href="/metodo"
-          className="mt-12 inline-flex items-center gap-3 rounded-full border border-white/20 px-10 py-5 font-satoshi text-xs font-black uppercase tracking-[0.2em] text-white transition-colors duration-300 hover:border-white/60"
-        >
-          Guarda come lo mettiamo a terra <span aria-hidden>→</span>
-        </a>
-      </div>
+      {/* respiro finale prima del footer */}
+      <div className="h-20 md:h-28" />
     </section>
   );
 }
