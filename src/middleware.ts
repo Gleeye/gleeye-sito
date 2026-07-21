@@ -147,10 +147,12 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // ——— portfolio: index + dettagli dinamici /portfolio/[slug] → sito nuovo ———
-  // Le rotte dettaglio sono dinamiche, quindi non stanno in ROUTES: le lasciamo
-  // passare per prefisso (normalizzando l'eventuale slash finale come sopra).
-  if (clean === '/portfolio' || clean.startsWith('/portfolio/')) {
+  // ——— blog nativo ———
+  // Tutti gli articoli /blog/<slug> sono serviti dal Next (rotta /blog/[slug],
+  // con generateStaticParams che pesca gli slug dalla REST di WP). L'indice
+  // /blog senza slug NON è ancora una pagina nostra: cade nel catch-all e
+  // resta sul blog del vecchio WordPress finché non lo costruiamo.
+  if (clean.startsWith('/blog/') && clean.length > '/blog/'.length) {
     if (clean !== pathname) {
       return NextResponse.redirect(new URL(clean + search, req.url), 301);
     }
