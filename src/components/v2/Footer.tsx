@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
 
 const NAV = [
   { label: 'Home', href: '/' },
@@ -17,12 +18,53 @@ const SOCIAL = [
 ];
 
 export default function Footer() {
+  // I CTA del footer stanno fuori da <main>, quindi non vengono intercettati:
+  // aprono il popup lanciando gli eventi del PageWidgetOverlay.
+  const openContact = () => window.dispatchEvent(new Event('gleeye:open-contact-form'));
+  const openBooking = () => window.dispatchEvent(new Event('gleeye:open-booking'));
+
   return (
     <footer className="relative overflow-hidden bg-[#0a0a10] text-[#f8f9fa]">
       <div className="grain absolute inset-0" />
       <div className="absolute left-1/2 top-0 h-[50vh] w-[80vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#614aa2]/20 blur-[160px]" />
 
-      <div className="relative mx-auto max-w-7xl px-5 pt-24 md:px-10 md:pt-32">
+      {/* CTA di chiusura — su tutte le pagine */}
+      <div className="relative mx-auto max-w-7xl border-b border-white/10 px-5 py-28 md:px-10 md:py-40">
+        <div className="grid grid-cols-1 gap-14 md:grid-cols-[1.3fr_1fr] md:gap-20">
+          {/* titolone */}
+          <h2 className="voice-display text-[15vw] leading-[0.85] text-[#f8f9fa] md:text-[min(8.4vw,7.5rem)]">
+            Raccontaci<br />un&apos;idea.
+          </h2>
+
+          {/* colonna destra: occhiello in alto, testo + pulsanti allineati in basso */}
+          <div className="flex flex-col justify-between gap-12 md:pb-2 md:pt-3">
+            <span className="voice-mono text-white/40">[ Parliamone ]</span>
+            <div>
+              <p className="mb-9 max-w-sm font-jakarta text-lg font-medium leading-relaxed text-white/65">
+                Scrivici e raccontaci il tuo progetto. Lo mettiamo a fuoco insieme.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  onClick={openContact}
+                  className="group inline-flex items-center gap-2.5 rounded-lg border border-white/20 px-6 py-3.5 font-satoshi text-xs font-bold uppercase tracking-[0.12em] text-white transition-colors duration-300 hover:bg-[#f8f9fa] hover:text-[#0a0a10]"
+                >
+                  Inizia un progetto
+                  <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </button>
+                <button
+                  onClick={openBooking}
+                  className="group inline-flex items-center gap-2.5 rounded-lg border border-white/20 px-6 py-3.5 font-satoshi text-xs font-bold uppercase tracking-[0.12em] text-white transition-colors duration-300 hover:bg-[#f8f9fa] hover:text-[#0a0a10]"
+                >
+                  Prenota una call
+                  <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="relative mx-auto max-w-7xl px-5 pt-16 md:px-10 md:pt-20">
         {/* Columns */}
         <div className="grid grid-cols-2 gap-10 py-14 md:grid-cols-4">
           <div className="col-span-2 md:col-span-1">
