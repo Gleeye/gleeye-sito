@@ -41,6 +41,15 @@ export default function ApproachSection({ data }: { data: ApproachData }) {
   const hasVideo = !!data.video;
 
   useEffect(() => {
+    // Su touch niente reveal: contenuto subito visibile (mobile è più leggero e
+    // non si vede la roba che appare/scompare mentre la pagina carica).
+    if (
+      window.matchMedia('(pointer: coarse)').matches ||
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0
+    ) {
+      return;
+    }
     const ctx = gsap.context(() => {
       // stato iniziale (mai animare il transform di .sub-pos-media: su desktop
       // porta il -translate-y-1/2 di centratura → solo opacità)
