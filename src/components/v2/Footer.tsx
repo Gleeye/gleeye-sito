@@ -75,11 +75,12 @@ export default function Footer() {
             {ctaTitle}
           </h2>
 
-          {/* colonna destra: occhiello in alto, testo + pulsanti allineati in basso */}
-          <div className="flex flex-col justify-between gap-12 md:pb-2 md:pt-3">
-            <span className="voice-mono text-white/40">
-              {isCareers ? '[ Lavora con noi ]' : '[ Parliamone ]'}
-            </span>
+          {/* colonna destra: occhiello in alto (non su lavora-con-noi), testo +
+              pulsanti allineati in basso */}
+          <div className={`flex flex-col gap-12 md:pb-2 md:pt-3 ${isCareers ? 'justify-end' : 'justify-between'}`}>
+            {!isCareers && (
+              <span className="voice-mono text-white/40">[ Parliamone ]</span>
+            )}
             <div>
               <p className="mb-9 max-w-sm font-jakarta text-lg font-medium leading-relaxed text-white/65">
                 {isCareers

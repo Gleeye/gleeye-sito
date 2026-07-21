@@ -248,11 +248,15 @@ export default function LavoraConNoi() {
       <section className="relative overflow-hidden bg-[#F8F9FA] py-28 text-[#0a0a10] md:py-40">
         <div className="relative mx-auto max-w-7xl px-5 md:px-10">
           <div className="lcn-head max-w-3xl">
-            <p className="voice-mono mb-6 text-[#614aa2]">[ La vita in Gleeye ]</p>
+            <p className="voice-mono mb-6 text-[#614aa2]">La vita in Gleeye</p>
             <h2 className="voice-display text-[11vw] leading-[0.95] sm:text-5xl md:text-6xl lg:text-7xl">
               Cosa ti aspetta
               <br />
+              {/* Payoff in corsivo + gradiente come l'hero. Su fondo chiaro il
+                  gradiente è anchor blue→purple (il fluo sbiadirebbe). pb: i
+                  discendenti (q, p) non vengono tagliati dal clip:text. */}
               <span
+                className="inline-block pb-[0.16em] font-playfair text-[1.12em] font-medium italic normal-case leading-[1.05] tracking-[-0.01em]"
                 style={{
                   backgroundImage: 'linear-gradient(100deg, #4e92d8, #614aa2)',
                   WebkitBackgroundClip: 'text',
@@ -297,11 +301,14 @@ export default function LavoraConNoi() {
         <div className="relative mx-auto max-w-7xl px-5 md:px-10">
           <div className="lcn-head grid grid-cols-1 gap-8 md:grid-cols-[1.2fr_1fr] md:items-end md:gap-16">
             <div>
-              <p className="voice-mono mb-6 text-white/40">[ Chi cerchiamo ]</p>
+              <p className="voice-mono mb-6 text-white/40">Chi cerchiamo</p>
               <h2 className="voice-display text-[11vw] leading-[0.95] sm:text-5xl md:text-6xl lg:text-7xl">
                 Cerchiamo mestieri.
                 <br />
-                <span className="text-gradient">E cerchiamo skill.</span>
+                {/* Payoff in corsivo + gradiente fluo, come "esiste." nell'hero. */}
+                <span className="text-gradient inline-block pb-[0.16em] font-playfair text-[1.12em] font-medium italic normal-case leading-[1.05] tracking-[-0.01em]">
+                  E cerchiamo skill.
+                </span>
               </h2>
             </div>
             <p className="max-w-md font-jakarta font-medium leading-relaxed text-white/55 md:pb-2">
@@ -313,7 +320,7 @@ export default function LavoraConNoi() {
 
           {/* Figure professionali */}
           <div className="mt-16 md:mt-20">
-            <p className="voice-mono mb-6 text-white/35">[ Le figure ]</p>
+            <p className="voice-mono mb-6 text-white/35">Le figure</p>
             <div className="border-b border-white/10">
               {FIGURE.map((role) => (
                 <div
@@ -341,7 +348,7 @@ export default function LavoraConNoi() {
 
           {/* Skill — doppio marquee */}
           <div className="mt-16 md:mt-20">
-            <p className="voice-mono mb-8 px-1 text-white/35">[ Le skill che ci accendono ]</p>
+            <p className="voice-mono mb-8 px-1 text-white/35">Le skill che ci accendono</p>
           </div>
         </div>
 
