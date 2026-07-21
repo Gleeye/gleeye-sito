@@ -36,13 +36,15 @@ import { useErpForm } from './useErpForm';
 
 type Props = {
   formId: string;
+  /** Pagina del sito da cui parte il lead (es. "/factory/fotografia"). */
+  sourcePage?: string;
   /** Chiamato quando l'utente chiude dopo il successo (facoltativo). */
   onDone?: () => void;
   /** Modulo protetto (reCAPTCHA): rimanda all'embed ERP invece di perdere il lead. */
   onProtectedFallback?: () => void;
 };
 
-export default function NativeForm({ formId, onDone, onProtectedFallback }: Props) {
+export default function NativeForm({ formId, sourcePage, onDone, onProtectedFallback }: Props) {
   const { form, loading, error, isProtected, submit } = useErpForm(formId);
 
   const [values, setValues] = useState<Record<string, unknown>>({});
@@ -156,6 +158,9 @@ export default function NativeForm({ formId, onDone, onProtectedFallback }: Prop
       if (v == null) continue;
       data[f.id] = Array.isArray(v) ? v.join(', ') : String(v);
     }
+    // Pagina d'origine del lead (per la Ricezione nell'ERP): sotto una chiave
+    // che non collide con gli id dei campi del form.
+    if (sourcePage) data['_source_page'] = sourcePage;
     const visibleFiles: Record<string, File> = {};
     for (const f of form?.fields || []) {
       if (f.type === 'file' && isVisible(f) && files[f.id]) visibleFiles[f.id] = files[f.id];
