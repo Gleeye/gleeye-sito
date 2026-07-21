@@ -14,9 +14,9 @@ if (typeof window !== 'undefined') {
    Il titolo della pagina è "Dove siamo diretti": la pagina è il viaggio.
    Una rotta luminosa parte dalla hero e si disegna con lo scroll; un punto
    — noi — la percorre. Passa per la missione (il lavoro di ogni giorno:
-   la lama che toglie l'attrito alla frase), poi per la visione, e arriva
-   a destinazione: il punto all'orizzonte, un anello che pulsa.
-   Chiusa: "il tragitto tra i due punti è il nostro metodo".
+   la lama che toglie l'attrito alla frase), poi per la visione, e infine
+   si tuffa in basso: il punto consegna il visitatore alla CTA del footer,
+   che su questa pagina risponde al titolo ("Fatti vedere per ciò che vali.").
    ———————————————————————————————————————————————————————————————— */
 
 /* Corsivo gradiente del sito. */
@@ -45,19 +45,19 @@ function MissionStatement() {
 
 /* Geometria della rotta (viewBox 1000×2600, stirata sull'intera pagina).
    La rotta parte sotto la hero, sfiora la missione (a destra), scende alla
-   visione (a sinistra) e termina al centro, dove vive l'anello-destinazione. */
+   visione (a sinistra) e si tuffa in basso a sinistra: il punto consegna
+   il visitatore alla CTA del footer ("Fatti vedere per ciò che vali."). */
 const ROUTE_D =
-  'M 140 300 C 300 450, 620 520, 720 700 C 810 860, 840 980, 760 1120 C 690 1240, 420 1330, 320 1500 C 240 1640, 240 1760, 330 1880 C 420 2000, 520 2140, 500 2380';
+  'M 140 300 C 300 450, 620 520, 720 700 C 810 860, 840 980, 760 1120 C 690 1240, 420 1330, 320 1500 C 240 1640, 240 1760, 330 1880 C 430 2010, 340 2290, 210 2565';
 const VIEW_W = 1000;
 const VIEW_H = 2600;
-const END_X = 500;
-const END_Y = 2380;
+const END_X = 210;
+const END_Y = 2565;
 
 export default function MissionVision() {
   const rootRef = useRef<HTMLElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
   const dotRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
   const wipeRef = useRef<HTMLDivElement>(null);
   const degRef = useRef<HTMLHeadingElement>(null);
   const cleanRef = useRef<HTMLHeadingElement>(null);
@@ -83,12 +83,11 @@ export default function MissionVision() {
       if (isTouchDevice()) {
         gsap.set(path, { strokeDashoffset: 0 });
         gsap.set(dot, { left: `${(END_X / VIEW_W) * 100}%`, top: `${(END_Y / VIEW_H) * 100}%`, opacity: 1 });
-        gsap.set(clean, { clipPath: 'inset(-8% 0% -8% 0)' });
-        gsap.set(deg, { clipPath: 'inset(-8% 0 -8% 100%)' });
+        gsap.set(clean, { clipPath: 'none' });
+        gsap.set(deg, { clipPath: 'inset(0 0 0 100%)' });
         gsap.set('.mv-word', { opacity: 1 });
         gsap.set('.mv-vis-title', { opacity: 1, y: 0 });
         gsap.set('.mv-vis-glow', { opacity: 1, scale: 1 });
-        if (ringRef.current) gsap.set(ringRef.current, { opacity: 1, scale: 1 });
         return;
       }
 
@@ -105,7 +104,8 @@ export default function MissionVision() {
           const pt = path.getPointAtLength(p * len);
           dot.style.left = `${(pt.x / VIEW_W) * 100}%`;
           dot.style.top = `${(pt.y / VIEW_H) * 100}%`;
-          dot.style.opacity = p > 0.015 && p < 0.985 ? '1' : '0';
+          /* visibile fino in fondo: a fine rotta resta sopra la CTA del footer */
+          dot.style.opacity = p > 0.015 ? '1' : '0';
         },
       });
 
@@ -117,8 +117,15 @@ export default function MissionVision() {
         scrub: 0.5,
         onUpdate: (self) => {
           const p = self.progress * 100;
-          clean.style.clipPath = `inset(-8% ${100 - p}% -8% 0)`;
-          deg.style.clipPath = `inset(-8% 0 -8% ${Math.max(0, p - 0.5)}%)`;
+          /* margini verticali larghi (accenti di CIÒ, discendenti) e snap agli
+             estremi: a fine corsa nessun clip residuo che tagli le lettere */
+          if (p >= 99.2) {
+            clean.style.clipPath = 'none';
+            deg.style.clipPath = 'inset(0 0 0 100%)';
+          } else {
+            clean.style.clipPath = `inset(-25% ${100 - p}% -25% 0)`;
+            deg.style.clipPath = `inset(-25% 0 -25% ${Math.max(0, p - 0.5)}%)`;
+          }
           bar.style.left = `${p}%`;
           bar.style.opacity = p > 0.5 && p < 99 ? '1' : '0';
         },
@@ -142,13 +149,6 @@ export default function MissionVision() {
         scrollTrigger: { trigger: '.mv-vis-title', start: 'top 80%', once: true },
       });
 
-      /* ————— destinazione: l'anello si accende all'arrivo ————— */
-      if (ringRef.current) {
-        gsap.fromTo(ringRef.current, { opacity: 0, scale: 0.5 }, {
-          opacity: 1, scale: 1, duration: 1.1, ease: 'back.out(1.6)',
-          scrollTrigger: { trigger: ringRef.current, start: 'top 78%', once: true },
-        });
-      }
     }, root);
 
     return () => ctx.revert();
@@ -212,19 +212,6 @@ export default function MissionVision() {
         }}
       />
 
-      {/* la destinazione: il punto all'orizzonte */}
-      <div
-        ref={ringRef}
-        className="pointer-events-none absolute z-[4] -translate-x-1/2 -translate-y-1/2"
-        style={{ left: `${(END_X / VIEW_W) * 100}%`, top: `${(END_Y / VIEW_H) * 100}%`, opacity: 0 }}
-      >
-        <div className="relative flex h-20 w-20 items-center justify-center md:h-28 md:w-28">
-          <div className="absolute inset-0 rounded-full border border-[#614aa2]/30" style={{ animation: 'mv-ring 3s ease-in-out infinite' }} />
-          <div className="absolute inset-[22%] rounded-full border border-[#4e92d8]/45" />
-          <div className="h-2.5 w-2.5 rounded-full" style={{ background: 'linear-gradient(135deg, #4e92d8, #614aa2)', boxShadow: '0 0 22px 6px rgba(97,74,162,0.5)' }} />
-        </div>
-      </div>
-
       {/* ————— hero ————— */}
       <div className="relative z-10 flex min-h-svh flex-col justify-center px-5 md:px-10">
         <h1 className="relative">
@@ -269,7 +256,7 @@ export default function MissionVision() {
             <h2
               ref={cleanRef}
               className="voice-display absolute inset-0 text-4xl leading-[1.06] md:text-6xl"
-              style={{ clipPath: 'inset(-8% 100% -8% 0)' }}
+              style={{ clipPath: 'inset(-25% 100% -25% 0)' }}
             >
               <MissionStatement />
             </h2>
@@ -308,20 +295,13 @@ export default function MissionVision() {
         </div>
       </div>
 
-      {/* ————— arrivo ————— */}
-      <div className="relative z-10 flex h-[80vh] flex-col items-center justify-end px-5 pb-24 text-center">
-        <p className="font-jakarta text-base font-medium text-black/50 md:text-lg">
+      {/* ————— ultimo tratto: la rotta si tuffa verso la CTA del footer ————— */}
+      <div className="relative z-10 flex h-[55vh] items-end px-5 pb-16 md:px-10">
+        <p className="font-jakarta text-sm font-medium text-black/45 md:text-base">
           Il tragitto tra i due punti è il nostro{' '}
           <a href="/metodo" className="font-semibold text-[#0a0a10] underline decoration-[#4e92d8] underline-offset-4">metodo</a>.
         </p>
       </div>
-
-      <style>{`
-        @keyframes mv-ring {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.18); opacity: 0.55; }
-        }
-      `}</style>
     </section>
   );
 }

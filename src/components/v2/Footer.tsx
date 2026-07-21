@@ -8,6 +8,9 @@ import { ArrowUpRight } from 'lucide-react';
    poi default. Rimpiazza le vecchie CTA per-pagina (ora rimosse). */
 const CTA_TITLES: Record<string, string> = {
   '/': "Raccontaci un'idea.",
+  /* Chiusa del viaggio di /mission-e-vision: riprende il titolo ("e perché")
+     e ricombina missione (vali/vede) e visione in un invito. */
+  '/mission-e-vision': 'Fatti vedere per ciò che vali.',
   '/identity': 'Scopriamo chi sei davvero.',
   '/identity/brand-strategy': 'Partiamo dalla strategia.',
   '/identity/naming': 'Troviamo il nome giusto.',
