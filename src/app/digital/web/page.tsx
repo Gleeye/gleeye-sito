@@ -9,7 +9,6 @@ import ForWhoSection from '@/components/digital/web/ForWhoSection';
 import WhySection from '@/components/digital/web/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/digital/web/FaqSection';
-import CtaSection from '@/components/digital/web/CtaSection';
 
 export const metadata = {
   title: 'Web Design & Development — Gleeye Digital',
@@ -31,7 +30,6 @@ export default function WebPage() {
           <WhySection />
         </DarkBand>
         <FaqSection />
-        <CtaSection />
       </main>
       <Footer />
     </>

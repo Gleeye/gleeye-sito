@@ -9,7 +9,6 @@ import ForWhoSection from '@/components/factory/video/ForWhoSection';
 import WhySection from '@/components/factory/video/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/factory/video/FaqSection';
-import CtaSection from '@/components/factory/video/CtaSection';
 
 export const metadata = {
   title: 'Video Production — Gleeye Factory',
@@ -31,7 +30,6 @@ export default function VideoPage() {
           <WhySection />
         </DarkBand>
         <FaqSection />
-        <CtaSection />
       </main>
       <Footer />
     </>

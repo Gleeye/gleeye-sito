@@ -2,7 +2,6 @@ import HeroSection     from '@/components/copy/HeroSection';
 import ManifestoSection from '@/components/copy/ManifestoSection';
 import ForChiSection   from '@/components/copy/ForChiSection';
 import ServicesGrid    from '@/components/copy/ServicesGrid';
-import CtaSection      from '@/components/copy/CtaSection';
 import Header          from '@/components/Header';
 import Footer          from '@/components/Footer';
 
@@ -20,7 +19,6 @@ export default function CopyPage() {
                 <ManifestoSection />
                 <ForChiSection />
                 <ServicesGrid />
-                <CtaSection />
             </main>
             <Footer />
         </>

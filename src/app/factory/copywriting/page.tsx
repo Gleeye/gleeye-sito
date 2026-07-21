@@ -9,7 +9,6 @@ import ForWhoSection from '@/components/factory/copywriting/ForWhoSection';
 import WhySection from '@/components/factory/copywriting/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/factory/copywriting/FaqSection';
-import CtaSection from '@/components/factory/copywriting/CtaSection';
 
 export const metadata = {
   title: 'Copywriting — Gleeye Factory',
@@ -31,7 +30,6 @@ export default function CopywritingPage() {
           <WhySection />
         </DarkBand>
         <FaqSection />
-        <CtaSection />
       </main>
       <Footer />
     </>

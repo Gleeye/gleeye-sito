@@ -1,7 +1,41 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ArrowUpRight } from 'lucide-react';
+
+/* Titolo della CTA di chiusura, diverso per pagina. Match esatto, poi per area,
+   poi default. Rimpiazza le vecchie CTA per-pagina (ora rimosse). */
+const CTA_TITLES: Record<string, string> = {
+  '/': "Raccontaci un'idea.",
+  '/identity': 'Scopriamo chi sei davvero.',
+  '/identity/brand-strategy': 'Partiamo dalla strategia.',
+  '/identity/naming': 'Troviamo il nome giusto.',
+  '/identity/visual-identity': 'Diamo un volto al tuo brand.',
+  '/identity/brand-guidelines': 'Mettiamo ordine nel brand.',
+  '/digital': 'Costruiamo la tua infrastruttura.',
+  '/digital/web': 'Costruiamo il tuo sito.',
+  '/digital/social': 'Presidiamo i tuoi social.',
+  '/digital/seo': 'Ti facciamo trovare.',
+  '/digital/advertising': "Facciamo rendere l'advertising.",
+  '/factory': 'Mettiamo in produzione la tua immagine.',
+  '/factory/video': 'Giriamo il tuo video.',
+  '/factory/fotografia': 'Scattiamo la tua immagine.',
+  '/factory/copywriting': 'Diamo voce al tuo brand.',
+  '/factory/grafica': 'Diamo forma alle idee.',
+  '/events': 'Comunichiamo il tuo evento.',
+  '/podcast': 'Lanciamo il tuo podcast.',
+  '/video-explainer': 'Spieghiamo con un video.',
+  '/lavora-con-noi': 'Entra nel team.',
+  '/contatti': 'Parliamone.',
+};
+
+function ctaTitleFor(path: string): string {
+  if (CTA_TITLES[path]) return CTA_TITLES[path];
+  const area = '/' + (path.split('/').filter(Boolean)[0] || '');
+  if (CTA_TITLES[area]) return CTA_TITLES[area];
+  return "Raccontaci un'idea.";
+}
 
 const NAV = [
   { label: 'Home', href: '/' },
@@ -18,6 +52,8 @@ const SOCIAL = [
 ];
 
 export default function Footer() {
+  const pathname = usePathname();
+  const ctaTitle = ctaTitleFor(pathname || '/');
   // I CTA del footer stanno fuori da <main>, quindi non vengono intercettati:
   // aprono il popup lanciando gli eventi del PageWidgetOverlay.
   const openContact = () => window.dispatchEvent(new Event('gleeye:open-contact-form'));
@@ -31,9 +67,9 @@ export default function Footer() {
       {/* CTA di chiusura — su tutte le pagine */}
       <div className="relative mx-auto max-w-7xl border-b border-white/10 px-5 py-28 md:px-10 md:py-40">
         <div className="grid grid-cols-1 gap-14 md:grid-cols-[1.3fr_1fr] md:gap-20">
-          {/* titolone */}
-          <h2 className="voice-display text-[15vw] leading-[0.85] text-[#f8f9fa] md:text-[min(8.4vw,7.5rem)]">
-            Raccontaci<br />un&apos;idea.
+          {/* titolone — dinamico per pagina, va a capo da solo, responsive */}
+          <h2 className="voice-display max-w-[15ch] text-[8.5vw] leading-[0.94] text-[#f8f9fa] sm:text-[6.5vw] md:text-[min(5vw,4.4rem)]">
+            {ctaTitle}
           </h2>
 
           {/* colonna destra: occhiello in alto, testo + pulsanti allineati in basso */}

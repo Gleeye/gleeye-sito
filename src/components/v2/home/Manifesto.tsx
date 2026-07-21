@@ -59,9 +59,9 @@ export default function Manifesto() {
 
       <div className="relative mx-auto max-w-7xl px-5 md:px-10">
         {/* Titolo */}
-        <h2 className="voice-display mb-16 text-[13vw] leading-[0.9] md:mb-24 md:text-[min(7vw,7rem)]">
+        <h2 className="voice-display mb-16 text-[10vw] leading-[0.9] md:mb-24 md:text-[min(7vw,7rem)]">
           <span className="mf-title-line block md:pl-[8%]">Dall&apos;intenzione</span>
-          <span className="mf-title-line -mt-[1vw] block whitespace-nowrap text-gradient font-playfair italic font-medium normal-case tracking-[-0.01em] text-[15vw] leading-[0.9] md:text-[min(13vw,11rem)]">alla sostanza.</span>
+          <span className="mf-title-line -mt-[1vw] block whitespace-nowrap text-gradient font-playfair italic font-medium normal-case tracking-[-0.01em] text-[12vw] leading-[0.9] md:text-[min(13vw,11rem)]">alla sostanza.</span>
         </h2>
 
         {/* Nav + due colonne di testo */}

@@ -4,7 +4,6 @@ import ExamplesSection from '@/components/video-explainer/ExamplesSection';
 import EssenceSection from '@/components/video-explainer/EssenceSection';
 import ProcessStack from '@/components/video-explainer/ProcessStack';
 import FaqSection from '@/components/video-explainer/FaqSection';
-import ContactSection from '@/components/video-explainer/ContactSection';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -24,7 +23,6 @@ export default function VideoExplainerLandingPage() {
                 <EssenceSection />
                 <ProcessStack />
                 <FaqSection />
-                <ContactSection />
             </main>
             <Footer />
         </>

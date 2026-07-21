@@ -9,7 +9,6 @@ import ForWhoSection from '@/components/identity/visual-identity/ForWhoSection';
 import WhySection from '@/components/identity/visual-identity/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/identity/visual-identity/FaqSection';
-import CtaSection from '@/components/identity/visual-identity/CtaSection';
 
 export const metadata = {
   title: 'Visual Identity — Gleeye Identity',
@@ -31,7 +30,6 @@ export default function VisualIdentityPage() {
           <WhySection />
         </DarkBand>
         <FaqSection />
-        <CtaSection />
       </main>
       <Footer />
     </>

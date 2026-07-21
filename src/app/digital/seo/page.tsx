@@ -8,7 +8,6 @@ import ProcessSection from '@/components/digital/seo/ProcessSection';
 import ForWhoSection from '@/components/digital/seo/ForWhoSection';
 import WhySection from '@/components/digital/seo/WhySection';
 import FaqSection from '@/components/digital/seo/FaqSection';
-import CtaSection from '@/components/digital/seo/CtaSection';
 import DarkBand from '@/components/subpage/DarkBand';
 
 export const metadata = {
@@ -31,7 +30,6 @@ export default function SeoPage() {
           <WhySection />
         </DarkBand>
         <FaqSection />
-        <CtaSection />
       </main>
       <Footer />
     </>

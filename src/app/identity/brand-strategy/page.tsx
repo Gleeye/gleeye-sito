@@ -9,7 +9,6 @@ import ForWhoSection from '@/components/identity/brand-strategy/ForWhoSection';
 import WhySection from '@/components/identity/brand-strategy/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/identity/brand-strategy/FaqSection';
-import CtaSection from '@/components/identity/brand-strategy/CtaSection';
 
 export const metadata = {
   title: 'Brand Strategy — Gleeye Identity',
@@ -32,7 +31,6 @@ export default function BrandStrategyPage() {
           <WhySection />
         </DarkBand>
         <FaqSection />
-        <CtaSection />
       </main>
       <Footer />
     </>

@@ -9,7 +9,6 @@ import ForWhoSection from '@/components/identity/brand-guidelines/ForWhoSection'
 import WhySection from '@/components/identity/brand-guidelines/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/identity/brand-guidelines/FaqSection';
-import CtaSection from '@/components/identity/brand-guidelines/CtaSection';
 
 export const metadata = {
   title: 'Brand Guidelines — Gleeye Identity',
@@ -31,7 +30,6 @@ export default function BrandGuidelinesPage() {
           <WhySection />
         </DarkBand>
         <FaqSection />
-        <CtaSection />
       </main>
       <Footer />
     </>

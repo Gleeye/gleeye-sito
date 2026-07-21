@@ -8,7 +8,6 @@ import ProcessSection from '@/components/digital/social/ProcessSection';
 import ForWhoSection from '@/components/digital/social/ForWhoSection';
 import WhySection from '@/components/digital/social/WhySection';
 import FaqSection from '@/components/digital/social/FaqSection';
-import CtaSection from '@/components/digital/social/CtaSection';
 import DarkBand from '@/components/subpage/DarkBand';
 
 export const metadata = {
@@ -31,7 +30,6 @@ export default function SocialPage() {
           <WhySection />
         </DarkBand>
         <FaqSection />
-        <CtaSection />
       </main>
       <Footer />
     </>

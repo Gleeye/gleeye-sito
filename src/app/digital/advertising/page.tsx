@@ -8,7 +8,6 @@ import ProcessSection from '@/components/digital/advertising/ProcessSection';
 import ForWhoSection from '@/components/digital/advertising/ForWhoSection';
 import WhySection from '@/components/digital/advertising/WhySection';
 import FaqSection from '@/components/digital/advertising/FaqSection';
-import CtaSection from '@/components/digital/advertising/CtaSection';
 import DarkBand from '@/components/subpage/DarkBand';
 
 export const metadata = {
@@ -31,7 +30,6 @@ export default function AdvertisingPage() {
           <WhySection />
         </DarkBand>
         <FaqSection />
-        <CtaSection />
       </main>
       <Footer />
     </>
