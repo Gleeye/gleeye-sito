@@ -19,6 +19,18 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     if (prefersReduced) return;
     if (new URLSearchParams(window.location.search).has('nolenis')) return;
 
+    // Su dispositivi touch niente Lenis: lo scroll nativo è più fluido e non si
+    // incolla. Teniamo però lagSmoothing(0) così le animazioni GSAP (transizione
+    // pagina, reveal) si completano comunque anche durante i lag di carico su iOS.
+    const isTouch =
+      window.matchMedia('(pointer: coarse)').matches ||
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0;
+    if (isTouch) {
+      gsap.ticker.lagSmoothing(0);
+      return;
+    }
+
     const lenis = new Lenis({
       duration: 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

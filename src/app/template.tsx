@@ -13,6 +13,15 @@ export default function Template({ children }: { children: React.ReactNode }) {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) return;
 
+    /* Su touch niente fade: il contenuto parte già visibile. Su iOS, sotto
+       carico, il tween d'opacità poteva restare in pausa a metà lasciando un
+       velo grigio e la pagina apparentemente vuota. */
+    const isTouch =
+      window.matchMedia('(pointer: coarse)').matches ||
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0;
+    if (isTouch) return;
+
     /* opacity only — a transform here would turn the wrapper into the
        containing block for every position:fixed child (header, overlay) */
     const tween = gsap.fromTo(
