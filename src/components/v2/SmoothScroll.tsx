@@ -53,6 +53,23 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     };
   }, []);
 
+  /* Dopo ogni navigazione client-side vanno ricalcolate le posizioni dei
+     ScrollTrigger (e rimisurato Lenis su desktop): altrimenti le sezioni pinnate
+     della nuova pagina calcolano posizioni sbagliate e BLOCCANO lo scroll finché
+     non si ricarica la pagina a mano. Due passate: subito e dopo che i media
+     (immagini/video) hanno cambiato le altezze. */
+  useEffect(() => {
+    const refresh = () => {
+      lenisRef.current?.resize();
+      ScrollTrigger.refresh();
+    };
+    const timers = [
+      window.setTimeout(refresh, 200),
+      window.setTimeout(refresh, 800),
+    ];
+    return () => timers.forEach((t) => window.clearTimeout(t));
+  }, [pathname]);
+
   /* Hash anchors land wrong when pinned sections insert extra scroll space
      after the browser's native jump — re-scroll once layout has settled. */
   useEffect(() => {
