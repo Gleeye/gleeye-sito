@@ -78,9 +78,8 @@ export default function Footer() {
             {ctaTitle}
           </h2>
 
-          {/* colonna destra: occhiello in alto, testo + pulsanti allineati in basso */}
-          <div className="flex flex-col justify-between gap-12 md:pb-2 md:pt-3">
-            <span className="voice-mono text-white/40">[ Parliamone ]</span>
+          {/* colonna destra: testo + pulsanti allineati in basso */}
+          <div className="flex flex-col justify-end gap-12 md:pb-2 md:pt-3">
             <div>
               <p className="mb-9 max-w-sm font-jakarta text-lg font-medium leading-relaxed text-white/65">
                 Scrivici e raccontaci il tuo progetto. Lo mettiamo a fuoco insieme.

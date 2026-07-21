@@ -69,7 +69,7 @@ export default function EventsPositioningSection() {
               Un evento ben comunicato
               <br />
               vale il doppio.
-              <span className="text-gradient mt-3 block w-fit pb-[0.08em] pr-[0.05em] font-playfair text-[9vw] font-medium italic normal-case leading-[1.08] tracking-[-0.01em] md:text-[5vw] lg:text-[4.2vw]">
+              <span className="text-gradient-deep mt-3 block w-fit pb-[0.08em] pr-[0.05em] font-playfair text-[9vw] font-medium italic normal-case leading-[1.08] tracking-[-0.01em] md:text-[5vw] lg:text-[4.2vw]">
                 Uno comunicato male non vale niente.
               </span>
             </h2>

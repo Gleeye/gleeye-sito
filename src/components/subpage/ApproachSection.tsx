@@ -8,7 +8,7 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-/* Corsivo gradiente: la classe .text-gradient, la stessa di tutto il sito. */
+/* Corsivo gradiente: su chiaro: .text-gradient-deep (blu/viola pieni). */
 
 export type ApproachData = {
   /** etichetta in alto a destra, es. "Web Design & Dev · Genova" */
@@ -90,7 +90,7 @@ export default function ApproachSection({ data }: { data: ApproachData }) {
     <h2 className="sub-pos-statement font-satoshi text-[8vw] font-black leading-[1.06] tracking-tight text-black md:text-[3.6vw] lg:text-[3vw]">
       {data.statement.plain}
       {/* w-fit: il gradiente si estende sulla larghezza del testo, non del blocco */}
-      <span className="text-gradient mt-2 block w-fit pb-[0.14em] pr-[0.05em] font-playfair text-[9vw] font-medium italic normal-case tracking-[-0.01em] md:text-[4vw] lg:text-[3.4vw]">
+      <span className="text-gradient-deep mt-2 block w-fit pb-[0.14em] pr-[0.05em] font-playfair text-[9vw] font-medium italic normal-case tracking-[-0.01em] md:text-[4vw] lg:text-[3.4vw]">
         {data.statement.accent}
       </span>
     </h2>

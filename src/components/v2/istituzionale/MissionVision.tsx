@@ -19,10 +19,10 @@ if (typeof window !== 'undefined') {
    che su questa pagina risponde al titolo ("Fatti vedere per ciò che vali.").
    ———————————————————————————————————————————————————————————————— */
 
-/* Corsivo gradiente del sito: la classe .text-gradient, la stessa ovunque. */
+/* Corsivo gradiente del sito: su chiaro: .text-gradient-deep (blu/viola pieni). */
 function Accent({ children }: { children: React.ReactNode }) {
   return (
-    <span className="text-gradient font-playfair italic font-medium normal-case">
+    <span className="text-gradient-deep font-playfair italic font-medium normal-case">
       {children}
     </span>
   );
@@ -71,10 +71,15 @@ export default function MissionVision() {
         yPercent: 110, duration: 1.3, stagger: 0.12, ease: 'power4.out', delay: 0.2,
       });
 
+      /* lunghezza REALE della rotta: il dash lavora in queste unità (robusto
+         su tutti i browser, niente pathLength normalizzato) */
+      const len = path.getTotalLength();
+      path.style.strokeDasharray = String(len);
+
       /* Su touch niente scrub: rotta già tracciata, punto a destinazione,
          frase già ripulita, tutto leggibile. */
       if (isTouchDevice()) {
-        gsap.set(path, { strokeDashoffset: 0 });
+        path.style.strokeDashoffset = '0';
         /* niente puntino fermo: non può posarsi sulla CTA del footer */
         gsap.set(dot, { opacity: 0 });
         gsap.set(clean, { clipPath: 'none' });
@@ -86,7 +91,7 @@ export default function MissionVision() {
       }
 
       /* ————— la rotta si disegna e il punto la percorre ————— */
-      const len = path.getTotalLength();
+      path.style.strokeDashoffset = String(len);
       ScrollTrigger.create({
         trigger: root,
         start: 'top top',
@@ -94,7 +99,7 @@ export default function MissionVision() {
         scrub: 0.5,
         onUpdate: (self) => {
           const p = self.progress;
-          path.style.strokeDashoffset = String(1 - p);
+          path.style.strokeDashoffset = String(len * (1 - p));
           const pt = path.getPointAtLength(p * len);
           dot.style.left = `${(pt.x / VIEW_W) * 100}%`;
           dot.style.top = `${(pt.y / VIEW_H) * 100}%`;
@@ -180,7 +185,11 @@ export default function MissionVision() {
           strokeDasharray="3 9"
           vectorEffect="non-scaling-stroke"
         />
-        {/* il tragitto percorso, in gradiente, si disegna con lo scroll */}
+        {/* il tragitto percorso, in gradiente, si disegna con lo scroll.
+            NIENTE pathLength normalizzato: con vector-effect alcuni browser
+            (Safari) ignorano la normalizzazione e il dash da 1 unità diventa
+            micro-trattini invisibili — "lo spago sparisce". Il dash viene
+            impostato in JS con la lunghezza REALE (getTotalLength). */}
         <path
           ref={pathRef}
           d={ROUTE_D}
@@ -188,9 +197,8 @@ export default function MissionVision() {
           stroke="url(#mvRoute)"
           strokeWidth="2.5"
           strokeLinecap="round"
-          pathLength={1}
           vectorEffect="non-scaling-stroke"
-          style={{ strokeDasharray: 1, strokeDashoffset: 1, filter: 'drop-shadow(0 0 6px rgba(78,146,216,0.45))' }}
+          style={{ strokeDasharray: 9000, strokeDashoffset: 9000, filter: 'drop-shadow(0 0 6px rgba(78,146,216,0.45))' }}
         />
       </svg>
 
@@ -216,7 +224,7 @@ export default function MissionVision() {
           <span className="block overflow-hidden text-[13vw] leading-[0] pb-[0.22em] md:text-[9vw]">
             <span className="mv-hero-line voice-display block leading-[1.05]">
               diretti,{' '}
-              <span className="text-gradient inline-block align-baseline font-playfair font-medium normal-case italic leading-none pb-[0.34em] -mb-[0.3em]">
+              <span className="text-gradient-deep inline-block align-baseline font-playfair font-medium normal-case italic leading-none pb-[0.34em] -mb-[0.3em]">
                 e perché.
               </span>
             </span>

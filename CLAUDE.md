@@ -36,7 +36,7 @@ servizio non ancora rifatte. `Header.tsx` e `Footer.tsx` legacy sono re-export d
 - 404 custom (`not-found.tsx`), page transitions (`template.tsx`), sitemap.ts, robots.ts
 - Sottopagine servizio (identity/digital/factory/*, /podcast, /video-explainer, /events): design v1, chrome v2
 - `/factory/podcast` — sottopagina vetrina Podcast & Audio Branding (sistema sottopagine condiviso); la landing `/podcast` resta il servizio "Podcast da Remoto Essential"
-- Pagine istituzionali rifatte (lug 2026): `/chi-siamo` (hero "Piacere," a strisciata orizzontale + capitoli ghost), `/mission-e-vision` (concept "La rotta": percorso luminoso che consegna alla CTA footer), `/manifesto` (statement + corsivi gradiente), `/metodo` (concept "La linea": scarabocchio che si raddrizza scrollando e si parcheggia sotto la chiusura). Corsivi: SEMPRE Playfair italic + classe `.text-gradient` con `w-fit` (mai gradienti inline custom)
+- Pagine istituzionali rifatte (lug 2026): `/chi-siamo` (hero "Piacere," a strisciata orizzontale + capitoli ghost), `/mission-e-vision` (concept "La rotta": percorso luminoso che consegna alla CTA footer), `/manifesto` (statement + corsivi gradiente), `/metodo` (concept "La linea": scarabocchio che si raddrizza scrollando e si parcheggia sotto la chiusura). Corsivi: SEMPRE Playfair italic con `w-fit` (mai gradienti inline custom) — su fondo scuro classe `.text-gradient` (fluo), su fondo chiaro `.text-gradient-deep` (blu/viola pieni: il fluo sul bianco risulta slavato)
 
 ### Lezioni tecniche apprese (NON ripetere questi errori)
 - Turbopack (Next 16) NON emette `@import url()` remoti nel CSS: font via `next/font` o `<link>` nel layout
