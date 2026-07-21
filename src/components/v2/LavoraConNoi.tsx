@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import IrisCanvas from '@/components/v2/IrisCanvas';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -151,9 +152,16 @@ export default function LavoraConNoi() {
     <div ref={rootRef}>
       {/* ——— HERO — riempie esattamente la prima schermata ——— */}
       <section className="relative flex min-h-[calc(100svh-4rem)] flex-col justify-center overflow-hidden bg-[#0a0a10] px-5 py-20 text-[#f8f9fa] md:min-h-[calc(100svh-5rem)] md:px-10">
-        <div className="grain absolute inset-0" />
-        <div className="pointer-events-none absolute right-[-15%] top-[5%] h-[60vh] w-[60vh] rounded-full bg-[#614aa2]/25 blur-[150px]" />
-        <div className="pointer-events-none absolute bottom-[0%] left-[-12%] h-[50vh] w-[50vh] rounded-full bg-[#4e92d8]/20 blur-[140px]" />
+        {/* Iride liquida (WebGL riusabile), tinta brand come la home. Full-bleed
+            su mobile, pesata a destra da md in su (il claim sta a sinistra). */}
+        <div className="absolute inset-0 md:left-auto md:w-[72%] lg:w-[64%]">
+          <IrisCanvas color1="#6db5ff" color2="#9b7bff" zoom={1.2} className="h-full w-full" />
+        </div>
+        {/* Overlay leggibilità: da md velo da sinistra; su mobile scrim in basso
+            (il centro scuro dell'iride regge il titolo, come in home). */}
+        <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-[#0a0a10] via-[#0a0a10]/85 to-[#0a0a10]/25 md:block" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0a0a10]/30 via-transparent to-[#0a0a10]/85 md:hidden" />
+        <div className="grain pointer-events-none absolute inset-0" />
 
         <div className="relative mx-auto w-full max-w-7xl">
           <p className="lcn-hero-sub voice-mono mb-8 text-white/40">
@@ -174,7 +182,7 @@ export default function LavoraConNoi() {
           </h1>
 
           <div className="lcn-hero-sub mt-12 max-w-xl border-l-2 border-[#4e92d8]/50 pl-6">
-            <p className="font-jakarta text-base font-medium leading-relaxed text-white/55 md:text-lg">
+            <p className="font-jakarta text-base font-medium leading-relaxed text-white/75 md:text-lg">
               Alzarti ogni mattina per fare la cosa che ti appassiona, accanto a
               gente con il tuo stesso fuoco dentro. Per noi lavorare è questo.
               Se per te vale lo stesso, sei nel posto giusto.
