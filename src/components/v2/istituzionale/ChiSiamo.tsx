@@ -13,7 +13,7 @@ const CAPITOLI = [
   {
     ghost: 'CHI',
     label: 'Chi siamo',
-    accent: '#8257e6',
+    accent: '#614aa2',
     text: "Un team multidisciplinare progettato per la sintesi. Uniamo visione strategica e capacità esecutiva per offrire un interlocutore unico a chi ha bisogno di trasformare un'idea in un progetto solido.",
     align: 'left',
   },
@@ -27,7 +27,7 @@ const CAPITOLI = [
   {
     ghost: 'COME',
     label: 'Come lo facciamo',
-    accent: '#8257e6',
+    accent: '#614aa2',
     text: "Con un metodo che elimina l'incertezza. Presidiamo ogni passaggio — dalla strategia alla messa a terra — garantendo che ogni investimento si traduca in un valore reale, senza dispersioni.",
     align: 'left',
   },
@@ -48,25 +48,24 @@ export default function ChiSiamo() {
     if (!root) return;
 
     const ctx = gsap.context(() => {
+      /* Entrata hero — sempre, anche su touch (è al load, non scroll-driven):
+         le parole della prima riga entrano in cascata da una maschera, la riga
+         in gradiente segue con uno sweep dal basso, poi il sottotitolo. */
+      const heroTl = gsap.timeline({ delay: 0.15 });
+      heroTl
+        .from('.cs-hero-word', { yPercent: 118, duration: 1, stagger: 0.08, ease: 'power4.out' })
+        .from('.cs-hero-line2', { yPercent: 118, duration: 1.1, ease: 'power4.out' }, '-=0.78')
+        .from('.cs-hero-sub', { opacity: 0, y: 22, duration: 0.9, ease: 'power3.out' }, '-=0.6');
+
       /* Su touch: niente scrub scroll-triggered (su iOS post-navigazione
          misurano male e lascerebbero le parole a opacity 0.08 / ghost vuoto).
-         Portiamo tutto allo stato finale, teniamo solo l'intro della hero. */
+         Portiamo i capitoli allo stato finale. */
       if (isTouchDevice()) {
         gsap.set('.cs-word', { opacity: 1 });
         gsap.set('.cs-ghost-fill', { clipPath: 'inset(0% 0 0 0)' });
         gsap.set('.cs-thread', { scaleY: 1 });
-        gsap.from('.cs-hero-line', { yPercent: 110, duration: 1.1, stagger: 0.1, ease: 'power4.out', delay: 0.15 });
         return;
       }
-
-      /* hero */
-      gsap.from('.cs-hero-line', {
-        yPercent: 110,
-        duration: 1.3,
-        stagger: 0.12,
-        ease: 'power4.out',
-        delay: 0.2,
-      });
 
       /* filo verticale che cuce i capitoli */
       gsap.fromTo('.cs-thread', { scaleY: 0 }, {
@@ -117,18 +116,22 @@ export default function ChiSiamo() {
         <div className="pointer-events-none absolute bottom-[5%] left-[-10%] h-[50vh] w-[50vh] rounded-full bg-[#4e92d8]/15 blur-[130px]" />
 
         <h1 className="relative">
-          <span className="block overflow-hidden py-[0.04em]">
-            <span className="cs-hero-line voice-display block text-[9.5vw] leading-[0.95] md:text-[9vw]">
-              Un interlocutore.
-            </span>
+          <span className="flex flex-wrap">
+            {'Un interlocutore.'.split(' ').map((w, i) => (
+              <span key={i} className="block overflow-hidden py-[0.04em] pr-[0.24em]">
+                <span className="cs-hero-word voice-display block text-[9.5vw] leading-[0.95] md:text-[9vw]">
+                  {w}
+                </span>
+              </span>
+            ))}
           </span>
           <span className="block overflow-hidden py-[0.04em]">
-            <span className="cs-hero-line voice-display text-gradient-flow block text-[9.5vw] leading-[0.95] md:text-[9vw]">
+            <span className="cs-hero-line2 voice-display text-gradient-flow block text-[9.5vw] leading-[0.95] md:text-[9vw]">
               Tutte le risposte.
             </span>
           </span>
         </h1>
-        <div className="cs-hero-line mt-10 max-w-xl border-l-2 border-[#4e92d8]/50 pl-6">
+        <div className="cs-hero-sub mt-10 max-w-xl border-l-2 border-[#4e92d8]/50 pl-6">
           <p className="font-jakarta text-base font-medium leading-relaxed text-white/50 md:text-lg">
             Quattro domande bastano per capire con chi stai parlando. Le stesse che faresti tu — con le risposte che diamo a tutti, prima ancora che ce le chiedano.
           </p>
@@ -139,7 +142,7 @@ export default function ChiSiamo() {
       <div className="cs-chapters relative">
         {/* filo che cuce */}
         <div className="pointer-events-none absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-white/[0.06] md:block">
-          <div className="cs-thread h-full w-full origin-top bg-gradient-to-b from-[#8257e6] via-[#4e92d8] to-[#8257e6] opacity-60" style={{ transform: 'scaleY(0)' }} />
+          <div className="cs-thread h-full w-full origin-top bg-gradient-to-b from-[#614aa2] via-[#4e92d8] to-[#614aa2] opacity-60" style={{ transform: 'scaleY(0)' }} />
         </div>
 
         {CAPITOLI.map((c) => (
@@ -175,7 +178,10 @@ export default function ChiSiamo() {
 
             {/* testo */}
             <div className={`relative w-full md:w-1/2 ${c.align === 'right' ? '' : 'md:ml-auto'}`}>
-              <p className="voice-mono mb-6" style={{ color: c.accent }}>
+              <p
+                className="voice-mono mb-6"
+                style={{ background: 'linear-gradient(90deg, #4e92d8, #614aa2)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}
+              >
                 {c.label}
               </p>
               <p className="font-satoshi text-2xl font-black leading-snug tracking-tight md:text-4xl">
@@ -190,17 +196,8 @@ export default function ChiSiamo() {
         ))}
       </div>
 
-      {/* ------- chiusura ------- */}
-      <div className="relative px-5 pb-32 pt-10 text-center md:px-10">
-        <p className="font-jakarta text-base font-medium text-white/40">La quinta domanda falla di persona.</p>
-        <a
-          href="/contatti"
-          className="mt-8 inline-flex items-center gap-3 rounded-full px-10 py-5 font-satoshi text-xs font-black uppercase tracking-[0.2em] text-white"
-          style={{ background: 'linear-gradient(120deg, #8257e6, #4e92d8)' }}
-        >
-          Parliamone <span aria-hidden>→</span>
-        </a>
-      </div>
+      {/* respiro finale prima del footer (il contatto vive già nel footer) */}
+      <div className="h-16 md:h-24" />
     </section>
   );
 }
