@@ -82,7 +82,8 @@ export default function MissionVision() {
          frase già ripulita, tutto leggibile. */
       if (isTouchDevice()) {
         gsap.set(path, { strokeDashoffset: 0 });
-        gsap.set(dot, { left: `${(END_X / VIEW_W) * 100}%`, top: `${(END_Y / VIEW_H) * 100}%`, opacity: 1 });
+        /* niente puntino fermo: non può posarsi sulla CTA del footer */
+        gsap.set(dot, { opacity: 0 });
         gsap.set(clean, { clipPath: 'none' });
         gsap.set(deg, { clipPath: 'inset(0 0 0 100%)' });
         gsap.set('.mv-word', { opacity: 1 });
@@ -104,8 +105,9 @@ export default function MissionVision() {
           const pt = path.getPointAtLength(p * len);
           dot.style.left = `${(pt.x / VIEW_W) * 100}%`;
           dot.style.top = `${(pt.y / VIEW_H) * 100}%`;
-          /* visibile fino in fondo: a fine rotta resta sopra la CTA del footer */
-          dot.style.opacity = p > 0.015 ? '1' : '0';
+          /* non può posarsi sulla CTA del footer (vive in un'altra sezione):
+             nell'ultimo tratto si dissolve mentre si tuffa verso di lei */
+          dot.style.opacity = p <= 0.015 ? '0' : p >= 0.88 ? String(Math.max(0, (0.98 - p) / 0.1)) : '1';
         },
       });
 
