@@ -198,7 +198,7 @@ export default function PageWidgetOverlay() {
   // Sorgente iframe: usata per la prenotazione, e come FALLBACK del form protetto.
   const iframeSrc =
     open === "booking"
-      ? `${ERP_APP}/prenota?embed=true`
+      ? `${ERP_APP}/prenota?embed=true${w?.booking_item_id ? `&servizio=${w.booking_item_id}` : ""}`
       : open === "form" && formFallback && w?.contact_form_id
         ? `${ERP_APP}/form/${w.contact_form_id}?embed=true`
         : null;
