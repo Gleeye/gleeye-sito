@@ -1,20 +1,19 @@
 import type { Metadata } from 'next';
-import LavoraConNoi from '@/components/LavoraConNoi';
+import Header from '@/components/v2/Header';
+import Footer from '@/components/v2/Footer';
+import LavoraConNoi from '@/components/v2/LavoraConNoi';
 
 export const metadata: Metadata = {
     title: 'Lavora con noi | GLEEYE',
     description:
-        'Prova di non essere un prompt. Cerchiamo umani capaci di sbagliare con genio, di intuire l\'impossibile e di dare sostanza al vuoto.',
+        'Progetti veri dal primo giorno, uno standard che ti alza e una squadra che ama il proprio mestiere. Designer, videomaker, copywriter, developer: presentati.',
 };
-
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 
 export default function LavoraConNoiPage() {
     return (
         <>
             <Header />
-            <main className="min-h-[100dvh]">
+            <main className="bg-[#0a0a10] pt-16 md:pt-20">
                 <LavoraConNoi />
             </main>
             <Footer />

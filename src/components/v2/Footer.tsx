@@ -54,6 +54,8 @@ const SOCIAL = [
 export default function Footer() {
   const pathname = usePathname();
   const ctaTitle = ctaTitleFor(pathname || '/');
+  // Su /lavora-con-noi la CTA parla al candidato, non al cliente.
+  const isCareers = (pathname || '').startsWith('/lavora-con-noi');
   // I CTA del footer stanno fuori da <main>, quindi non vengono intercettati:
   // aprono il popup lanciando gli eventi del PageWidgetOverlay.
   const openContact = () => window.dispatchEvent(new Event('gleeye:open-contact-form'));
@@ -74,26 +76,32 @@ export default function Footer() {
 
           {/* colonna destra: occhiello in alto, testo + pulsanti allineati in basso */}
           <div className="flex flex-col justify-between gap-12 md:pb-2 md:pt-3">
-            <span className="voice-mono text-white/40">[ Parliamone ]</span>
+            <span className="voice-mono text-white/40">
+              {isCareers ? '[ Lavora con noi ]' : '[ Parliamone ]'}
+            </span>
             <div>
               <p className="mb-9 max-w-sm font-jakarta text-lg font-medium leading-relaxed text-white/65">
-                Scrivici e raccontaci il tuo progetto. Lo mettiamo a fuoco insieme.
+                {isCareers
+                  ? 'Due righe su chi sei e un link a quello che hai fatto: un portfolio vale più di mille CV. Le candidature le leggiamo tutte.'
+                  : 'Scrivici e raccontaci il tuo progetto. Lo mettiamo a fuoco insieme.'}
               </p>
               <div className="flex flex-wrap gap-3">
                 <button
                   onClick={openContact}
                   className="group inline-flex items-center gap-2.5 rounded-lg border border-white/20 px-6 py-3.5 font-satoshi text-xs font-bold uppercase tracking-[0.12em] text-white transition-colors duration-300 hover:bg-[#f8f9fa] hover:text-[#0a0a10]"
                 >
-                  Inizia un progetto
+                  {isCareers ? 'Invia la candidatura' : 'Inizia un progetto'}
                   <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </button>
-                <button
-                  onClick={openBooking}
-                  className="group inline-flex items-center gap-2.5 rounded-lg border border-white/20 px-6 py-3.5 font-satoshi text-xs font-bold uppercase tracking-[0.12em] text-white transition-colors duration-300 hover:bg-[#f8f9fa] hover:text-[#0a0a10]"
-                >
-                  Prenota una call
-                  <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                </button>
+                {!isCareers && (
+                  <button
+                    onClick={openBooking}
+                    className="group inline-flex items-center gap-2.5 rounded-lg border border-white/20 px-6 py-3.5 font-satoshi text-xs font-bold uppercase tracking-[0.12em] text-white transition-colors duration-300 hover:bg-[#f8f9fa] hover:text-[#0a0a10]"
+                  >
+                    Prenota una call
+                    <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  </button>
+                )}
               </div>
             </div>
           </div>
