@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { isTouchDevice } from '@/lib/isTouch';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -47,6 +48,17 @@ export default function ChiSiamo() {
     if (!root) return;
 
     const ctx = gsap.context(() => {
+      /* Su touch: niente scrub scroll-triggered (su iOS post-navigazione
+         misurano male e lascerebbero le parole a opacity 0.08 / ghost vuoto).
+         Portiamo tutto allo stato finale, teniamo solo l'intro della hero. */
+      if (isTouchDevice()) {
+        gsap.set('.cs-word', { opacity: 1 });
+        gsap.set('.cs-ghost-fill', { clipPath: 'inset(0% 0 0 0)' });
+        gsap.set('.cs-thread', { scaleY: 1 });
+        gsap.from('.cs-hero-line', { yPercent: 110, duration: 1.1, stagger: 0.1, ease: 'power4.out', delay: 0.15 });
+        return;
+      }
+
       /* hero */
       gsap.from('.cs-hero-line', {
         yPercent: 110,
@@ -106,12 +118,12 @@ export default function ChiSiamo() {
 
         <h1 className="relative">
           <span className="block overflow-hidden py-[0.04em]">
-            <span className="cs-hero-line voice-display block text-[13vw] leading-[0.9] md:text-[9vw]">
+            <span className="cs-hero-line voice-display block text-[9.5vw] leading-[0.95] md:text-[9vw]">
               Un interlocutore.
             </span>
           </span>
           <span className="block overflow-hidden py-[0.04em]">
-            <span className="cs-hero-line voice-display text-gradient-flow block text-[13vw] leading-[0.9] md:text-[9vw]">
+            <span className="cs-hero-line voice-display text-gradient-flow block text-[9.5vw] leading-[0.95] md:text-[9vw]">
               Tutte le risposte.
             </span>
           </span>
@@ -134,7 +146,7 @@ export default function ChiSiamo() {
           <div
             key={c.ghost}
             data-align={c.align}
-            className="cs-chapter relative flex min-h-[90vh] items-center overflow-hidden px-5 py-24 md:px-10"
+            className="cs-chapter relative flex min-h-[58vh] items-center overflow-hidden px-5 py-16 md:min-h-[90vh] md:py-24 md:px-10"
           >
             {/* parola gigante: contorno + riempimento gradiente che sale */}
             <div
