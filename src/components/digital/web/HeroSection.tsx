@@ -3,7 +3,7 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 
-const HEAD = { plain: ["PIATTAFORME AL SERVIZIO"], accent: "del Tuo Business.", inline: false };
+const HEAD = { plain: ["PIATTAFORME AL SERVIZIO"], accent: "del tuo business.", inline: false };
 
 export default function WebHeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
