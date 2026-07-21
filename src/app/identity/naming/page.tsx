@@ -9,7 +9,6 @@ import ForWhoSection from '@/components/identity/naming/ForWhoSection';
 import WhySection from '@/components/identity/naming/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/identity/naming/FaqSection';
-import CtaSection from '@/components/identity/naming/CtaSection';
 
 export const metadata = {
   title: 'Naming — Gleeye Identity',
@@ -31,7 +30,6 @@ export default function NamingPage() {
           <WhySection />
         </DarkBand>
         <FaqSection />
-        <CtaSection />
       </main>
       <Footer />
     </>

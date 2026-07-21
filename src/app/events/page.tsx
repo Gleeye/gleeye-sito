@@ -5,7 +5,6 @@ import PositioningSection from '@/components/events/PositioningSection';
 import ServicesSection from '@/components/events/ServicesSection';
 import TimelineSection from '@/components/events/TimelineSection';
 import FaqSection from '@/components/events/FaqSection';
-import CtaSection from '@/components/events/CtaSection';
 
 export const metadata = {
   title: 'Comunicazione per Eventi Aziendali — Gleeye',
@@ -25,7 +24,6 @@ export default function EventsPage() {
         <ServicesSection />
         <TimelineSection />
         <FaqSection />
-        <CtaSection />
       </main>
       <Footer />
     </>

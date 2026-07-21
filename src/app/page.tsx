@@ -16,7 +16,6 @@ import Areas from '@/components/v2/home/Areas';
 const SHOWREEL_URL = '/video/showreel-2022.mp4';
 import Manifesto from '@/components/v2/home/Manifesto';
 import SpecialUnits from '@/components/v2/home/SpecialUnits';
-import Contact from '@/components/v2/home/Contact';
 
 export const dynamic = 'force-dynamic';
 
@@ -42,7 +41,6 @@ export default function Home() {
         <Showreel clips={[SHOWREEL_URL]} />
         <Manifesto />
         <SpecialUnits />
-        <Contact />
       </main>
       <Footer />
     </>

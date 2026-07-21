@@ -284,8 +284,8 @@ export default function HeroIris() {
               Visione<span className="text-white">.</span>
             </span>
           </span>
-          <span className="-mt-[0.5vw] block overflow-visible md:-mt-[0.6vw]">
-            <span className="comunica-line text-gradient block whitespace-nowrap text-center font-newsreader italic font-medium normal-case tracking-[-0.01em] text-[14vw] leading-[1.2] md:text-[min(12.5vw,10.5rem)]">
+          <span className="-mt-[1vw] block overflow-visible md:-mt-[1.2vw]">
+            <span className="comunica-line text-gradient block whitespace-nowrap text-center font-playfair italic font-medium normal-case tracking-[-0.01em] text-[12.3vw] leading-[0.95] md:text-[min(10vw,8.5rem)]">
               {'Comunicazione.'.split('').map((ch, i) => (
                 <span key={i} className="comunica-letter">
                   {ch}
@@ -336,7 +336,31 @@ export default function HeroIris() {
         </div>
         <div className="voice-mono hero-fade hidden whitespace-nowrap text-right leading-relaxed text-white/35 md:block">
           <span className="block">44.4056° N — 8.9463° E</span>
-          <span className="block">Genova — Operativi ovunque</span>
+          <span className="flex items-center justify-end gap-1.5">
+            {/* Lanterna di Genova — due tronconi DRITTI (pareti verticali),
+                cornice sporgente a metà, lanterna col cupolino, roccia alla base */}
+            <svg
+              viewBox="0 0 16 28"
+              className="h-[1.8em] w-auto shrink-0"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M8 0.8v1.1" />
+              <path d="M6.8 3.4Q8 2 9.2 3.4" />
+              <path d="M6.8 3.4V5.5M9.2 3.4V5.5" />
+              <path d="M6.2 5.5h3.6" />
+              <path d="M7 5.9v8.1M9 5.9v8.1" />
+              <path d="M5.6 14h4.8M5.6 14v2M10.4 14v2M5.6 16h4.8" />
+              <path d="M6.3 16v7.5M9.7 16v7.5" />
+              <path d="M2.2 27c.8-3 3-2 4.1-3.5" />
+              <path d="M9.7 23.5c1.3 1.5 3.4.4 4.1 3.5" />
+            </svg>
+            Genova — Operativi ovunque
+          </span>
         </div>
       </div>
     </section>

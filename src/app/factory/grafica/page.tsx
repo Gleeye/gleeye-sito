@@ -9,7 +9,6 @@ import ForWhoSection from '@/components/factory/grafica/ForWhoSection';
 import WhySection from '@/components/factory/grafica/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/factory/grafica/FaqSection';
-import CtaSection from '@/components/factory/grafica/CtaSection';
 
 export const metadata = {
   title: 'Graphic Design — Gleeye Factory',
@@ -31,7 +30,6 @@ export default function GraficaPage() {
           <WhySection />
         </DarkBand>
         <FaqSection />
-        <CtaSection />
       </main>
       <Footer />
     </>

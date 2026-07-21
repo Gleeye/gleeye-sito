@@ -10,7 +10,6 @@ import ForWhoSection from '@/components/factory/fotografia/ForWhoSection';
 import WhySection from '@/components/factory/fotografia/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/factory/fotografia/FaqSection';
-import CtaSection from '@/components/factory/fotografia/CtaSection';
 
 export const metadata = {
   title: 'Fotografia — Gleeye Factory',
@@ -33,7 +32,6 @@ export default function FotografiaPage() {
           <WhySection />
         </DarkBand>
         <FaqSection />
-        <CtaSection />
       </main>
       <Footer />
     </>

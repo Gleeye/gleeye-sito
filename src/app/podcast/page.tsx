@@ -3,7 +3,6 @@ import ValueSection from '@/components/podcast/ValueSection';
 import EssenceSection from '@/components/podcast/EssenceSection';
 import ProcessStack from '@/components/podcast/ProcessStack';
 import FaqSection from '@/components/podcast/FaqSection';
-import ContactSection from '@/components/podcast/ContactSection';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -22,7 +21,6 @@ export default function PodcastLandingPage() {
                 <EssenceSection />
                 <ProcessStack />
                 <FaqSection />
-                <ContactSection />
             </main>
             <Footer />
         </>

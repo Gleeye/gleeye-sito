@@ -64,6 +64,7 @@ const AREAS = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [onLight, setOnLight] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
@@ -116,6 +117,40 @@ export default function Header() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
+  /* Colore hamburger adattivo: mix-blend-difference a volte non "vede" lo
+     sfondo (contesto di impilamento da Lenis/transform) e resta bianco → sparisce
+     sul chiaro. Campioniamo lo sfondo dietro l'header e decidiamo il colore. */
+  useEffect(() => {
+    let raf = 0;
+    const measure = () => {
+      raf = 0;
+      const el = document.elementFromPoint(Math.round(window.innerWidth / 2), 36);
+      let node: Element | null = el;
+      let bg = '';
+      while (node) {
+        const c = getComputedStyle(node).backgroundColor;
+        if (c && c !== 'transparent' && !c.startsWith('rgba(0, 0, 0, 0')) { bg = c; break; }
+        node = node.parentElement;
+      }
+      const m = bg.match(/\d+(\.\d+)?/g);
+      if (!m) return;
+      const [r, g, b] = m.map(Number);
+      setOnLight(0.299 * r + 0.587 * g + 0.114 * b > 140);
+    };
+    const sample = () => { if (!raf) raf = requestAnimationFrame(measure); };
+    // ScrollTrigger è sincronizzato con Lenis (il native 'scroll' non scatta)
+    const st = ScrollTrigger.create({ start: 0, end: () => ScrollTrigger.maxScroll(window), onUpdate: sample, onRefresh: sample });
+    sample();
+    const t = window.setTimeout(sample, 200);
+    window.addEventListener('resize', sample);
+    return () => {
+      st.kill();
+      window.clearTimeout(t);
+      window.cancelAnimationFrame(raf);
+      window.removeEventListener('resize', sample);
+    };
+  }, [pathname]);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && open) toggle(false);
@@ -152,18 +187,22 @@ export default function Header() {
               onClick={() => toggle(!open)}
               aria-expanded={open}
               aria-label={open ? 'Chiudi menu' : 'Apri menu'}
-              className="group flex items-center gap-3 mix-blend-difference"
+              className="group flex items-center gap-3"
             >
-              <span className="relative flex h-12 w-12 items-center justify-center rounded-full border border-white/40 transition-colors duration-300 group-hover:border-white">
+              <span
+                className={`relative flex h-12 w-12 items-center justify-center rounded-full border transition-colors duration-300 ${
+                  open || !onLight ? 'border-white/40 group-hover:border-white' : 'border-[#0a0a10]/25 group-hover:border-[#0a0a10]'
+                }`}
+              >
                 <span
-                  className={`absolute h-px w-4 bg-white transition-all duration-300 ${
-                    open ? 'rotate-45' : '-translate-y-[3.5px]'
-                  }`}
+                  className={`absolute h-px w-4 transition-all duration-300 ${
+                    open || !onLight ? 'bg-white' : 'bg-[#0a0a10]'
+                  } ${open ? 'rotate-45' : '-translate-y-[3.5px]'}`}
                 />
                 <span
-                  className={`absolute h-px w-4 bg-white transition-all duration-300 ${
-                    open ? '-rotate-45' : 'translate-y-[3.5px]'
-                  }`}
+                  className={`absolute h-px w-4 transition-all duration-300 ${
+                    open || !onLight ? 'bg-white' : 'bg-[#0a0a10]'
+                  } ${open ? '-rotate-45' : 'translate-y-[3.5px]'}`}
                 />
               </span>
             </button>

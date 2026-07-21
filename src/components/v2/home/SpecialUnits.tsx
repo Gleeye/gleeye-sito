@@ -23,7 +23,7 @@ const UNITS = [
   },
   {
     icon: Sparkles,
-    name: 'Gleeye Events',
+    name: 'Gleeye X Eventi Aziendali',
     logo: null,
     desc: "Presidio visivo degli eventi live: fiere, convention, lanci di prodotto. La messa a terra coerente con l'immagine boutique del brand.",
     accent: '#6db5ff',
