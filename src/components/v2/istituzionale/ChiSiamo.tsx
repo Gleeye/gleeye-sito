@@ -42,30 +42,45 @@ const CAPITOLI = [
 
 export default function ChiSiamo() {
   const rootRef = useRef<HTMLElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const root = rootRef.current;
-    if (!root) return;
+    const hero = heroRef.current;
+    if (!root || !hero) return;
 
     const ctx = gsap.context(() => {
-      /* Entrata hero — sempre, anche su touch (è al load, non scroll-driven):
-         le parole della prima riga entrano in cascata da una maschera, la riga
-         in gradiente segue con uno sweep dal basso, poi il sottotitolo. */
-      const heroTl = gsap.timeline({ delay: 0.15 });
-      heroTl
-        .from('.cs-hero-word', { yPercent: 118, duration: 1, stagger: 0.08, ease: 'power4.out' })
-        .from('.cs-hero-line2', { yPercent: 118, duration: 1.1, ease: 'power4.out' }, '-=0.78')
-        .from('.cs-hero-sub', { opacity: 0, y: 22, duration: 0.9, ease: 'power3.out' }, '-=0.6');
+      /* Stato iniziale della sequenza hero: all'inizio si vede solo "Piacere,",
+         le altre parole entrano dopo (dal basso). */
+      gsap.set(['.cs-n', '.cs-s', '.cs-g'], { opacity: 0, yPercent: 90 });
 
-      /* Su touch: niente scrub scroll-triggered (su iOS post-navigazione
-         misurano male e lascerebbero le parole a opacity 0.08 / ghost vuoto).
-         Portiamo i capitoli allo stato finale. */
+      /* Su touch: niente pin (su iOS blocca/desincronizza lo scroll) né scrub.
+         La sequenza hero parte in autoplay al load; i capitoli allo stato finale. */
       if (isTouchDevice()) {
         gsap.set('.cs-word', { opacity: 1 });
         gsap.set('.cs-ghost-fill', { clipPath: 'inset(0% 0 0 0)' });
         gsap.set('.cs-thread', { scaleY: 1 });
+        gsap.set('.cs-p', { scale: 1.5, transformOrigin: '50% 50%' });
+        gsap.timeline({ delay: 0.25 })
+          .to('.cs-p', { scale: 1, duration: 1.1, ease: 'power2.inOut' })
+          .to('.cs-n', { opacity: 1, yPercent: 0, duration: 0.5, ease: 'power3.out' }, '-=0.15')
+          .to('.cs-s', { opacity: 1, yPercent: 0, duration: 0.5, ease: 'power3.out' }, '-=0.2')
+          .to('.cs-g', { opacity: 1, yPercent: 0, duration: 0.6, ease: 'power3.out' }, '-=0.2');
         return;
       }
+
+      /* Desktop: hero pinnata, la sequenza è guidata dallo scroll.
+         "Piacere," parte enorme a tutto schermo, si rimpicciolisce e sale;
+         poi entrano NOI, SIAMO, GLEEYE una alla volta. */
+      gsap.set('.cs-p', { scale: 2.3, y: '20vh', transformOrigin: '50% 50%' });
+      gsap.timeline({
+        scrollTrigger: { trigger: hero, start: 'top top', end: '+=320%', pin: true, scrub: 0.6, anticipatePin: 1 },
+      })
+        .to('.cs-p', { scale: 1, y: 0, ease: 'power2.inOut', duration: 1.5 })
+        .to('.cs-n', { opacity: 1, yPercent: 0, ease: 'power3.out', duration: 0.8 }, '>-0.15')
+        .to('.cs-s', { opacity: 1, yPercent: 0, ease: 'power3.out', duration: 0.8 }, '>-0.05')
+        .to('.cs-g', { opacity: 1, yPercent: 0, ease: 'power3.out', duration: 1.0 }, '>-0.05')
+        .to({}, { duration: 0.5 });
 
       /* filo verticale che cuce i capitoli */
       gsap.fromTo('.cs-thread', { scaleY: 0 }, {
@@ -110,32 +125,17 @@ export default function ChiSiamo() {
     <section ref={rootRef} className="relative overflow-hidden bg-[#0a0a10] text-[#f8f9fa]">
       <div className="grain absolute inset-0" />
 
-      {/* ------- hero ------- */}
-      <div className="relative flex min-h-svh flex-col justify-center px-5 md:px-10">
+      {/* ------- hero: sequenza "Piacere, noi siamo Gleeye." guidata dallo scroll ------- */}
+      <div ref={heroRef} className="relative h-svh overflow-hidden">
         <div className="pointer-events-none absolute right-[-15%] top-[10%] h-[60vh] w-[60vh] rounded-full bg-[#614aa2]/20 blur-[140px]" />
         <div className="pointer-events-none absolute bottom-[5%] left-[-10%] h-[50vh] w-[50vh] rounded-full bg-[#4e92d8]/15 blur-[130px]" />
 
-        <h1 className="relative">
-          <span className="flex flex-wrap">
-            {'Un interlocutore.'.split(' ').map((w, i) => (
-              <span key={i} className="block overflow-hidden py-[0.04em] pr-[0.24em]">
-                <span className="cs-hero-word voice-display block text-[9.5vw] leading-[0.95] md:text-[9vw]">
-                  {w}
-                </span>
-              </span>
-            ))}
-          </span>
-          <span className="block overflow-hidden py-[0.04em]">
-            <span className="cs-hero-line2 voice-display text-gradient-flow block text-[9.5vw] leading-[0.95] md:text-[9vw]">
-              Tutte le risposte.
-            </span>
-          </span>
+        <h1 className="voice-display absolute inset-0 flex flex-col items-center justify-center gap-y-1 px-5 text-center leading-[0.88]">
+          <span className="cs-p block text-[13vw] will-change-transform md:text-[8.5vw]">Piacere,</span>
+          <span className="cs-n block text-[13vw] will-change-transform md:text-[8.5vw]">noi</span>
+          <span className="cs-s block text-[13vw] will-change-transform md:text-[8.5vw]">siamo</span>
+          <span className="cs-g block text-gradient-flow text-[13vw] will-change-transform md:text-[8.5vw]">Gleeye.</span>
         </h1>
-        <div className="cs-hero-sub mt-10 max-w-xl border-l-2 border-[#4e92d8]/50 pl-6">
-          <p className="font-jakarta text-base font-medium leading-relaxed text-white/50 md:text-lg">
-            Quattro domande bastano per capire con chi stai parlando. Le stesse che faresti tu — con le risposte che diamo a tutti, prima ancora che ce le chiedano.
-          </p>
-        </div>
       </div>
 
       {/* ------- capitoli ------- */}
@@ -180,7 +180,7 @@ export default function ChiSiamo() {
             <div className={`relative w-full md:w-1/2 ${c.align === 'right' ? '' : 'md:ml-auto'}`}>
               <p
                 className="voice-mono mb-6"
-                style={{ background: 'linear-gradient(90deg, #4e92d8, #614aa2)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}
+                style={{ backgroundImage: 'linear-gradient(90deg, #4e92d8, #614aa2)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}
               >
                 {c.label}
               </p>
