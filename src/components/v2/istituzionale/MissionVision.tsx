@@ -295,13 +295,8 @@ export default function MissionVision() {
         </div>
       </div>
 
-      {/* ————— ultimo tratto: la rotta si tuffa verso la CTA del footer ————— */}
-      <div className="relative z-10 flex h-[55vh] items-end px-5 pb-16 md:px-10">
-        <p className="font-jakarta text-sm font-medium text-black/45 md:text-base">
-          Il tragitto tra i due punti è il nostro{' '}
-          <a href="/metodo" className="font-semibold text-[#0a0a10] underline decoration-[#4e92d8] underline-offset-4">metodo</a>.
-        </p>
-      </div>
+      {/* ————— ultimo tratto: solo la rotta, che si tuffa sulla CTA del footer ————— */}
+      <div className="relative h-[55vh]" />
     </section>
   );
 }
