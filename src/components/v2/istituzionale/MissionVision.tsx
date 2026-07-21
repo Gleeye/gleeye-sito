@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { isTouchDevice } from '@/lib/isTouch';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -24,19 +25,21 @@ export default function MissionVision() {
     if (!root) return;
 
     const ctx = gsap.context(() => {
+      /* Su touch: niente scrub (su iOS post-navigazione lascerebbero parole a
+         opacity 0.1 e i titoli a opacity 0). Il giorno→notte ora vive negli
+         sfondi di sezione, non nello scrub del root, quindi qui basta portare
+         tutto allo stato finale e tenere l'intro della hero. */
+      if (isTouchDevice()) {
+        gsap.set('.mv-word', { opacity: 1 });
+        gsap.set('.mv-stars', { opacity: 1 });
+        gsap.set('.mv-act-title', { opacity: 1, y: 0, rotate: 0 });
+        gsap.from('.mv-hero-line', { yPercent: 110, duration: 1.1, stagger: 0.1, ease: 'power4.out', delay: 0.15 });
+        return;
+      }
+
       gsap.from('.mv-hero-line', {
         yPercent: 110, duration: 1.3, stagger: 0.12, ease: 'power4.out', delay: 0.2,
       });
-
-      /* il giorno diventa notte: lo sfondo si spegne tra i due atti */
-      gsap.fromTo(root,
-        { backgroundColor: '#f8f9fa' },
-        {
-          backgroundColor: '#0a0a10',
-          ease: 'none',
-          scrollTrigger: { trigger: '.mv-transition', start: 'top 90%', end: 'bottom 35%', scrub: 0.6 },
-        },
-      );
 
       /* il sole sale e si spegne diventando luna */
       gsap.fromTo('.mv-disc',
@@ -102,7 +105,7 @@ export default function MissionVision() {
       </div>
 
       {/* ------- atto I: mission ------- */}
-      <div className="relative px-5 py-28 md:px-10 md:py-40">
+      <div className="relative px-5 py-20 md:px-10 md:py-40">
         <p className="voice-mono mb-8 text-black/40">Atto I — La missione</p>
         <h2 className="mv-act-title voice-display max-w-5xl text-4xl leading-[1.02] text-[#0a0a10] md:text-7xl">
           Ridurre l&apos;attrito tra ciò che <span className="text-gradient-flow">vali</span> e ciò che si <span className="text-gradient-flow">vede</span>.
@@ -115,7 +118,7 @@ export default function MissionVision() {
       </div>
 
       {/* ------- transizione: il sole tramonta ------- */}
-      <div className="mv-transition pointer-events-none relative flex h-[70vh] items-center justify-center overflow-hidden">
+      <div className="mv-transition pointer-events-none relative flex h-[46vh] items-center justify-center overflow-hidden bg-gradient-to-b from-[#f8f9fa] to-[#0a0a10] md:h-[70vh]">
         <div
           className="mv-disc h-[46vh] w-[46vh] rounded-full blur-[6px]"
           style={{ background: 'radial-gradient(circle at 35% 30%, #8fc1ee 0%, #4e92d8 40%, #614aa2 100%)', opacity: 0.9 }}
@@ -124,7 +127,7 @@ export default function MissionVision() {
       </div>
 
       {/* ------- atto II: vision (notte) ------- */}
-      <div className="mv-vision relative px-5 py-28 pb-40 md:px-10 md:py-40">
+      <div className="mv-vision relative bg-[#0a0a10] px-5 py-20 pb-32 md:px-10 md:py-40 md:pb-40">
         {/* cielo stellato */}
         <div className="mv-stars pointer-events-none absolute inset-0" style={{ opacity: 0 }}>
           {STARS.map((s, i) => (
