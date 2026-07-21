@@ -60,24 +60,26 @@ export default function ChiSiamo() {
         gsap.set('.cs-word', { opacity: 1 });
         gsap.set('.cs-ghost-fill', { clipPath: 'inset(0% 0 0 0)' });
         gsap.set('.cs-thread', { scaleY: 1 });
-        gsap.set('.cs-p', { scale: 1.5, transformOrigin: '50% 50%' });
+        gsap.set('.cs-p', { scale: 1.7, y: () => -window.innerHeight * 0.06, transformOrigin: '50% 50%' });
         gsap.timeline({ delay: 0.25 })
-          .to('.cs-p', { scale: 1, duration: 1.1, ease: 'power2.inOut' })
+          .to('.cs-p', { scale: 1, y: 0, duration: 1.2, ease: 'power2.inOut' })
           .to('.cs-n', { opacity: 1, yPercent: 0, duration: 0.5, ease: 'power3.out' }, '-=0.15')
           .to('.cs-s', { opacity: 1, yPercent: 0, duration: 0.5, ease: 'power3.out' }, '-=0.2')
           .to('.cs-g', { opacity: 1, yPercent: 0, duration: 0.6, ease: 'power3.out' }, '-=0.2');
         return;
       }
 
-      /* Desktop: hero pinnata, la sequenza è guidata dallo scroll.
-         "Piacere," parte enorme a tutto schermo, si rimpicciolisce e sale;
-         poi entrano NOI, SIAMO, GLEEYE una alla volta. */
-      gsap.set('.cs-p', { scale: 2.3, y: '20vh', transformOrigin: '50% 50%' });
+      /* Desktop: hero pinnata, sequenza guidata dallo scroll.
+         "Piacere," parte enorme a tutto schermo (fino a sbordare) e mentre
+         scrolli STRISCIA verticalmente dall'alto verso il basso; poi si
+         rimpicciolisce nella posizione finale e entrano NOI, SIAMO, GLEEYE. */
+      gsap.set('.cs-p', { scale: 2.6, y: () => -window.innerHeight * 0.14, transformOrigin: '50% 50%' });
       gsap.timeline({
-        scrollTrigger: { trigger: hero, start: 'top top', end: '+=320%', pin: true, scrub: 0.6, anticipatePin: 1 },
+        scrollTrigger: { trigger: hero, start: 'top top', end: '+=380%', pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true },
       })
-        .to('.cs-p', { scale: 1, y: 0, ease: 'power2.inOut', duration: 1.5 })
-        .to('.cs-n', { opacity: 1, yPercent: 0, ease: 'power3.out', duration: 0.8 }, '>-0.15')
+        .to('.cs-p', { y: () => window.innerHeight * 0.34, ease: 'none', duration: 1.5 })
+        .to('.cs-p', { scale: 1, y: 0, ease: 'power2.inOut', duration: 1.2 })
+        .to('.cs-n', { opacity: 1, yPercent: 0, ease: 'power3.out', duration: 0.8 }, '>-0.1')
         .to('.cs-s', { opacity: 1, yPercent: 0, ease: 'power3.out', duration: 0.8 }, '>-0.05')
         .to('.cs-g', { opacity: 1, yPercent: 0, ease: 'power3.out', duration: 1.0 }, '>-0.05')
         .to({}, { duration: 0.5 });
@@ -134,7 +136,7 @@ export default function ChiSiamo() {
           <span className="cs-p block text-[13vw] will-change-transform md:text-[8.5vw]">Piacere,</span>
           <span className="cs-n block text-[13vw] will-change-transform md:text-[8.5vw]">noi</span>
           <span className="cs-s block text-[13vw] will-change-transform md:text-[8.5vw]">siamo</span>
-          <span className="cs-g block text-gradient-flow text-[13vw] will-change-transform md:text-[8.5vw]">Gleeye.</span>
+          <span className="cs-g block font-playfair text-gradient text-[15vw] font-medium normal-case italic leading-[1.08] will-change-transform md:text-[9.5vw] pb-[0.16em]">Gleeye.</span>
         </h1>
       </div>
 
