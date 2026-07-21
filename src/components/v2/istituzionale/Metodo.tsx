@@ -82,8 +82,9 @@ export default function Metodo() {
         d += ` L ${x.toFixed(1)} ${(base + noise(i) * amp).toFixed(1)}`;
       }
       path.setAttribute('d', d);
-      /* la linea è fixed: sfuma poco prima del footer, dopo il payoff */
-      svg.style.opacity = p > 0.92 ? String(Math.max(0, (1 - p) / 0.08)) : '1';
+      /* la linea è fixed: resta in scena fino al payoff, sfuma solo
+         sull'ultimissimo tratto prima del footer */
+      svg.style.opacity = p > 0.975 ? String(Math.max(0, (1 - p) / 0.025)) : '1';
     };
 
     const onResize = () => {
@@ -113,15 +114,39 @@ export default function Metodo() {
         onUpdate: (self) => draw(self.progress),
       });
 
-      /* reveal delle fasi: set + onEnter (pattern robusto) */
-      gsap.utils.toArray<HTMLElement>('.mt-reveal', root).forEach((el) => {
-        gsap.set(el, { opacity: 0, y: 36 });
+      /* entrata delle fasi: sequenza per elemento — il numero sale, la label
+         scivola da sinistra, la tesi emerge da una maschera, il corpo segue */
+      gsap.utils.toArray<HTMLElement>('.mt-fase', root).forEach((fase) => {
+        const num = fase.querySelector('.mt-f-num');
+        const label = fase.querySelector('.mt-f-label');
+        const tesi = fase.querySelector('.mt-f-tesi');
+        const body = fase.querySelector('.mt-f-body');
+        gsap.set(num, { opacity: 0, y: 44, scale: 0.94 });
+        gsap.set(label, { opacity: 0, x: -24 });
+        gsap.set(tesi, { yPercent: 115 });
+        gsap.set(body, { opacity: 0, y: 26 });
         ScrollTrigger.create({
-          trigger: el,
-          start: 'top 82%',
+          trigger: fase,
+          start: 'top 80%',
           once: true,
-          onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }),
+          onEnter: () => {
+            gsap.timeline()
+              .to(num, { opacity: 1, y: 0, scale: 1, duration: 0.9, ease: 'power3.out' })
+              .to(label, { opacity: 1, x: 0, duration: 0.6, ease: 'power3.out' }, '-=0.55')
+              .to(tesi, { yPercent: 0, duration: 1.1, ease: 'power4.out' }, '-=0.45')
+              .to(body, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.6');
+          },
         });
+      });
+
+      /* chiusura: le due righe emergono dalla maschera, in sequenza */
+      const closeLines = gsap.utils.toArray<HTMLElement>('.mt-close-line', root);
+      gsap.set(closeLines, { yPercent: 115 });
+      ScrollTrigger.create({
+        trigger: '.mt-close',
+        start: 'top 80%',
+        once: true,
+        onEnter: () => gsap.to(closeLines, { yPercent: 0, duration: 1.2, stagger: 0.14, ease: 'power4.out' }),
       });
     }, root);
 
@@ -168,7 +193,7 @@ export default function Metodo() {
           </span>
         </h1>
         <p className="mt-hero-sub mt-8 max-w-xl font-jakarta text-lg font-medium leading-relaxed text-white/55 md:text-xl">
-          La linea qui sotto è il caos con cui arriva ogni progetto. Scorri: guardala raddrizzarsi.
+          Quattro fasi, una direzione. Ogni progetto entra come una domanda ed esce come una certezza.
         </p>
       </div>
 
@@ -178,18 +203,21 @@ export default function Metodo() {
           key={f.num}
           className="relative z-10 flex min-h-[70vh] items-center px-5 py-16 md:min-h-[85vh] md:px-10 md:py-24"
         >
-          <div className={`mt-reveal w-full max-w-2xl ${i % 2 === 1 ? 'md:ml-auto' : ''}`}>
+          <div className={`mt-fase w-full max-w-2xl ${i % 2 === 1 ? 'md:ml-auto' : ''}`}>
             <span
-              className="voice-display block text-7xl leading-none md:text-9xl"
+              className="mt-f-num voice-display block text-7xl leading-none md:text-9xl"
               style={{ color: 'transparent', WebkitTextStroke: '1.5px rgba(255,255,255,0.22)' }}
             >
               {f.num}
             </span>
-            <p className="voice-mono mb-6 mt-5 text-white/40">{f.label}</p>
-            <h2 className="voice-display text-3xl leading-[1.08] md:text-5xl">
-              {f.tesi.plain} <Accent>{f.tesi.accent}</Accent>
-            </h2>
-            <p className="mt-6 max-w-xl font-jakarta text-base font-medium leading-relaxed text-white/55 md:text-xl">
+            <p className="mt-f-label voice-mono mb-6 mt-5 text-white/40">{f.label}</p>
+            {/* maschera con pb generoso (discendenti dell'accento) compensato dal -mb */}
+            <span className="block overflow-hidden pb-[0.22em] -mb-[0.22em]">
+              <h2 className="mt-f-tesi voice-display text-3xl leading-[1.08] md:text-5xl">
+                {f.tesi.plain} <Accent>{f.tesi.accent}</Accent>
+              </h2>
+            </span>
+            <p className="mt-f-body mt-6 max-w-xl font-jakarta text-base font-medium leading-relaxed text-white/55 md:text-xl">
               {f.body}
             </p>
           </div>
@@ -197,11 +225,15 @@ export default function Metodo() {
       ))}
 
       {/* ————— chiusura: il payoff della linea ————— */}
-      <div className="relative z-10 flex min-h-[60vh] flex-col items-center justify-center px-5 pb-40 text-center">
-        <h2 className="mt-reveal voice-display text-3xl leading-[1.1] md:text-6xl">
-          Dal primo dubbio alla consegna:
-          <span className="text-gradient mx-auto mt-3 block w-fit pb-[0.16em] pr-[0.05em] font-playfair italic font-medium normal-case leading-[1.05] tracking-[-0.01em]">
-            una linea retta.
+      <div className="mt-close relative z-10 flex min-h-[60vh] flex-col items-center justify-center px-5 pb-40 text-center">
+        <h2 className="voice-display text-3xl leading-[1.1] md:text-6xl">
+          <span className="block overflow-hidden py-[0.05em]">
+            <span className="mt-close-line block">Dal primo dubbio alla consegna:</span>
+          </span>
+          <span className="block overflow-hidden pt-[0.03em] pb-[0.2em]">
+            <span className="mt-close-line text-gradient mx-auto mt-3 block w-fit pb-[0.16em] pr-[0.05em] font-playfair italic font-medium normal-case leading-[1.05] tracking-[-0.01em]">
+              una linea retta.
+            </span>
           </span>
         </h2>
       </div>
