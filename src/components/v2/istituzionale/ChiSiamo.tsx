@@ -56,26 +56,30 @@ export default function ChiSiamo() {
       /* Anche su touch: il pin usa position:fixed con lo scroll nativo e la
          sequenza PIACERE è guidata dallo scroll come su desktop. */
 
-      /* Desktop: hero pinnata. "Piacere," è GIGANTE — alto quanto lo schermo —
-         e all'inizio se ne vede solo l'inizio; scrollando STRISCIA in orizzontale
+      /* Hero pinnata. "Piacere," è GIGANTE — alto quanto lo schermo — e
+         all'inizio se ne vede solo l'inizio; scrollando STRISCIA in orizzontale
          rivelando tutta la parola, poi si rimpicciolisce nella posizione finale
-         ed entrano NOI, SIAMO, Gleeye. Misuriamo la parola a runtime (font vw)
-         per calcolare scala e corsa orizzontale a ogni refresh. */
+         ed entrano NOI, SIAMO, Gleeye.
+         NIENTE transform:scale per ingrandire: il testo verrebbe rasterizzato
+         alla dimensione di layout e upscalato ~7-17x → sgranato (visibile su
+         mobile). Animiamo la dimensione REALE del font: a ogni frame il testo
+         si ri-rasterizza nitido. Misure a runtime (font vw) a ogni refresh. */
       const measureNat = () => {
         const el = root.querySelector<HTMLElement>('.cs-p');
-        if (!el?.parentElement) return { w: 0, h: 1 };
+        if (!el?.parentElement) return { w: 0, h: 1, fs: 50 };
         const clone = el.cloneNode(true) as HTMLElement;
-        Object.assign(clone.style, { transform: 'none', position: 'absolute', visibility: 'hidden', whiteSpace: 'nowrap', left: '0', top: '0' });
+        Object.assign(clone.style, { transform: 'none', fontSize: '', position: 'absolute', visibility: 'hidden', whiteSpace: 'nowrap', left: '0', top: '0' });
         el.parentElement.appendChild(clone);
         const r = clone.getBoundingClientRect();
+        const fs = parseFloat(getComputedStyle(clone).fontSize) || 50;
         clone.remove();
-        return { w: r.width, h: r.height || 1 };
+        return { w: r.width, h: r.height || 1, fs };
       };
       let nat = measureNat();
       const bigScale = () => Math.max(1, (window.innerHeight * 0.9) / nat.h);
       const halfOver = () => (nat.w * bigScale() - window.innerWidth) / 2 + window.innerWidth * 0.05;
 
-      gsap.set('.cs-p', { transformOrigin: '50% 50%', scale: bigScale, x: halfOver, y: () => nat.h * 1.5 });
+      gsap.set('.cs-p', { fontSize: () => bigScale() * nat.fs, x: halfOver, y: () => nat.h * 1.5 });
       gsap.timeline({
         scrollTrigger: {
           trigger: hero, start: 'top top', end: '+=440%', pin: true, scrub: 0.6, anticipatePin: 1,
@@ -83,7 +87,7 @@ export default function ChiSiamo() {
         },
       })
         .to('.cs-p', { x: () => -halfOver(), ease: 'none', duration: 2 })
-        .to('.cs-p', { scale: 1, x: 0, y: 0, ease: 'power2.inOut', duration: 1.3 })
+        .to('.cs-p', { fontSize: () => nat.fs, x: 0, y: 0, ease: 'power2.inOut', duration: 1.3 })
         .to('.cs-n', { opacity: 1, yPercent: 0, ease: 'power3.out', duration: 0.8 }, '>-0.1')
         .to('.cs-s', { opacity: 1, yPercent: 0, ease: 'power3.out', duration: 0.8 }, '>-0.05')
         .to('.cs-g', { opacity: 1, yPercent: 0, ease: 'power3.out', duration: 1.0 }, '>-0.05')
