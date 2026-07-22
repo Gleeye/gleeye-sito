@@ -38,7 +38,9 @@ export default function PrivacyPolicy() {
                         <p>Durante la navigazione del sito Web, il Titolare può raccogliere i seguenti dati:</p>
                         <ul className="list-disc pl-6 space-y-2">
                             <li><strong>Dati di navigazione:</strong> Gli applicativi software preposti al funzionamento di questo sito web acquisiscono, nel corso del loro normale esercizio, alcuni dati personali (es. indirizzi IP, nomi a dominio dei computer utilizzati dagli utenti che si connettono al sito).</li>
-                            <li><strong>Dati forniti volontariamente dall'utente:</strong> L'invio facoltativo ed esplicito di posta elettronica agli indirizzi indicati su questo sito, nonché la compilazione dei form di contatto, comporta la successiva acquisizione dell'indirizzo del mittente, necessario per rispondere alle richieste, nonché degli eventuali altri dati personali inseriti.</li>
+                            <li><strong>Dati forniti volontariamente dall'utente:</strong> L'invio facoltativo ed esplicito di posta elettronica agli indirizzi indicati su questo sito, nonché la compilazione dei form di contatto, di prenotazione di una call o di candidatura (pagina &quot;Lavora con noi&quot;), comporta la successiva acquisizione dell'indirizzo del mittente, necessario per rispondere alle richieste, nonché degli eventuali altri dati personali inseriti. Tali richieste vengono gestite tramite il sistema gestionale interno di Gleeye.</li>
+                            <li><strong>Dati statistici (solo previo consenso):</strong> Se acconsenti ai cookie analitici, utilizziamo Google Analytics 4 per misurare in forma aggregata le visite al sito. Lo strumento non viene caricato prima del tuo consenso. Dettagli nella <a href="/cookie-policy" className="underline">Cookie Policy</a>.</li>
+                            <li><strong>Registro dei consensi:</strong> Le scelte espresse nel banner cookie vengono registrate a fini di prova (accountability), con indirizzo IP anonimizzato.</li>
                         </ul>
                     </section>
 

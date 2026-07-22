@@ -181,6 +181,11 @@ export default function Footer() {
                   Cookie Policy
                 </Link>
               </li>
+              <li>
+                <Link href="/cookie-policy#preferenze" className="font-jakarta text-white/70 transition-colors duration-300 hover:text-white">
+                  Preferenze cookie
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
