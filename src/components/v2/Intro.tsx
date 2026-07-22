@@ -28,14 +28,26 @@ export default function Intro() {
 
     document.body.style.overflow = 'hidden';
 
+    /* Chiusura BLINDATA. Prima era solo nell'onComplete della timeline: se
+       la scrittura in sessionStorage lanciava (Safari private) o la timeline
+       non completava (tab in background al load), l'overlay full-screen
+       z-9990 restava montato per sempre — pagina visibile ma OGNI click
+       morto e scroll bloccato (body overflow mai rilasciato). */
+    const finish = () => {
+      document.body.style.overflow = '';
+      try {
+        sessionStorage.setItem('gleeye-intro', '1');
+      } catch {
+        /* private mode: pazienza, l'intro girerà di nuovo */
+      }
+      setDone(true);
+    };
+
+    /* Failsafe: comunque vada, dopo 4.5s l'intro si toglie di mezzo. */
+    const failsafe = window.setTimeout(finish, 4500);
+
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        onComplete: () => {
-          document.body.style.overflow = '';
-          sessionStorage.setItem('gleeye-intro', '1');
-          setDone(true);
-        },
-      });
+      const tl = gsap.timeline({ onComplete: finish });
 
       tl.fromTo(
         '.intro-mark',
@@ -57,6 +69,7 @@ export default function Intro() {
     }, root);
 
     return () => {
+      window.clearTimeout(failsafe);
       document.body.style.overflow = '';
       ctx.revert();
     };
@@ -65,7 +78,9 @@ export default function Intro() {
   if (done || !mounted) return null;
 
   return (
-    <div ref={rootRef} className="fixed inset-0 z-[9990]" aria-hidden="true">
+    /* pointer-events-none: è pura decorazione (aria-hidden) — non deve MAI
+       catturare click/tap, nemmeno per il mezzo secondo in cui è a schermo */
+    <div ref={rootRef} className="pointer-events-none fixed inset-0 z-[9990]" aria-hidden="true">
       {/* palpebra superiore */}
       <div
         className="intro-lid-top absolute inset-x-0 top-0 h-[51%] bg-[#07070c]"

@@ -43,13 +43,14 @@ export default function CookieBanner() {
     };
 
     return (
-        /* Card COMPATTA ancorata in basso a sinistra: i CTA delle hero vivono
-           in basso al centro e i bottoni del footer in basso — un banner a
-           tutta larghezza li copriva e si mangiava i click su ogni pagina.
-           Su mobile resta full-width ma bassa il più possibile. */
-        <div className="fixed bottom-0 left-0 z-[1000] w-full p-3 pointer-events-none md:p-6 md:max-w-[26rem]">
-            {/* mb su mobile: non finire sotto il FAB della chat (basso-destra) */}
-            <div className="rounded-2xl bg-[#111111] text-[#F5F3EE] p-5 shadow-2xl border border-white/10 pointer-events-auto mb-[4.75rem] md:mb-0 md:p-6">
+        /* Card COMPATTA in basso a DESTRA, sopra il FAB della chat: è l'unica
+           zona senza CTA — la home li ha in basso a sinistra, le sottopagine
+           in basso al centro, il footer su tutta la fascia. Un banner a tutta
+           larghezza (o a sinistra) copriva i CTA e si mangiava i click.
+           Su mobile resta full-width ma bassa, alzata sopra il FAB. */
+        <div className="fixed bottom-0 left-0 z-[1000] w-full p-3 pointer-events-none md:left-auto md:right-0 md:max-w-[26rem] md:p-6">
+            {/* mb: non finire sotto il FAB della chat (basso-destra) */}
+            <div className="rounded-2xl bg-[#111111] text-[#F5F3EE] p-5 shadow-2xl border border-white/10 pointer-events-auto mb-[4.75rem] md:p-6">
 
                 {!showDetails ? (
                     // Main Banner View — compatta
