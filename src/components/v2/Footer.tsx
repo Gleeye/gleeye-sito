@@ -59,6 +59,8 @@ const SOCIAL = [
 export default function Footer() {
   const pathname = usePathname();
   const ctaTitle = ctaTitleFor(pathname || '/');
+  // Su /lavora-con-noi la CTA parla al candidato, non al cliente.
+  const isCareers = (pathname || '').startsWith('/lavora-con-noi');
   // I CTA del footer stanno fuori da <main>, quindi non vengono intercettati:
   // aprono il popup lanciando gli eventi del PageWidgetOverlay.
   const openContact = () => window.dispatchEvent(new Event('gleeye:open-contact-form'));
@@ -69,9 +71,10 @@ export default function Footer() {
       <div className="grain absolute inset-0" />
       <div className="absolute left-1/2 top-0 h-[50vh] w-[80vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#614aa2]/20 blur-[160px]" />
 
-      {/* CTA di chiusura — su tutte le pagine. id="parliamone": ci atterra il
-          pulsante "Parliamone" della hero (scroll-to-anchor via SmoothScroll). */}
-      <div id="parliamone" className="relative mx-auto max-w-7xl border-b border-white/10 px-5 py-28 md:px-10 md:py-40">
+      {/* CTA di chiusura — su tutte le pagine. id="parliamone": ci atterrano i
+          pulsanti "vai in fondo" delle hero (Parliamone, oppure Candidati su
+          /lavora-con-noi), via lo scroll-to-anchor di SmoothScroll. */}
+      <div id="parliamone" className="relative mx-auto max-w-7xl scroll-mt-24 border-b border-white/10 px-5 py-28 md:px-10 md:py-40">
         <div className="grid grid-cols-1 gap-14 md:grid-cols-[1.3fr_1fr] md:gap-20">
           {/* titolone — dinamico per pagina, va a capo da solo, responsive */}
           <h2 className="voice-display max-w-[15ch] text-[8.5vw] leading-[0.94] text-[#f8f9fa] sm:text-[6.5vw] md:text-[min(5vw,4.4rem)]">
@@ -82,23 +85,27 @@ export default function Footer() {
           <div className="flex flex-col justify-end gap-12 md:pb-2 md:pt-3">
             <div>
               <p className="mb-9 max-w-sm font-jakarta text-lg font-medium leading-relaxed text-white/65">
-                Scrivici e raccontaci il tuo progetto. Lo mettiamo a fuoco insieme.
+                {isCareers
+                  ? 'Due righe su chi sei e un link a quello che hai fatto: un portfolio vale più di mille CV. Le candidature le leggiamo tutte.'
+                  : 'Scrivici e raccontaci il tuo progetto. Lo mettiamo a fuoco insieme.'}
               </p>
               <div className="flex flex-wrap gap-3">
                 <button
                   onClick={openContact}
                   className="group inline-flex items-center gap-2.5 rounded-lg border border-white/20 px-6 py-3.5 font-satoshi text-xs font-bold uppercase tracking-[0.12em] text-white transition-colors duration-300 hover:bg-[#f8f9fa] hover:text-[#0a0a10]"
                 >
-                  Inizia un progetto
+                  {isCareers ? 'Invia la candidatura' : 'Inizia un progetto'}
                   <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </button>
-                <button
-                  onClick={openBooking}
-                  className="group inline-flex items-center gap-2.5 rounded-lg border border-white/20 px-6 py-3.5 font-satoshi text-xs font-bold uppercase tracking-[0.12em] text-white transition-colors duration-300 hover:bg-[#f8f9fa] hover:text-[#0a0a10]"
-                >
-                  Prenota una call
-                  <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                </button>
+                {!isCareers && (
+                  <button
+                    onClick={openBooking}
+                    className="group inline-flex items-center gap-2.5 rounded-lg border border-white/20 px-6 py-3.5 font-satoshi text-xs font-bold uppercase tracking-[0.12em] text-white transition-colors duration-300 hover:bg-[#f8f9fa] hover:text-[#0a0a10]"
+                  >
+                    Prenota una call
+                    <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  </button>
+                )}
               </div>
             </div>
           </div>
