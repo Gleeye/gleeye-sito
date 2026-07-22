@@ -13,6 +13,23 @@ if (typeof window !== 'undefined') {
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
   const pathname = usePathname();
+  const firstNavRef = useRef(true);
+
+  /* Ogni navigazione client apre la pagina nuova DALL'INIZIO. Senza questo,
+     la posizione di scroll della pagina precedente (o il restore del browser,
+     sfasato dai pin che cambiano le altezze) restava applicata al layout
+     nuovo → pagine che si aprivano "a caso" a metà. Salta il primo mount
+     (reload: lasciamo il restore nativo) e i casi con hash (li gestisce il
+     glide qui sotto). */
+  useEffect(() => {
+    if (firstNavRef.current) {
+      firstNavRef.current = false;
+      return;
+    }
+    if (window.location.hash) return;
+    window.scrollTo(0, 0);
+    lenisRef.current?.scrollTo(0, { immediate: true, force: true });
+  }, [pathname]);
 
   useEffect(() => {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

@@ -4,8 +4,14 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 
 /**
- * Intro "blink": lo schermo è un occhio chiuso che si apre sul sito.
+ * Intro "iride": il buio si apre dal centro come una pupilla che si dilata —
+ * Gleeye, l'occhio. Il logo respira una volta e svanisce nell'apertura.
  * Gira una volta per sessione, mai con prefers-reduced-motion.
+ *
+ * Regole di sicurezza (lezione imparata): è DECORAZIONE —
+ * - pointer-events-none: non cattura mai click/tap;
+ * - failsafe: comunque vada, dopo 4s si toglie di mezzo;
+ * - side-effect (overflow, storage) blindati in finish()/try-catch.
  */
 export default function Intro() {
   const [mounted, setMounted] = useState(false);
@@ -14,7 +20,13 @@ export default function Intro() {
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced || sessionStorage.getItem('gleeye-intro')) {
+    let seen = false;
+    try {
+      seen = !!sessionStorage.getItem('gleeye-intro');
+    } catch {
+      /* private mode */
+    }
+    if (reduced || seen) {
       setDone(true);
       return;
     }
@@ -28,44 +40,41 @@ export default function Intro() {
 
     document.body.style.overflow = 'hidden';
 
-    /* Chiusura BLINDATA. Prima era solo nell'onComplete della timeline: se
-       la scrittura in sessionStorage lanciava (Safari private) o la timeline
-       non completava (tab in background al load), l'overlay full-screen
-       z-9990 restava montato per sempre — pagina visibile ma OGNI click
-       morto e scroll bloccato (body overflow mai rilasciato). */
     const finish = () => {
       document.body.style.overflow = '';
       try {
         sessionStorage.setItem('gleeye-intro', '1');
       } catch {
-        /* private mode: pazienza, l'intro girerà di nuovo */
+        /* private mode: l'intro girerà di nuovo, pazienza */
       }
       setDone(true);
     };
 
-    /* Failsafe: comunque vada, dopo 4.5s l'intro si toglie di mezzo. */
-    const failsafe = window.setTimeout(finish, 4500);
+    /* Failsafe: comunque vada, l'intro si smonta. */
+    const failsafe = window.setTimeout(finish, 4000);
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ onComplete: finish });
-
       tl.fromTo(
         '.intro-mark',
-        { opacity: 0, scale: 0.94 },
-        { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' },
+        { opacity: 0, scale: 0.92 },
+        { opacity: 1, scale: 1, duration: 0.45, ease: 'power2.out' },
       )
-        // respiro: il marchio pulsa due volte
+        /* un respiro solo */
         .to('.intro-mark', {
-          opacity: 0.4,
-          scale: 0.975,
-          duration: 0.5,
+          opacity: 0.55,
+          scale: 0.985,
+          duration: 0.38,
           ease: 'sine.inOut',
           yoyo: true,
           repeat: 1,
         })
-        .to('.intro-mark', { opacity: 0, scale: 1.03, duration: 0.35, ease: 'power2.in' }, '+=0.15')
-        .to('.intro-lid-top', { yPercent: -100, duration: 0.95, ease: 'expo.inOut' }, '-=0.1')
-        .to('.intro-lid-bottom', { yPercent: 100, duration: 0.95, ease: 'expo.inOut' }, '<');
+        /* il logo svanisce ingrandendosi appena: risucchiato nell'apertura */
+        .to('.intro-mark', { opacity: 0, scale: 1.07, duration: 0.32, ease: 'power2.in' }, '+=0.05')
+        /* la pupilla si dilata: il buio si apre dal centro (mask radiale) */
+        .to('.intro-veil', { '--r': '130%', duration: 1.0, ease: 'expo.inOut' }, '-=0.18')
+        /* cintura: se il mask non animasse (browser esotici), dissolve comunque */
+        .to('.intro-veil', { opacity: 0, duration: 0.15 }, '-=0.12');
     }, root);
 
     return () => {
@@ -78,27 +87,23 @@ export default function Intro() {
   if (done || !mounted) return null;
 
   return (
-    /* pointer-events-none: è pura decorazione (aria-hidden) — non deve MAI
-       catturare click/tap, nemmeno per il mezzo secondo in cui è a schermo */
+    /* pointer-events-none: non deve MAI catturare input, nemmeno un frame */
     <div ref={rootRef} className="pointer-events-none fixed inset-0 z-[9990]" aria-hidden="true">
-      {/* palpebra superiore */}
+      {/* il velo: nero pieno, con un foro radiale morbido guidato da --r */}
       <div
-        className="intro-lid-top absolute inset-x-0 top-0 h-[51%] bg-[#07070c]"
-        style={{ borderBottomLeftRadius: '100% 22%', borderBottomRightRadius: '100% 22%' }}
+        className="intro-veil absolute inset-0 bg-[#07070c]"
+        style={{
+          ['--r' as string]: '-14%',
+          WebkitMaskImage:
+            'radial-gradient(circle at 50% 50%, transparent var(--r), #000 calc(var(--r) + 14%))',
+          maskImage:
+            'radial-gradient(circle at 50% 50%, transparent var(--r), #000 calc(var(--r) + 14%))',
+        }}
       />
-      {/* palpebra inferiore */}
-      <div
-        className="intro-lid-bottom absolute inset-x-0 bottom-0 h-[51%] bg-[#07070c]"
-        style={{ borderTopLeftRadius: '100% 22%', borderTopRightRadius: '100% 22%' }}
-      />
-      {/* marchio al centro */}
+      {/* marchio al centro, sopra il velo */}
       <div className="absolute inset-0 z-10 flex items-center justify-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/brand/logo.png"
-          alt=""
-          className="intro-mark w-[min(42vw,230px)] opacity-0"
-        />
+        <img src="/brand/logo.png" alt="" className="intro-mark w-[min(42vw,230px)] opacity-0" />
       </div>
     </div>
   );
