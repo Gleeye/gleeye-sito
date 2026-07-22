@@ -31,7 +31,7 @@ servizio non ancora rifatte. `Header.tsx` e `Footer.tsx` legacy sono re-export d
 - `/` — HeroIris WebGL, Ticker (servizi + loghi clienti), Areas (pin orizzontale), Manifesto (reveal parola-per-parola), Duality (dittico Boutique/Factory interattivo), Method, SpecialUnits (tilt 3D), Contact
 - `/identity`, `/digital`, `/factory` — sistema area parametrico (`v2/area/`): AreaHero (iride tinta), AreaChapters (accordion capitoli), AreaEssence (principi), AreaCTA (marquee)
 - `/contatti` — pagina contatti dedicata (form mailto → info@gleeye.eu)
-- `/lavora-con-noi` — redesign v2 (`v2/LavoraConNoi.tsx`): hero "Il lavoro bello esiste", perché lavorare qui, lista ruoli cliccabile; niente form inline — i CTA (mailto) aprono il form nativo del widget ERP; footer con CTA dedicata ai candidati
+- `/lavora-con-noi` — redesign v2 (`v2/LavoraConNoi.tsx`): hero "Facciamo un buon lavoro. Vieni a farlo con noi." (tono sobrio, niente claim mitomani — richiesta esplicita), sezioni perché lavorare qui + figure/skill; unico CTA candidatura nel footer (apre il form del widget ERP via ancora #parliamone)
 - `/cookie-policy`, `/privacy-policy` — chrome v2 + dati reali (Piazza Brignole 2/3, P.IVA corretta)
 - 404 custom (`not-found.tsx`), page transitions (`template.tsx`), sitemap.ts, robots.ts
 - Sottopagine servizio (identity/digital/factory/*, /podcast, /video-explainer, /events): design v1, chrome v2

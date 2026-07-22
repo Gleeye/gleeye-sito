@@ -184,24 +184,24 @@ export default function LavoraConNoi() {
 
           <h1 className="voice-display max-w-none">
             <span className="block overflow-hidden">
-              <span className="lcn-hero-line block text-[8.5vw] leading-[1.02] md:text-[min(7vw,5.6rem)]">
-                Il lavoro bello
+              <span className="lcn-hero-line block text-[9vw] leading-[1.02] md:whitespace-nowrap md:text-[min(5.6vw,4.6rem)]">
+                Facciamo un buon lavoro.
               </span>
             </span>
             {/* Corsivo in gradiente come le altre pagine (font-playfair italic).
                 w-fit: il gradiente si estende sul testo, non sul blocco.
                 pb per non tagliare i discendenti col background-clip:text. */}
             <span className="block overflow-hidden">
-              <span className="lcn-hero-line text-gradient block w-fit pb-[0.18em] pr-[0.08em] font-playfair italic font-medium normal-case leading-[1.12] tracking-[-0.01em] text-[13vw] md:text-[min(9vw,7rem)]">
-                esiste.
+              <span className="lcn-hero-line text-gradient block w-fit pb-[0.18em] pr-[0.08em] font-playfair italic font-medium normal-case leading-[1.12] tracking-[-0.01em] text-[13vw] md:text-[min(8vw,6.6rem)]">
+                Vieni a farlo con noi.
               </span>
             </span>
           </h1>
 
           <p className="lcn-hero-fade mt-8 max-w-xl font-jakarta text-base font-medium leading-relaxed text-white/60 md:text-lg">
-            Alzarti ogni mattina per fare la cosa che ti appassiona, accanto a
-            gente con il tuo stesso fuoco dentro. Per noi lavorare è questo.
-            Se per te vale lo stesso, sei nel posto giusto.
+            Progetti veri, clienti esigenti e persone a cui piace il proprio
+            mestiere: non serve molto altro per lavorare bene. Se la pensi
+            così, ci piacerebbe conoscerti.
           </p>
 
           {/* Porta alla candidatura (unico CTA, in fondo, id="parliamone").
