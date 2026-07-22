@@ -78,8 +78,6 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       if (!hash) return;
       const el = document.querySelector(hash) as HTMLElement | null;
       if (!el) return;
-      /* Links to hashes use scroll={false}: the browser never jumps, we glide
-         there with lenis (which feeds ScrollTrigger frame by frame). */
       setTimeout(() => {
         ScrollTrigger.refresh();
         requestAnimationFrame(() => {
@@ -95,9 +93,44 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       }, 450);
     };
 
+    /* I click sui link con hash verso la STESSA pagina li gestiamo NOI, in
+       capture. Perché: i <Link scroll={false}> di Next navigano via pushState
+       — che NON genera hashchange — e col pathname invariato nessun effect
+       ri-gira: l'URL cambiava e la pagina restava ferma (i CTA "Parliamone"
+       della home sembravano morti). In più i plain <a href="#…"> facevano il
+       jump nativo che Lenis risucchiava subito (snap-back). Qui: preventDefault,
+       pushState manuale, glide — identico per Link e <a>, su ogni pagina. */
+    const onDocClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = (e.target as HTMLElement | null)?.closest?.('a[href]') as HTMLAnchorElement | null;
+      if (!a) return;
+      if (a.target && a.target !== '_self') return;
+      const href = a.getAttribute('href') || '';
+      const hashIdx = href.indexOf('#');
+      if (hashIdx === -1) return;
+      const hash = href.slice(hashIdx);
+      if (hash.length < 2) return;
+      /* solo hash della pagina corrente ('#x', '/#x' sulla home, '/pagina#x') */
+      const pathPart = href.slice(0, hashIdx);
+      if (pathPart && pathPart !== window.location.pathname) return;
+      /* '#contatti' è del PageWidgetOverlay (apre il form): non toccarlo */
+      if (hash === '#contatti') return;
+      if (!document.querySelector(hash)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      history.pushState(null, '', hash);
+      scrollToHash();
+    };
+
     scrollToHash();
     window.addEventListener('hashchange', scrollToHash);
-    return () => window.removeEventListener('hashchange', scrollToHash);
+    window.addEventListener('popstate', scrollToHash);
+    document.addEventListener('click', onDocClick, true);
+    return () => {
+      window.removeEventListener('hashchange', scrollToHash);
+      window.removeEventListener('popstate', scrollToHash);
+      document.removeEventListener('click', onDocClick, true);
+    };
   }, [pathname]);
 
   return <>{children}</>;
