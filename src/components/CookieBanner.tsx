@@ -43,54 +43,47 @@ export default function CookieBanner() {
     };
 
     return (
-        <div className="fixed bottom-0 left-0 w-full z-[1000] p-4 md:p-6 pointer-events-none">
-            <div className="max-w-4xl mx-auto rounded-3xl bg-[#111111] text-[#F5F3EE] p-6 md:p-8 shadow-2xl border border-white/10 pointer-events-auto transform transition-all duration-500 translate-y-0">
+        /* Card COMPATTA ancorata in basso a sinistra: i CTA delle hero vivono
+           in basso al centro e i bottoni del footer in basso — un banner a
+           tutta larghezza li copriva e si mangiava i click su ogni pagina.
+           Su mobile resta full-width ma bassa il più possibile. */
+        <div className="fixed bottom-0 left-0 z-[1000] w-full p-3 pointer-events-none md:p-6 md:max-w-[26rem]">
+            {/* mb su mobile: non finire sotto il FAB della chat (basso-destra) */}
+            <div className="rounded-2xl bg-[#111111] text-[#F5F3EE] p-5 shadow-2xl border border-white/10 pointer-events-auto mb-[4.75rem] md:mb-0 md:p-6">
 
                 {!showDetails ? (
-                    // Main Banner View
-                    <div className="flex flex-col md:flex-row gap-6 md:gap-12 items-start md:items-center">
-                        <div className="flex-1 space-y-3">
-                            <div className="flex items-center gap-3">
-                                <ShieldCheck className="w-6 h-6 text-emerald-400" />
-                                <h3 className="text-xl font-bold font-satoshi">La tua privacy</h3>
-                            </div>
-                            <p className="text-sm md:text-base text-white/70 leading-relaxed max-w-2xl">
-                                I cookie ci permettono di offrirti la migliore esperienza possibile.
-                                Utilizziamo cookie tecnici essenziali (sempre attivi) e, con il tuo consenso,
-                                cookie analitici e di profilazione per misurare le performance e personalizzare
-                                la tua esperienza.
-                            </p>
-                            <div className="flex gap-4 text-xs font-bold tracking-widest uppercase mt-4">
-                                <a href="/privacy-policy" className="text-white/40 hover:text-white transition-colors underline underline-offset-4">Privacy Policy</a>
-                                <a href="/cookie-policy" className="text-white/40 hover:text-white transition-colors underline underline-offset-4">Cookie Policy</a>
-                            </div>
+                    // Main Banner View — compatta
+                    <div className="space-y-3">
+                        <div className="flex items-center gap-2.5">
+                            <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                            <h3 className="text-base font-bold font-satoshi">La tua privacy</h3>
                         </div>
-
-                        <div className="flex flex-col gap-3 w-full md:w-auto shrink-0">
+                        <p className="text-[13px] leading-relaxed text-white/70">
+                            Cookie tecnici sempre attivi; analitici e di profilazione solo col tuo consenso.{' '}
+                            <a href="/privacy-policy" className="text-white/45 underline underline-offset-2 hover:text-white transition-colors">Privacy</a>
+                            {' · '}
+                            <a href="/cookie-policy" className="text-white/45 underline underline-offset-2 hover:text-white transition-colors">Cookie policy</a>
+                        </p>
+                        <div className="flex items-center gap-2 pt-1">
                             <button
                                 onClick={acceptAll}
-                                className="px-8 py-3 bg-[#F5F3EE] text-[#111111] font-bold text-sm tracking-widest uppercase rounded-full hover:bg-white transition-colors duration-300 w-full whitespace-nowrap"
+                                className="flex-1 px-4 py-2.5 bg-[#F5F3EE] text-[#111111] font-bold text-[11px] tracking-widest uppercase rounded-full hover:bg-white transition-colors duration-300 whitespace-nowrap"
                             >
-                                Accetta Tutti
+                                Accetta tutti
                             </button>
-                            {/* Su mobile i due secondari stanno impilati a tutta larghezza:
-                                affiancati a 375px andavano a capo e finivano sotto il widget
-                                chat (angolo in basso a destra, z-index massimo). Side-by-side
-                                solo da md in su. */}
-                            <div className="flex flex-col md:flex-row gap-3 w-full">
-                                <button
-                                    onClick={rejectAll}
-                                    className="flex-1 px-4 py-3 bg-white/5 border border-white/10 text-white font-bold text-xs tracking-widest uppercase rounded-full hover:bg-white/10 transition-colors duration-300 whitespace-nowrap"
-                                >
-                                    Solo Necessari
-                                </button>
-                                <button
-                                    onClick={() => setShowDetails(true)}
-                                    className="flex-1 px-4 py-3 bg-transparent text-white/60 font-bold text-xs tracking-widest uppercase rounded-full hover:text-white transition-colors duration-300 whitespace-nowrap"
-                                >
-                                    Personalizza
-                                </button>
-                            </div>
+                            <button
+                                onClick={rejectAll}
+                                className="flex-1 px-3 py-2.5 bg-white/5 border border-white/10 text-white font-bold text-[11px] tracking-widest uppercase rounded-full hover:bg-white/10 transition-colors duration-300 whitespace-nowrap"
+                            >
+                                Necessari
+                            </button>
+                            <button
+                                onClick={() => setShowDetails(true)}
+                                aria-label="Personalizza preferenze cookie"
+                                className="shrink-0 rounded-full border border-white/10 p-2.5 text-white/60 hover:text-white hover:bg-white/10 transition-colors duration-300"
+                            >
+                                <Settings2 className="w-4 h-4" />
+                            </button>
                         </div>
                     </div>
                 ) : (
