@@ -355,3 +355,25 @@ h1, h2, h3, h4, h5, h6 {
     display: none !important;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* MENU APERTO — la chrome flottante si toglie di mezzo.               */
+/* Il banner cookie (z-1000) e il FAB dei contatti (z-max) stanno       */
+/* SOPRA il menu a tutto schermo (z-90): alla prima visita coprivano   */
+/* la metà bassa della lista — voci non cliccabili e lista che non     */
+/* scrollava, perché il dito finiva sulla card del banner.             */
+/* Il menu marca <html class="menu-open"> e qui li spegniamo.          */
+/* ------------------------------------------------------------------ */
+/* rientro ritardato: il menu impiega ~0.55s a richiudersi, la chrome
+   riappare dopo, non sopra l'animazione */
+[data-menu-hide] {
+  transition: opacity 0.3s ease 0.4s;
+}
+html.menu-open [data-menu-hide] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.18s ease,
+    visibility 0s linear 0.18s;
+}

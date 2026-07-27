@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useConsent, CookieConsents } from "@/hooks/useConsent";
 import { X, Check, Settings2, ShieldCheck, Info } from "lucide-react";
 
@@ -15,16 +15,18 @@ export default function CookieBanner() {
         marketing: consents?.marketing === "granted" ? "granted" : "denied",
     });
 
-    // Sync local state when the details panel is opened or consents change
-    useState(() => {
-        if (consents) {
-            setLocalConsents({
-                necessary: "granted",
-                analytics: consents.analytics === "granted" ? "granted" : "denied",
-                marketing: consents.marketing === "granted" ? "granted" : "denied",
-            });
-        }
-    });
+    // Allinea i toggle quando i consensi arrivano da localStorage.
+    // (Era un `useState(() => …)`: l'inizializzatore girava una volta sola col
+    // primo render, quando `consents` è ancora null — i toggle di "Personalizza"
+    // ripartivano sempre da zero ignorando la scelta già fatta.)
+    useEffect(() => {
+        if (!consents) return;
+        setLocalConsents({
+            necessary: "granted",
+            analytics: consents.analytics === "granted" ? "granted" : "denied",
+            marketing: consents.marketing === "granted" ? "granted" : "denied",
+        });
+    }, [consents]);
 
     // If we haven't loaded from localStorage yet, or if they have already made a choice, don't show the main banner.
     if (!hasLoaded || hasConsented) return null;
@@ -48,7 +50,10 @@ export default function CookieBanner() {
            in basso al centro, il footer su tutta la fascia. Un banner a tutta
            larghezza (o a sinistra) copriva i CTA e si mangiava i click.
            Su mobile resta full-width ma bassa, alzata sopra il FAB. */
-        <div className="fixed bottom-0 left-0 z-[1000] w-full p-3 pointer-events-none md:left-auto md:right-0 md:max-w-[26rem] md:p-6">
+        /* data-menu-hide: mentre il menu a tutto schermo è aperto questa card
+           gli finirebbe sopra (z-1000 > z-90) coprendo metà delle voci — vedi
+           la regola html.menu-open in globals.css. */
+        <div data-menu-hide className="fixed bottom-0 left-0 z-[1000] w-full p-3 pointer-events-none md:left-auto md:right-0 md:max-w-[26rem] md:p-6">
             {/* mb: non finire sotto il FAB della chat (basso-destra) */}
             <div className="rounded-2xl bg-[#111111] text-[#F5F3EE] p-5 shadow-2xl border border-white/10 pointer-events-auto mb-[4.75rem] md:p-6">
 

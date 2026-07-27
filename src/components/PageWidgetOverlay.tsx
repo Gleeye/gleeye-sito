@@ -255,8 +255,17 @@ export default function PageWidgetOverlay() {
     <>
       {/* Trigger: FAB gradiente che si apre a ventaglio verticale */}
       <FabStyles />
+      {/* data-menu-hide: col menu a tutto schermo aperto il FAB gli galleggia
+          sopra (z-max) e copre la fascia in basso a destra — spento da CSS. */}
+      {/* pointerEvents none sul contenitore: le voci del ventaglio, anche
+          chiuse, OCCUPANO SPAZIO (sono solo opacity:0) — il loro box invisibile
+          copriva ~180x290px in basso a destra su ogni pagina e ingoiava i tap.
+          Ci finiva dentro il pulsante "Necessari" del banner cookie, che
+          risultava morto. I click tornano vivi solo sul FAB e sulle voci
+          quando il ventaglio è aperto (.gl-fab / .gl-fan-item.open). */}
       <div
         ref={fabRef}
+        data-menu-hide
         style={{
           position: "fixed",
           right: "20px",
@@ -265,6 +274,7 @@ export default function PageWidgetOverlay() {
           display: "flex",
           flexDirection: "column",
           alignItems: "flex-end",
+          pointerEvents: "none",
         }}
       >
         {/* Ventaglio (sopra il FAB) */}
@@ -455,6 +465,7 @@ function FabStyles() {
   return (
     <style>{`
       .gl-fab {
+        pointer-events: auto;
         width: 58px; height: 58px;
         display: flex; align-items: center; justify-content: center;
         border: none; cursor: pointer; padding: 0;

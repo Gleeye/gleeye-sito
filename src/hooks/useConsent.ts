@@ -43,10 +43,15 @@ export function useConsent() {
 
   const sendConsentLog = async (newConsents: CookieConsents, isUpdate: boolean) => {
     try {
-      let consentId = localStorage.getItem(CONSENT_ID_KEY);
-      if (!consentId) {
+      let consentId: string | null = null;
+      try {
+        consentId = localStorage.getItem(CONSENT_ID_KEY);
+        if (!consentId) {
+          consentId = generateConsentId();
+          localStorage.setItem(CONSENT_ID_KEY, consentId);
+        }
+      } catch {
         consentId = generateConsentId();
-        localStorage.setItem(CONSENT_ID_KEY, consentId);
       }
 
       await fetch('/api/consent', {
@@ -66,7 +71,14 @@ export function useConsent() {
   const updateConsent = (newConsents: CookieConsents) => {
     const isUpdate = hasConsented; // if they already had a valid state
     setConsents(newConsents);
-    localStorage.setItem(CONSENT_KEY, JSON.stringify(newConsents));
+    // In alcuni browser Android/in-app (o coi cookie di terze parti bloccati)
+    // localStorage LANCIA: senza try/catch l'eccezione uccideva l'handler e il
+    // banner non si chiudeva più, qualunque pulsante si premesse.
+    try {
+      localStorage.setItem(CONSENT_KEY, JSON.stringify(newConsents));
+    } catch {
+      /* la scelta vale comunque per questa sessione */
+    }
 
     // Notifica gli altri componenti nella stessa tab (es. AnalyticsGate):
     // l'evento 'storage' nativo scatta solo nelle ALTRE tab.

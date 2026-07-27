@@ -121,8 +121,15 @@ export default function Header() {
     return () => ctx.revert();
   }, []);
 
+  /* Il menu è a tutto schermo ma NON è la cosa più in alto della pagina: il
+     banner cookie (z-1000) e il FAB della chat (z-max) gli stanno sopra e ne
+     coprivano la metà bassa — su Android, dove il banner è ancora lì alla prima
+     visita, le voci sotto (e i "+" delle aree, se la lista era scrollata) erano
+     intoccabili e la lista non scrollava nemmeno. Marchiamo <html> e da CSS
+     spegniamo tutta la chrome flottante finché il menu è aperto. */
   const toggle = useCallback((next: boolean) => {
     setOpen(next);
+    document.documentElement.classList.toggle('menu-open', next);
     if (next) {
       document.body.style.overflow = 'hidden';
       tlRef.current?.timeScale(1).play();
@@ -133,6 +140,15 @@ export default function Header() {
     }
   }, []);
 
+  /* Failsafe: se il componente sparisce col menu aperto, la pagina resterebbe
+     senza banner cookie e senza scroll. */
+  useEffect(() => {
+    return () => {
+      document.documentElement.classList.remove('menu-open');
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   /* Close on navigation — SEMPRE sblocca lo scroll e chiudi il menu.
      Il vecchio `if (open) toggle(false)` a volte non scattava (open già false)
      e lasciava document.body.style.overflow = 'hidden': su iOS lo scroll touch
@@ -141,6 +157,7 @@ export default function Header() {
     setOpen(false);
     setExpanded(null);
     document.body.style.overflow = '';
+    document.documentElement.classList.remove('menu-open');
     tlRef.current?.timeScale(1.5).reverse();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
@@ -239,9 +256,12 @@ export default function Header() {
       </header>
 
       {/* ——— Fullscreen overlay ——— */}
+      {/* h-[100dvh], non inset-0: su Android il `fixed` si misura sul viewport
+          con la barra URL nascosta, così l'ultima fascia del menu finiva sotto
+          la barra e non si raggiungeva. dvh segue l'altezza davvero visibile. */}
       <div
         ref={overlayRef}
-        className="fixed inset-0 z-[90] bg-[#0a0a10] text-[#f8f9fa] invisible"
+        className="fixed inset-x-0 top-0 z-[90] h-[100dvh] bg-[#0a0a10] text-[#f8f9fa] invisible"
         aria-hidden={!open}
       >
         <div className="grain absolute inset-0" />
@@ -249,8 +269,8 @@ export default function Header() {
         <div className="absolute -right-40 top-1/4 h-[60vh] w-[60vh] rounded-full bg-[#614aa2]/25 blur-[140px]" />
         <div className="absolute -left-40 bottom-0 h-[50vh] w-[50vh] rounded-full bg-[#4e92d8]/20 blur-[140px]" />
 
-        <div className="relative flex h-full flex-col justify-between px-5 pt-28 pb-6 md:px-10 md:pt-36 md:pb-10">
-          <div className="grid flex-1 grid-cols-1 gap-10 overflow-y-auto md:grid-cols-[1.15fr_1fr] md:gap-10 md:overflow-visible">
+        <div className="relative flex h-full flex-col justify-between px-5 pt-28 pb-[max(1.5rem,env(safe-area-inset-bottom))] md:px-10 md:pt-36 md:pb-10">
+          <div className="grid flex-1 grid-cols-1 gap-10 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] md:grid-cols-[1.15fr_1fr] md:gap-10 md:overflow-visible">
             {/* ——— Mobile: lista pulita e leggibile, accordion per area ——— */}
             <div className="flex flex-col md:hidden">
               {MOBILE.map((item) => {
@@ -259,18 +279,21 @@ export default function Header() {
                 return (
                   <div key={item.href} className="menu-link-row border-b border-white/10">
                     <div className="flex items-stretch">
-                      <Link href={item.href} className="flex flex-1 items-center py-5">
+                      <Link href={item.href} className="flex min-w-0 flex-1 touch-manipulation items-center py-5">
                         <span className="voice-display text-[7.5vw] leading-none text-[#f8f9fa]">
                           {item.label}
                         </span>
                       </Link>
                       {hasChildren && (
+                        /* -mr-3: il bersaglio arriva quasi al bordo dello schermo,
+                           dove cade naturalmente il pollice. shrink-0: un'etichetta
+                           lunga non può schiacciarlo via. */
                         <button
                           type="button"
                           onClick={() => setExpanded(isOpen ? null : item.label)}
                           aria-expanded={isOpen}
                           aria-label={`${isOpen ? 'Chiudi' : 'Apri'} i servizi ${item.label}`}
-                          className="flex w-14 items-center justify-center text-white/55 transition-colors active:text-white"
+                          className="-mr-3 flex w-[4.25rem] shrink-0 touch-manipulation items-center justify-center text-white/75 transition-colors active:text-white"
                         >
                           <svg
                             width="22"
