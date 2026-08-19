@@ -63,8 +63,10 @@ export default function CookiePolicy() {
                                 durante la navigazione sul web. Anche questi cookie vengono installati solo dopo il tuo esplicito consenso.
                             </p>
                             <p>
-                                Al momento questo sito <strong>non installa cookie di profilazione di terze parti</strong>: la categoria è predisposta per eventuali
-                                utilizzi futuri, che avverrebbero comunque solo previo tuo consenso.
+                                Questo sito <strong>non installa cookie di profilazione di terze parti</strong>. In questa categoria rientra però una cosa nostra:
+                                se arrivi da un link condiviso da un nostro segnalatore, con il tuo consenso conserviamo per <strong>90 giorni</strong>, nella
+                                memoria locale del browser, il codice di provenienza e la pagina di atterraggio, per attribuire correttamente il contatto se poi
+                                ci scrivi. Senza consenso quell&apos;indicazione dura solo la visita in corso, il tempo di completare la richiesta che stai facendo.
                             </p>
                         </div>
 
@@ -113,7 +115,7 @@ export default function CookiePolicy() {
                                     aria-pressed={consents?.marketing === "granted"}
                                     className="flex justify-between items-center py-2 border-b border-black/5 text-left w-full group"
                                 >
-                                    <span className="font-bold">Cookie Marketing <span className="font-normal text-black/40 text-sm">(nessuno attivo al momento)</span></span>
+                                    <span className="font-bold">Cookie Marketing <span className="font-normal text-black/40 text-sm">(nessun cookie di terze parti; solo l&apos;attribuzione a 90 giorni)</span></span>
                                     <span className={`shrink-0 w-12 h-6 rounded-full transition-colors relative ${consents?.marketing === "granted" ? "bg-emerald-500" : "bg-black/20"}`}>
                                         <span className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${consents?.marketing === "granted" ? "translate-x-6" : "translate-x-0"}`} />
                                     </span>

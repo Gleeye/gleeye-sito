@@ -17,6 +17,13 @@ export type SubmitArgs = {
   data: Record<string, string>;
   files: Record<string, File>;
   honeypotFilled?: boolean;
+  /**
+   * Attribuzione ambassador (vedi lib/referral). Va nelle COLONNE dedicate della
+   * submission — `ambassador_ref` e `landed_from` — non fra le risposte: non è
+   * roba che ha scritto la persona, ed è da lì che l'ERP fa nascere la
+   * segnalazione. Senza codice non si aggiunge niente: la riga resta identica.
+   */
+  referral?: { ref: string; from: string } | null;
 };
 
 export function useErpForm(id: string | null) {
@@ -80,7 +87,12 @@ export function useErpForm(id: string | null) {
   );
 
   const submit = useCallback(
-    async ({ data, files, honeypotFilled = false }: SubmitArgs): Promise<{ error: string | null }> => {
+    async ({
+      data,
+      files,
+      honeypotFilled = false,
+      referral = null,
+    }: SubmitArgs): Promise<{ error: string | null }> => {
       try {
         // Modulo PROTETTO (reCAPTCHA): il renderer nativo non emette token v3,
         // quindi NON tentiamo l'insert diretto (verrebbe scartato o passerebbe
@@ -98,9 +110,13 @@ export function useErpForm(id: string | null) {
 
         const supabase = getErpSupabase();
         const payload = await uploadFiles(data, files);
-        const { error: insErr } = await supabase
-          .from('contact_submissions')
-          .insert([{ form_id: id, data: payload, is_read: false }]);
+        const row: Record<string, unknown> = { form_id: id, data: payload, is_read: false };
+        // Nessun codice = caso normale: la insert resta quella di sempre.
+        if (referral) {
+          row.ambassador_ref = referral.ref;
+          row.landed_from = referral.from;
+        }
+        const { error: insErr } = await supabase.from('contact_submissions').insert([row]);
         if (insErr) throw new Error(insErr.message);
         return { error: null };
       } catch (e) {

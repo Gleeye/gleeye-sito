@@ -33,6 +33,7 @@ import {
   evaluateRule,
 } from './formLogic';
 import { useErpForm } from './useErpForm';
+import { getReferral } from '@/lib/referral';
 
 type Props = {
   formId: string;
@@ -166,7 +167,15 @@ export default function NativeForm({ formId, sourcePage, onDone, onProtectedFall
       if (f.type === 'file' && isVisible(f) && files[f.id]) visibleFiles[f.id] = files[f.id];
     }
 
-    const { error: err } = await submit({ data, files: visibleFiles, honeypotFilled });
+    // Attribuzione ambassador: se questo contatto è arrivato da un link
+    // condiviso, il codice viaggia con l'invio (colonne dedicate, non risposte).
+    // Senza codice è null, ed è il caso normale.
+    const { error: err } = await submit({
+      data,
+      files: visibleFiles,
+      honeypotFilled,
+      referral: getReferral(),
+    });
     setSubmitting(false);
     if (err) {
       setSubmitError(err);

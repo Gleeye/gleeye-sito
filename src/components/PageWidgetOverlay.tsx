@@ -21,6 +21,16 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { MessageCircle, X, Mail, Calendar, Phone } from "lucide-react";
 import NativeForm from "@/components/form/NativeForm";
+import { getReferral } from "@/lib/referral";
+
+/**
+ * Modulo di ripiego per l'attribuzione ambassador: le poche pagine senza attacco
+ * assegnato dall'ERP (blog, portfolio, legali…) hanno CTA che sono solo un
+ * `mailto:`, e una mail perde per strada il codice di chi ha segnalato. Se — e
+ * SOLO se — c'è un codice da consegnare, quei CTA aprono qui il "Form contatto
+ * base". Senza codice non cambia niente: il mailto resta un mailto.
+ */
+const REFERRAL_FALLBACK_FORM_ID = "517d363a-dea8-47d1-ba6e-1acf22498b99";
 
 // Canali diretti Gleeye (sempre presenti nel ventaglio).
 const WHATSAPP_URL = "https://wa.me/393351624363";
@@ -48,6 +58,9 @@ export default function PageWidgetOverlay() {
   const [open, setOpen] = useState<null | "form" | "booking">(null);
   // Modulo protetto (reCAPTCHA): il renderer nativo rimanda all'embed ERP.
   const [formFallback, setFormFallback] = useState(false);
+  // Pagina senza attacco ERP, ma con un'attribuzione da consegnare: vedi
+  // REFERRAL_FALLBACK_FORM_ID.
+  const [referralForm, setReferralForm] = useState(false);
   // Ventaglio dei canali (trigger collassato/aperto).
   const [fanOpen, setFanOpen] = useState(false);
   const fabRef = useRef<HTMLDivElement | null>(null);
@@ -81,6 +94,7 @@ export default function PageWidgetOverlay() {
   const close = () => {
     setOpen(null);
     setFormFallback(false);
+    setReferralForm(false);
   };
 
   // Blocca lo scroll di fondo mentre il modal è aperto.
@@ -140,7 +154,6 @@ export default function PageWidgetOverlay() {
     if (typeof document === "undefined") return;
     const hasContact = !!w?.contact_form_id;
     const hasBooking = !!w?.booking_item_id;
-    if (!hasContact && !hasBooking) return;
 
     const onClick = (e: MouseEvent) => {
       // Rispetta ctrl/cmd-click, tasto centrale, target=_blank: apri come sempre.
@@ -161,9 +174,22 @@ export default function PageWidgetOverlay() {
         href.toLowerCase().startsWith("mailto:info@gleeye.eu");
       if (!isContactCta) return;
 
+      // Pagina senza attacchi assegnati: si interviene SOLO se c'è
+      // un'attribuzione da consegnare, che un mailto perderebbe per strada.
+      if (!hasContact && !hasBooking) {
+        if (!getReferral()) return;
+        e.preventDefault();
+        e.stopPropagation();
+        setFormFallback(false);
+        setReferralForm(true);
+        setOpen("form");
+        return;
+      }
+
       e.preventDefault();
       e.stopPropagation();
       setFormFallback(false);
+      setReferralForm(false);
       // Preferenza: form se assegnato, altrimenti prenotazione.
       setOpen(hasContact ? "form" : "booking");
     };
@@ -195,15 +221,27 @@ export default function PageWidgetOverlay() {
     };
   }, [w?.contact_form_id, w?.booking_item_id]);
 
+  // Il modulo da mostrare: quello assegnato dall'ERP a questa pagina, oppure —
+  // solo sui CTA intercettati per l'attribuzione — il modulo base di ripiego.
+  const activeFormId = w?.contact_form_id ?? (referralForm ? REFERRAL_FALLBACK_FORM_ID : null);
+
+  // Attribuzione ambassador da riconsegnare (null è il caso normale). Serve solo
+  // alle sorgenti iframe: il renderer nativo se la prende da sé all'invio.
+  const referral = open ? getReferral() : null;
+  const refParam = referral ? `&ref=${encodeURIComponent(referral.ref)}` : "";
+  // `from` è la pagina di partenza: quella di atterraggio del link condiviso se
+  // c'è un'attribuzione, altrimenti la pagina corrente come è sempre stato.
+  const fromParam = encodeURIComponent(referral?.from ?? pathname);
+
   // Sorgente iframe: usata per la prenotazione, e come FALLBACK del form protetto.
   const iframeSrc =
     open === "booking"
-      ? `${ERP_APP}/prenota?embed=true${w?.booking_item_id ? `&servizio=${w.booking_item_id}` : ""}&from=${encodeURIComponent(pathname)}`
-      : open === "form" && formFallback && w?.contact_form_id
-        ? `${ERP_APP}/form/${w.contact_form_id}?embed=true&from=${encodeURIComponent(pathname)}`
+      ? `${ERP_APP}/prenota?embed=true${w?.booking_item_id ? `&servizio=${w.booking_item_id}` : ""}&from=${encodeURIComponent(pathname)}${refParam}`
+      : open === "form" && formFallback && activeFormId
+        ? `${ERP_APP}/form/${activeFormId}?embed=true&from=${fromParam}${refParam}`
         : null;
 
-  const showNativeForm = open === "form" && !formFallback && !!w?.contact_form_id;
+  const showNativeForm = open === "form" && !formFallback && !!activeFormId;
 
   // ── Voci del ventaglio ────────────────────────────────────────────────────
   // 1-2 (Scrivici / Prenota) solo se assegnate dall'ERP; 3-5 (canali diretti)
@@ -362,7 +400,7 @@ export default function PageWidgetOverlay() {
             >
               <CloseButton onClick={close} />
               <NativeForm
-                formId={w!.contact_form_id!}
+                formId={activeFormId!}
                 sourcePage={pathname}
                 onDone={close}
                 onProtectedFallback={() => setFormFallback(true)}

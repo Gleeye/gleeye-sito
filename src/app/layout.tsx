@@ -18,6 +18,7 @@ import CookieBanner from "@/components/CookieBanner";
 import AnalyticsGate from "@/components/AnalyticsGate";
 import SmoothScroll from "@/components/v2/SmoothScroll";
 import PageWidgetOverlay from "@/components/PageWidgetOverlay";
+import ReferralCapture from "@/components/ReferralCapture";
 
 const newsreader = Newsreader({
   variable: "--font-newsreader-next",
@@ -82,6 +83,7 @@ export default function RootLayout({
         </SmoothScroll>
         <CookieBanner />
         <AnalyticsGate />
+        <ReferralCapture />
         <PageWidgetOverlay />
       </body>
     </html>
