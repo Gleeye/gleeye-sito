@@ -89,21 +89,30 @@ export default function Footer() {
                   ? 'Due righe su chi sei e un link a quello che hai fatto: un portfolio vale più di mille CV. Le candidature le leggiamo tutte.'
                   : 'Scrivici e raccontaci il tuo progetto. Lo mettiamo a fuoco insieme.'}
               </p>
-              <div className="flex flex-wrap gap-3">
+              {/* Il primo pulsante è PIENO di colore (gradiente di brand) e più
+                  grande: sul fondo nero del footer un bordo sottile spariva.
+                  Il secondo resta in bordo, ma della stessa taglia, col lavaggio
+                  di gradiente sull'hover — lo stesso idioma dei CTA della hero. */}
+              <div className="flex flex-wrap gap-4">
                 <button
                   onClick={openContact}
-                  className="group inline-flex items-center gap-2.5 rounded-lg border border-white/20 px-6 py-3.5 font-satoshi text-xs font-bold uppercase tracking-[0.12em] text-white transition-colors duration-300 hover:bg-[#f8f9fa] hover:text-[#0a0a10]"
+                  className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-gradient-to-r from-[#4e92d8] to-[#614aa2] px-6 py-4 md:px-7 font-satoshi text-sm font-bold uppercase tracking-wide text-white shadow-[0_0_34px_-8px_rgba(78,146,216,0.75)] transition-shadow duration-500 hover:shadow-[0_0_46px_-6px_rgba(110,181,255,0.85)]"
                 >
-                  {isCareers ? 'Invia la candidatura' : 'Inizia un progetto'}
-                  <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  {/* stesso gradiente al contrario: sfuma in hover, niente salti */}
+                  <span className="absolute inset-0 bg-gradient-to-r from-[#614aa2] to-[#4e92d8] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                  <span className="relative">
+                    {isCareers ? 'Invia la candidatura' : 'Scrivici due righe'}
+                  </span>
+                  <ArrowUpRight className="relative h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </button>
                 {!isCareers && (
                   <button
                     onClick={openBooking}
-                    className="group inline-flex items-center gap-2.5 rounded-lg border border-white/20 px-6 py-3.5 font-satoshi text-xs font-bold uppercase tracking-[0.12em] text-white transition-colors duration-300 hover:bg-[#f8f9fa] hover:text-[#0a0a10]"
+                    className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-white/25 px-6 py-4 md:px-7 font-satoshi text-sm font-bold uppercase tracking-wide text-white/85 transition-colors duration-500 hover:border-transparent hover:text-white"
                   >
-                    Prenota una call
-                    <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    <span className="absolute inset-0 translate-y-full bg-gradient-to-r from-[#4e92d8] to-[#614aa2] transition-transform duration-500 ease-out group-hover:translate-y-0" />
+                    <span className="relative">Prenota una call</span>
+                    <ArrowUpRight className="relative h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                   </button>
                 )}
               </div>
