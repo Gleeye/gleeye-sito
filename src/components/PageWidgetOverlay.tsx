@@ -50,7 +50,30 @@ type Widgets = {
 
 const ERP_URL = process.env.NEXT_PUBLIC_ERP_SUPABASE_URL;
 const ERP_KEY = process.env.NEXT_PUBLIC_ERP_SUPABASE_ANON_KEY;
-const ERP_APP = process.env.NEXT_PUBLIC_ERP_APP_URL;
+// L'indirizzo pubblico del gestionale, da cui arrivano la prenotazione e
+// l'embed dei moduli protetti.
+//
+// ⚠️ IL CANONICO VINCE SULLA VARIABILE. In produzione la variabile d'ambiente
+//    su Vercel punta ancora all'host grezzo del progetto (*.vercel.app): oggi
+//    risponde, ma è un indirizzo tecnico — basta rinominare o spostare il
+//    progetto e la prenotazione si rompe, in silenzio, esattamente come è
+//    successo ai CTA a settembre 2026. Il gestionale ha un nome suo e quello
+//    usiamo: la variabile serve solo a puntare ALTROVE (in locale, o a un
+//    ambiente di prova), non a rimettere l'host grezzo.
+const ERP_CANONICO = "https://workspace.gleeye.eu";
+
+function indirizzoErp(v?: string): string {
+  if (!v) return ERP_CANONICO;
+  try {
+    const u = new URL(v);
+    if (u.hostname.endsWith(".vercel.app")) return ERP_CANONICO;
+    return v.replace(/\/+$/, "");
+  } catch {
+    return ERP_CANONICO;
+  }
+}
+
+const ERP_APP = indirizzoErp(process.env.NEXT_PUBLIC_ERP_APP_URL);
 
 export default function PageWidgetOverlay() {
   const pathname = usePathname();
