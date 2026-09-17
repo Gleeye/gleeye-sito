@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { ArrowUpRight } from 'lucide-react';
 
 /* Titolo della CTA di chiusura, diverso per pagina. Match esatto, poi per area,
@@ -61,10 +61,30 @@ export default function Footer() {
   const ctaTitle = ctaTitleFor(pathname || '/');
   // Su /lavora-con-noi la CTA parla al candidato, non al cliente.
   const isCareers = (pathname || '').startsWith('/lavora-con-noi');
+  const router = useRouter();
+
   // I CTA del footer stanno fuori da <main>, quindi non vengono intercettati:
   // aprono il popup lanciando gli eventi del PageWidgetOverlay.
-  const openContact = () => window.dispatchEvent(new Event('gleeye:open-contact-form'));
-  const openBooking = () => window.dispatchEvent(new Event('gleeye:open-booking'));
+  //
+  // ⛔ IL PARACADUTE. Fino al 17/9/26 questi due pulsanti lanciavano l'evento e
+  //    basta: se nessuno lo raccoglieva — ERP che non risponde, permesso
+  //    saltato, pagina senza widget — il click non faceva NIENTE. È durata
+  //    settimane senza che si vedesse. Ora l'overlay cancella l'evento quando
+  //    lo prende in carico: se non lo cancella, il pulsante porta comunque il
+  //    visitatore ai contatti. Un pulsante può aprire la cosa sbagliata, non
+  //    può non fare niente.
+  const lancia = (nome: string) =>
+    !window.dispatchEvent(new CustomEvent(nome, { cancelable: true }));
+
+  const openContact = () => {
+    if (!lancia('gleeye:open-contact-form')) router.push('/contatti');
+  };
+  const openBooking = () => {
+    // Prenotazione non assegnata a questa pagina: meglio il modulo che niente.
+    if (!lancia('gleeye:open-booking') && !lancia('gleeye:open-contact-form')) {
+      router.push('/contatti');
+    }
+  };
 
   return (
     <footer className="relative overflow-hidden bg-[#0a0a10] text-[#f8f9fa]">
@@ -89,10 +109,10 @@ export default function Footer() {
                   ? 'Due righe su chi sei e un link a quello che hai fatto: un portfolio vale più di mille CV. Le candidature le leggiamo tutte.'
                   : 'Scrivici e raccontaci il tuo progetto. Lo mettiamo a fuoco insieme.'}
               </p>
-              {/* Il primo pulsante è PIENO di colore (gradiente di brand) e più
-                  grande: sul fondo nero del footer un bordo sottile spariva.
-                  Il secondo resta in bordo, ma della stessa taglia, col lavaggio
-                  di gradiente sull'hover — lo stesso idioma dei CTA della hero. */}
+              {/* Tutti e due PIENI di colore e più grandi: sul fondo nero del
+                  footer un bordo sottile spariva. Il primo porta il gradiente
+                  di brand (blu→viola), il secondo il viola pieno: si vedono
+                  entrambi, ma restano distinguibili a colpo d'occhio. */}
               <div className="flex flex-wrap gap-4">
                 <button
                   onClick={openContact}
@@ -108,9 +128,9 @@ export default function Footer() {
                 {!isCareers && (
                   <button
                     onClick={openBooking}
-                    className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-white/25 px-6 py-4 md:px-7 font-satoshi text-sm font-bold uppercase tracking-wide text-white/85 transition-colors duration-500 hover:border-transparent hover:text-white"
+                    className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-[#614aa2] px-6 py-4 md:px-7 font-satoshi text-sm font-bold uppercase tracking-wide text-white shadow-[0_0_34px_-10px_rgba(97,74,162,0.9)] transition-shadow duration-500 hover:shadow-[0_0_46px_-6px_rgba(155,123,255,0.8)]"
                   >
-                    <span className="absolute inset-0 translate-y-full bg-gradient-to-r from-[#4e92d8] to-[#614aa2] transition-transform duration-500 ease-out group-hover:translate-y-0" />
+                    <span className="absolute inset-0 bg-gradient-to-r from-[#614aa2] to-[#9b7bff] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                     <span className="relative">Prenota una call</span>
                     <ArrowUpRight className="relative h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                   </button>

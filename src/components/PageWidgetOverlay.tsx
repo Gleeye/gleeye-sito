@@ -202,15 +202,26 @@ export default function PageWidgetOverlay() {
   // Apertura programmatica: qualsiasi elemento può fare
   // window.dispatchEvent(new Event("gleeye:open-contact-form")) per il contatto,
   // oppure "gleeye:open-booking" per la prenotazione. Usato dai CTA del footer.
+  //
+  // ⭐ CHI CHIAMA DEVE SAPERE SE ABBIAMO RISPOSTO. Gli eventi arrivano
+  //    `cancelable`: quando apriamo davvero facciamo preventDefault(), così
+  //    `dispatchEvent` torna false e il chiamante capisce che è stato preso in
+  //    carico. Se l'ERP non ha risposto (rotta senza widget, o ponte giù), noi
+  //    non facciamo niente E NON cancelliamo: il pulsante se ne accorge e
+  //    ripiega su /contatti invece di restare morto.
+  //    Nel settembre 2026 quel silenzio è durato settimane senza che nessuno
+  //    lo vedesse: un click che non fa niente non lascia tracce da nessuna parte.
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const openForm = () => {
+    const openForm = (e: Event) => {
       if (!w?.contact_form_id) return;
+      e.preventDefault();
       setFormFallback(false);
       setOpen("form");
     };
-    const openBooking = () => {
+    const openBooking = (e: Event) => {
       if (!w?.booking_item_id) return;
+      e.preventDefault();
       setOpen("booking");
     };
     window.addEventListener("gleeye:open-contact-form", openForm);
