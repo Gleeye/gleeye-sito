@@ -6,11 +6,14 @@ import ProcessStack from '@/components/video-explainer/ProcessStack';
 import FaqSection from '@/components/video-explainer/FaqSection';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-    title: 'GLEEYE Video Explainer Service',
-    description: 'Produzione video explainer ad alto impatto per brand che vogliono essere visti.',
-};
+export const metadata = seo({
+  title: 'Video Explainer',
+  description:
+    'Video explainer animati per spiegare prodotti, servizi e processi complessi in un minuto: script, storyboard, animazione e voce. Gleeye, Genova.',
+  path: '/video-explainer',
+});
 
 export default function VideoExplainerLandingPage() {
     return (

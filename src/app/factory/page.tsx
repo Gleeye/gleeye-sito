@@ -7,12 +7,14 @@ import AreaChapters from '@/components/v2/area/AreaChapters';
 import AreaMethod from '@/components/v2/area/AreaMethod';
 import AreaEssence from '@/components/v2/area/AreaEssence';
 import { AREAS } from '@/components/v2/area/data';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Gleeye Factory — Video, Foto, Copy, Podcast e Graphic Design a Genova',
+export const metadata = seo({
+  title: 'Video, Foto, Podcast e Graphic Design',
   description:
-    "L'eccellenza come output prevedibile. Video production, fotografia, copywriting strategico, podcast e motion design: la content factory di Gleeye.",
-};
+    'La content factory di Gleeye a Genova: video production, fotografia, copywriting, podcast e grafica. Produzione continua con qualità costante.',
+  path: '/factory',
+});
 
 export default function FactoryPage() {
   const area = AREAS.factory;

@@ -10,11 +10,14 @@ import ForWhoSection from '@/components/digital/web/ForWhoSection';
 import WhySection from '@/components/digital/web/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/digital/web/FaqSection';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Web Design & Development — Gleeye Digital',
-  description: 'Siti web professionali: design, sviluppo, performance. Da sito vetrina a e-commerce, costruiamo esperienze digitali che convertono.',
-};
+export const metadata = seo({
+  title: 'Web Design e Sviluppo Siti',
+  description:
+    'Realizzazione siti web e e-commerce: design, sviluppo e performance. Dal sito vetrina alla piattaforma su misura, veloci e fatti per convertire.',
+  path: '/digital/web',
+});
 
 export default function WebPage() {
   return (

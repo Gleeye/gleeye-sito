@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, Newsreader, Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import { SITE_URL } from "@/lib/seo";
 
 /* Satoshi self-hosted: niente dipendenza dal CDN Fontshare a runtime. */
 const satoshi = localFont({
@@ -48,21 +49,68 @@ const jakarta = Plus_Jakarta_Sans({
   weight: ["300", "400", "500", "600", "700", "800"],
 });
 
+/* metadataBase = www: l'apex fa 308 su www, quindi ogni URL che dichiariamo
+   (canonical, og:url, sitemap) deve già essere l'indirizzo che Google serve.
+   Titolo e descrizione qui sotto sono solo il fondo: ogni pagina scrive i suoi
+   con `seo()` (src/lib/seo.ts). */
 export const metadata: Metadata = {
-  metadataBase: new URL("https://gleeye.eu"),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Gleeye — Agenzia di Comunicazione | Genova",
+    default: "Gleeye — Agenzia di Comunicazione a Genova",
     template: "%s — Gleeye",
   },
   description:
-    "Architetti di percezioni. Boutique strategica e Factory creativa: identità di marca, ecosistemi digitali e produzione di contenuti d'élite. Genova.",
+    "Agenzia di comunicazione a Genova: brand identity, siti web, social, SEO, video e fotografia. Strategia e produzione sotto lo stesso tetto.",
   openGraph: {
-    title: "Gleeye — Glee to Eye",
-    description:
-      "Boutique strategica e Factory creativa. Identità, digital, produzione.",
+    siteName: "Gleeye",
     locale: "it_IT",
     type: "website",
   },
+};
+
+/* Dati strutturati: senza questi, per la ricerca "gleeye" Google si costruisce
+   lo snippet raschiando il footer (indirizzo, mail, telefono) invece di usare
+   la descrizione. Qui glieli diamo in chiaro, una volta sola per tutto il sito. */
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["Organization", "LocalBusiness"],
+      "@id": `${SITE_URL}/#organization`,
+      name: "Gleeye",
+      legalName: "Gleeye srl",
+      url: SITE_URL,
+      logo: `${SITE_URL}/brand/logo.png`,
+      image: `${SITE_URL}/brand/logo%20square.png`,
+      description:
+        "Agenzia di comunicazione a Genova: brand identity, siti web, social, SEO, video e fotografia.",
+      email: "info@gleeye.eu",
+      telephone: "+390100954533",
+      vatID: "IT02944020995",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "Piazza Brignole 2/3",
+        postalCode: "16122",
+        addressLocality: "Genova",
+        addressRegion: "GE",
+        addressCountry: "IT",
+      },
+      areaServed: "IT",
+      sameAs: [
+        "https://www.instagram.com/gleeye",
+        "https://www.linkedin.com/company/gleeye/",
+        "https://www.facebook.com/gleeye/",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: "Gleeye",
+      inLanguage: "it-IT",
+      publisher: { "@id": `${SITE_URL}/#organization` },
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -78,6 +126,10 @@ export default function RootLayout({
       className={`${satoshi.variable} ${newsreader.variable} ${playfair.variable} ${plexMono.variable} ${jakarta.variable}`}
     >
       <body className="antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
+        />
         <SmoothScroll>
           {children}
         </SmoothScroll>

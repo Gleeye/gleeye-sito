@@ -102,6 +102,10 @@ const ROUTES = new Set([
   '/manifesto',
   '/metodo',
   '/mission-e-vision',
+  /* L'immagine di anteprima generata da src/app/opengraph-image.tsx: non ha un
+     punto nel percorso, quindi senza questa riga il catch-all la spedisce su
+     old.gleeye.eu e ogni link condiviso resta senza figura. */
+  '/opengraph-image',
   '/podcast',
   '/privacy-policy',
   '/proposte',

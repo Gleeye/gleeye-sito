@@ -9,11 +9,14 @@ import ForWhoSection from '@/components/identity/brand-guidelines/ForWhoSection'
 import WhySection from '@/components/identity/brand-guidelines/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/identity/brand-guidelines/FaqSection';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Brand Guidelines — Gleeye Identity',
-  description: 'Brand guidelines professionali: il manuale che protegge e propaga il tuo brand. Regole chiare per chiunque lavori con la tua identità.',
-};
+export const metadata = seo({
+  title: 'Brand Guidelines',
+  description:
+    'Il manuale che protegge il brand: regole d\'uso di logo, colori, tipografia e tono di voce, chiare per chiunque lavori con la tua identità.',
+  path: '/identity/brand-guidelines',
+});
 
 export default function BrandGuidelinesPage() {
   return (

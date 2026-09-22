@@ -3,6 +3,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CaseStudyDetail from '@/components/portfolio/CaseStudyDetail';
 import { notFound } from 'next/navigation';
+import { seo } from '@/lib/seo';
 
 export async function generateStaticParams() {
   const all = await getAllCaseStudies();
@@ -13,10 +14,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const cs = await getCaseStudyBySlug(slug);
   if (!cs) return {};
-  return {
-    title: `${cs.title} — Gleeye Portfolio`,
-    description: cs.tagline,
-  };
+  const description =
+    cs.tagline ?? `${cs.title}: il case study di un progetto seguito da Gleeye.`;
+  return seo({
+    title: `${cs.title} — Portfolio`,
+    description,
+    path: `/portfolio/${slug}`,
+    ogType: 'article',
+    image: cs.cover_url ?? undefined,
+  });
 }
 
 export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {

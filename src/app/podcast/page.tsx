@@ -5,11 +5,14 @@ import ProcessStack from '@/components/podcast/ProcessStack';
 import FaqSection from '@/components/podcast/FaqSection';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-    title: 'GLEEYE Podcast Service',
-    description: 'Design sonoro e produzione podcast di altissimo livello.',
-};
+export const metadata = seo({
+  title: 'Podcast da Remoto Essential',
+  description:
+    'Il servizio podcast chiavi in mano di Gleeye: tu registri da remoto, noi curiamo format, montaggio, sound design e pubblicazione. Genova.',
+  path: '/podcast',
+});
 
 export default function PodcastLandingPage() {
     return (

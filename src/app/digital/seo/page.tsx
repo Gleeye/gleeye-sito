@@ -9,11 +9,14 @@ import ForWhoSection from '@/components/digital/seo/ForWhoSection';
 import WhySection from '@/components/digital/seo/WhySection';
 import FaqSection from '@/components/digital/seo/FaqSection';
 import DarkBand from '@/components/subpage/DarkBand';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'SEO — Gleeye Digital',
-  description: 'SEO strategica per aziende: audit tecnico, content strategy, link building. Posizionarsi su Google non è fortuna — è un metodo.',
-};
+export const metadata = seo({
+  title: 'SEO',
+  description:
+    'SEO per aziende: audit tecnico, struttura dei contenuti, link building e monitoraggio. Posizionarsi su Google non è fortuna, è un metodo.',
+  path: '/digital/seo',
+});
 
 export default function SeoPage() {
   return (

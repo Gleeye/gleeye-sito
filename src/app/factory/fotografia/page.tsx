@@ -10,11 +10,14 @@ import ForWhoSection from '@/components/factory/fotografia/ForWhoSection';
 import WhySection from '@/components/factory/fotografia/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/factory/fotografia/FaqSection';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Fotografia — Gleeye Factory',
-  description: 'Fotografia professionale per aziende: reportage aziendale, product photography, editorial e brand photography. Immagini costruite con intenzione, non solo scattate.',
-};
+export const metadata = seo({
+  title: 'Fotografia',
+  description:
+    'Fotografia per aziende: reportage aziendale, prodotto, ritratto e still life. Immagini costruite con intenzione, pronte per web, stampa e social.',
+  path: '/factory/fotografia',
+});
 
 export default function FotografiaPage() {
   return (

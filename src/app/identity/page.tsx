@@ -7,12 +7,14 @@ import AreaChapters from '@/components/v2/area/AreaChapters';
 import AreaMethod from '@/components/v2/area/AreaMethod';
 import AreaEssence from '@/components/v2/area/AreaEssence';
 import { AREAS } from '@/components/v2/area/data';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Gleeye Identity — Brand Discovery, Naming e Visual Identity a Genova',
+export const metadata = seo({
+  title: 'Brand Identity, Naming e Visual Identity',
   description:
-    "L'identità non si inventa: si scopre. Brand discovery, naming, visual identity system e brand guidelines. Il presidio dell'identità, a Genova.",
-};
+    'Brand discovery, naming, visual identity e brand guidelines: identità di marca riconoscibili e coerenti su ogni supporto. Gleeye Identity, Genova.',
+  path: '/identity',
+});
 
 export default function IdentityPage() {
   const area = AREAS.identity;

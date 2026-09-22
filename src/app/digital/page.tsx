@@ -7,12 +7,14 @@ import AreaChapters from '@/components/v2/area/AreaChapters';
 import AreaMethod from '@/components/v2/area/AreaMethod';
 import AreaEssence from '@/components/v2/area/AreaEssence';
 import { AREAS } from '@/components/v2/area/data';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Gleeye Digital — Web Design, Social, SEO e Advertising a Genova',
+export const metadata = seo({
+  title: 'Web Design, Social, SEO e Advertising',
   description:
-    "La tua presenza online non è un sito: è un'infrastruttura. Web design ad architettura piuma, social strategy, search authority e performance marketing.",
-};
+    'Siti web veloci, social strategy, SEO e campagne Google e Meta: l\'infrastruttura digitale del brand, non solo la sua vetrina. Gleeye Digital, Genova.',
+  path: '/digital',
+});
 
 export default function DigitalPage() {
   const area = AREAS.digital;

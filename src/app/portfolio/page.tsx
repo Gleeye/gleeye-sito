@@ -3,13 +3,16 @@ import { getAllCaseStudies } from '@/lib/portfolio';
 import PortfolioGrid from '@/components/portfolio/PortfolioGrid';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { seo } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = {
-  title: 'Portfolio — Gleeye',
-  description: 'I nostri lavori: video production, brand identity, digital e molto altro. Case study da Genova e dintorni.',
-};
+export const metadata = seo({
+  title: 'Portfolio',
+  description:
+    'I lavori di Gleeye: video, brand identity, siti web e campagne. Case history di aziende e organizzazioni seguite da Genova.',
+  path: '/portfolio',
+});
 
 export default async function PortfolioPage() {
   const caseStudies = await getAllCaseStudies();

@@ -1,13 +1,14 @@
-import type { Metadata } from 'next';
 import Header from '@/components/v2/Header';
 import Footer from '@/components/v2/Footer';
 import LavoraConNoi from '@/components/v2/LavoraConNoi';
+import { seo } from '@/lib/seo';
 
-export const metadata: Metadata = {
-    title: 'Lavora con noi | GLEEYE',
-    description:
-        'Progetti veri dal primo giorno, uno standard che ti alza e una squadra che ama il proprio mestiere. Designer, videomaker, copywriter, developer: presentati.',
-};
+export const metadata = seo({
+  title: 'Lavora con noi',
+  description:
+    'Posizioni aperte in Gleeye a Genova: designer, videomaker, copywriter, developer. Progetti veri dal primo giorno e una squadra che ama il mestiere.',
+  path: '/lavora-con-noi',
+});
 
 export default function LavoraConNoiPage() {
     return (

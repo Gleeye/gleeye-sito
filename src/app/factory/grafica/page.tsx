@@ -9,11 +9,14 @@ import ForWhoSection from '@/components/factory/grafica/ForWhoSection';
 import WhySection from '@/components/factory/grafica/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/factory/grafica/FaqSection';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Graphic Design — Gleeye Factory',
-  description: 'Brand design system, print, digital graphics e wayfinding per aziende che vogliono comunicare con coerenza visiva. Design che costruisce reputazione.',
-};
+export const metadata = seo({
+  title: 'Graphic Design',
+  description:
+    'Design system, materiali stampati, grafica digitale e segnaletica: un sistema visivo coerente su ogni supporto. Graphic design per aziende, Genova.',
+  path: '/factory/grafica',
+});
 
 export default function GraficaPage() {
   return (

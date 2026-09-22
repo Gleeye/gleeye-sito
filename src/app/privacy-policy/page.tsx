@@ -1,11 +1,13 @@
-import { Metadata } from "next";
 import Header from "@/components/v2/Header";
 import Footer from "@/components/v2/Footer";
+import { seo } from '@/lib/seo';
 
-export const metadata: Metadata = {
-    title: "Privacy Policy | GLEEYE",
-    description: "Informativa sulla Privacy di GLEEYE S.R.L. ai sensi del GDPR.",
-};
+export const metadata = seo({
+  title: 'Privacy Policy',
+  description:
+    'Informativa privacy di Gleeye srl ai sensi del GDPR: quali dati raccogliamo, perché, per quanto tempo e come esercitare i tuoi diritti.',
+  path: '/privacy-policy',
+});
 
 export default function PrivacyPolicy() {
     return (

@@ -65,6 +65,22 @@ che deve tornare all'ERP: su quello si paga una provvigione. Vedi `SPEC-attribuz
 - Senza codice non cambia NIENTE: stessa insert di prima, stessi link. È il caso normale
 - Niente tracciamento: nessun conteggio clic, nessun evento, nessun invio a terzi
 
+### SEO — il <head> esce da un posto solo
+`src/lib/seo.ts` costruisce i metadata di ogni pagina: `seo({ title, description, path })`.
+Da lì escono titolo (il template del layout aggiunge `— Gleeye`, quindi il titolo NON deve
+contenerlo), description, **canonical**, openGraph e twitter card. Non scrivere più
+`export const metadata = { ... }` a mano in un page.tsx.
+- **L'host canonico è `https://www.gleeye.eu`**: l'apex fa 308 su www. `metadataBase`,
+  sitemap e robots devono dichiarare www, altrimenti si indicizzano URL che redirigono
+- Dati strutturati (Organization + LocalBusiness + WebSite) in `layout.tsx`: senza, per la
+  ricerca "gleeye" Google si costruisce lo snippet raschiando il footer invece di usare la
+  description. È esattamente quello che stava succedendo prima (set 2026)
+- Anteprima social generata da `src/app/opengraph-image.tsx` (1200×630, logo su fondo ink).
+  `seo()` la dichiara esplicitamente: una pagina che scrive il suo `openGraph` sostituisce
+  quello del layout e **perde** l'immagine da file
+- Pagine `'use client'` (cookie-policy, proposte) non possono esportare `metadata`: il head
+  sta nel loro `layout.tsx`
+
 ### Lezioni tecniche apprese (NON ripetere questi errori)
 - Turbopack (Next 16) NON emette `@import url()` remoti nel CSS: font via `next/font` o `<link>` nel layout
 - MAI `::-webkit-scrollbar` custom sul root: forza scrolling main-thread e desincronizza il paint
@@ -74,7 +90,9 @@ che deve tornare all'ERP: su quello si paga una provvigione. Vedi `SPEC-attribuz
 - Niente CSS `transition-all` su elementi animati da GSAP (conflitto sulle stesse proprietà)
 - Anchor cross-page (`/#sezione`) inaffidabili con sezioni pinnate: usare pagine dedicate (es. `/contatti`)
 - Ogni pagina nuova va aggiunta a `ROUTES` in `src/middleware.ts`, altrimenti il catch-all la manda
-  su old.gleeye.eu (è successo a `/portfolio`)
+  su old.gleeye.eu (è successo a `/portfolio`). Vale anche per le rotte generate da Next che non
+  hanno un punto nel percorso: `/opengraph-image` finiva su old.gleeye.eu e le anteprime social
+  restavano vuote. I file con l'estensione (`/sitemap.xml`, `/robots.txt`, `/icon.png`) passano già
 - Niente `useSearchParams()` in un componente montato nel layout: obbliga a un `<Suspense>` e toglie
   la resa statica a tutte le pagine. Per leggere la query dopo il mount basta `window.location.search`
 

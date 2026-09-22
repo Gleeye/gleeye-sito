@@ -5,11 +5,14 @@ import PositioningSection from '@/components/events/PositioningSection';
 import ServicesSection from '@/components/events/ServicesSection';
 import TimelineSection from '@/components/events/TimelineSection';
 import FaqSection from '@/components/events/FaqSection';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Comunicazione per Eventi Aziendali — Gleeye',
-  description: 'Servizi di comunicazione e marketing per eventi aziendali: foto, video, grafica, media relation, digital marketing. Copertura totale prima, durante e dopo il tuo evento.',
-};
+export const metadata = seo({
+  title: 'Comunicazione per Eventi Aziendali',
+  description:
+    'Foto, video, grafica, ufficio stampa e social per eventi aziendali: copertura prima, durante e dopo. Un solo interlocutore per tutto l\'evento.',
+  path: '/events',
+});
 
 export default function EventsPage() {
   return (

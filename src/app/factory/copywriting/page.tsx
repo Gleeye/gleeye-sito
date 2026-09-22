@@ -9,11 +9,14 @@ import ForWhoSection from '@/components/factory/copywriting/ForWhoSection';
 import WhySection from '@/components/factory/copywriting/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/factory/copywriting/FaqSection';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Copywriting — Gleeye Factory',
-  description: 'Copywriting strategico, verbal identity e contenuti per aziende che vogliono comunicare con precisione. Copy che costruisce brand, non solo li descrive.',
-};
+export const metadata = seo({
+  title: 'Copywriting',
+  description:
+    'Copywriting e verbal identity per aziende: testi per siti, campagne e contenuti editoriali. Parole scelte per farsi capire, non per riempire.',
+  path: '/factory/copywriting',
+});
 
 export default function CopywritingPage() {
   return (

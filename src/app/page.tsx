@@ -16,6 +16,17 @@ import Areas from '@/components/v2/home/Areas';
 const SHOWREEL_URL = '/video/showreel-2022.mp4';
 import Manifesto from '@/components/v2/home/Manifesto';
 import SpecialUnits from '@/components/v2/home/SpecialUnits';
+import { seo } from '@/lib/seo';
+
+/* Titolo assoluto: il template del layout è "%s — Gleeye" e sulla home
+   raddoppierebbe il nome. */
+export const metadata = seo({
+  title: 'Gleeye — Agenzia di Comunicazione a Genova',
+  description:
+    'Agenzia di comunicazione a Genova: brand identity, siti web, social, SEO, video e fotografia. Strategia e produzione sotto lo stesso tetto.',
+  path: '/',
+  absoluteTitle: true,
+});
 
 export const dynamic = 'force-dynamic';
 

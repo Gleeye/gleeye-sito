@@ -9,11 +9,14 @@ import ForWhoSection from '@/components/digital/advertising/ForWhoSection';
 import WhySection from '@/components/digital/advertising/WhySection';
 import FaqSection from '@/components/digital/advertising/FaqSection';
 import DarkBand from '@/components/subpage/DarkBand';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Advertising — Gleeye Digital',
-  description: 'Campagne pubblicitarie digitali: Google Ads, Meta Ads, LinkedIn Ads. Budget ottimizzato, creatività che converte, risultati misurabili.',
-};
+export const metadata = seo({
+  title: 'Advertising: Google, Meta e LinkedIn Ads',
+  description:
+    'Campagne a pagamento su Google, Meta e LinkedIn: budget governato, creatività che converte e risultati misurabili mese per mese.',
+  path: '/digital/advertising',
+});
 
 export default function AdvertisingPage() {
   return (

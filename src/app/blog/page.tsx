@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import Header from '@/components/v2/Header';
 import Footer from '@/components/v2/Footer';
 import { getAllPosts, type BlogPost } from '@/lib/blog';
+import { seo } from '@/lib/seo';
 
 /* ————————————————————————————————————————————————————————————————
    Blog nativo — INDICE (/blog). Magazine dei ~120 articoli (ex WordPress) resi
@@ -18,18 +18,12 @@ import { getAllPosts, type BlogPost } from '@/lib/blog';
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
+export const metadata = seo({
   title: 'Blog',
   description:
-    'Idee, metodo e visione sulla comunicazione d’impresa. Il magazine di Gleeye: branding, marketing digitale e produzione di contenuti.',
-  alternates: { canonical: '/blog' },
-  openGraph: {
-    title: 'Blog — Gleeye',
-    description:
-      'Idee, metodo e visione sulla comunicazione d’impresa. Il magazine di Gleeye.',
-    type: 'website',
-  },
-};
+    'Il magazine di Gleeye: branding, marketing digitale, produzione di contenuti e metodo di lavoro. Idee utili sulla comunicazione d\'impresa.',
+  path: '/blog',
+});
 
 /* ——— helpers (allineati a blog/[slug]/page.tsx) ——— */
 

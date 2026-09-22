@@ -9,11 +9,14 @@ import ForWhoSection from '@/components/digital/social/ForWhoSection';
 import WhySection from '@/components/digital/social/WhySection';
 import FaqSection from '@/components/digital/social/FaqSection';
 import DarkBand from '@/components/subpage/DarkBand';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Social Media — Gleeye Digital',
-  description: 'Gestione social media professionale: strategia, produzione contenuti, community management. Social che costruisce brand, non solo follower.',
-};
+export const metadata = seo({
+  title: 'Social Media',
+  description:
+    'Gestione social media per aziende: strategia editoriale, produzione contenuti e community management. Social che costruisce brand, non follower.',
+  path: '/digital/social',
+});
 
 export default function SocialPage() {
   return (

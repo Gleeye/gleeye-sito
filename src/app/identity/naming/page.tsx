@@ -9,11 +9,14 @@ import ForWhoSection from '@/components/identity/naming/ForWhoSection';
 import WhySection from '@/components/identity/naming/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/identity/naming/FaqSection';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Naming — Gleeye Identity',
-  description: 'Naming professionale per brand, prodotti e aziende. Un nome non si trova — si costruisce con metodo, test e una strategia precisa.',
-};
+export const metadata = seo({
+  title: 'Naming',
+  description:
+    'Naming per brand, prodotti e aziende: un nome non si trova, si costruisce con metodo, verifiche di disponibilità e test di suono e memoria.',
+  path: '/identity/naming',
+});
 
 export default function NamingPage() {
   return (

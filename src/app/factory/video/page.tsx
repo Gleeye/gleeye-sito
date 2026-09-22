@@ -9,11 +9,14 @@ import ForWhoSection from '@/components/factory/video/ForWhoSection';
 import WhySection from '@/components/factory/video/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/factory/video/FaqSection';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Video Production — Gleeye Factory',
-  description: 'Video istituzionale, spot ADV, explainer e social video content. Produzione professionale dalla pre-produzione alla post. Un video sbagliato costa quanto uno giusto. Solo che non vende.',
-};
+export const metadata = seo({
+  title: 'Video Production',
+  description:
+    'Video istituzionali, spot, explainer e contenuti social: dalla pre-produzione alla post. Produzione video per aziende a Genova e in tutta Italia.',
+  path: '/factory/video',
+});
 
 export default function VideoPage() {
   return (

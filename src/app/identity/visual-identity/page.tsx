@@ -9,11 +9,14 @@ import ForWhoSection from '@/components/identity/visual-identity/ForWhoSection';
 import WhySection from '@/components/identity/visual-identity/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/identity/visual-identity/FaqSection';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Visual Identity — Gleeye Identity',
-  description: "Identità visiva professionale: logo, palette, tipografia, sistema grafico. Un brand che si riconosce a colpo d'occhio, su qualsiasi supporto.",
-};
+export const metadata = seo({
+  title: 'Visual Identity',
+  description:
+    'Logo, palette, tipografia e sistema grafico: un\'identità visiva che si riconosce a colpo d\'occhio e regge su stampa, web e social. Gleeye, Genova.',
+  path: '/identity/visual-identity',
+});
 
 export default function VisualIdentityPage() {
   return (

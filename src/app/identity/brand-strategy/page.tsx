@@ -9,12 +9,14 @@ import ForWhoSection from '@/components/identity/brand-strategy/ForWhoSection';
 import WhySection from '@/components/identity/brand-strategy/WhySection';
 import DarkBand from '@/components/subpage/DarkBand';
 import FaqSection from '@/components/identity/brand-strategy/FaqSection';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Brand Strategy — Gleeye Identity',
+export const metadata = seo({
+  title: 'Brand Strategy',
   description:
-    'Brand strategy per aziende che vogliono posizionarsi con chiarezza. Positioning, architettura di brand, framework valoriale. La strategia che precede tutto il resto.',
-};
+    'Positioning, architettura di brand e framework valoriale: la strategia che precede logo, sito e campagne. Consulenza brand strategy a Genova.',
+  path: '/identity/brand-strategy',
+});
 
 export default function BrandStrategyPage() {
   return (

@@ -4,11 +4,14 @@ import ForChiSection   from '@/components/copy/ForChiSection';
 import ServicesGrid    from '@/components/copy/ServicesGrid';
 import Header          from '@/components/Header';
 import Footer          from '@/components/Footer';
+import { seo } from '@/lib/seo';
 
-export const metadata = {
-    title:       'Servizi di Copywriting — Gleeye',
-    description: 'Testi asciutti, chirurgici e funzionali. Gleeye scrive per abbattere il rumore di fondo: copy strategy, content, blogging e naming per brand che sanno cosa vogliono comunicare.',
-};
+export const metadata = seo({
+  title: 'Servizi di Copywriting',
+  description:
+    'Copy strategy, testi per il sito, articoli e naming: scriviamo per farci capire in fretta. Servizi di copywriting per aziende a Genova.',
+  path: '/copy',
+});
 
 export default function CopyPage() {
     return (

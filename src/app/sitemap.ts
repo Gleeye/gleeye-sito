@@ -1,7 +1,10 @@
 import type { MetadataRoute } from 'next';
 import { getAllSlugs } from '@/lib/blog';
+import { SITE_URL } from '@/lib/seo';
 
-const BASE = 'https://gleeye.eu';
+/* www: l'apex fa 308 su www, e una sitemap che dichiara l'host sbagliato manda
+   Google a indicizzare URL che poi redirigono. */
+const BASE = SITE_URL;
 
 /* Gli slug dei ~120 articoli nativi (/blog/<slug>) vengono dal DB del sito
    (public.blog_posts). Rigenerato con la pagina (ISR). Nessun fetch a
@@ -12,6 +15,10 @@ export const revalidate = 3600;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = [
     { path: '', priority: 1 },
+    { path: '/chi-siamo', priority: 0.8 },
+    { path: '/mission-e-vision', priority: 0.6 },
+    { path: '/manifesto', priority: 0.6 },
+    { path: '/metodo', priority: 0.7 },
     { path: '/identity', priority: 0.9 },
     { path: '/digital', priority: 0.9 },
     { path: '/factory', priority: 0.9 },
@@ -27,6 +34,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/factory/fotografia', priority: 0.7 },
     { path: '/factory/copywriting', priority: 0.7 },
     { path: '/factory/grafica', priority: 0.7 },
+    { path: '/factory/podcast', priority: 0.7 },
+    { path: '/copy', priority: 0.7 },
     { path: '/contatti', priority: 0.8 },
     { path: '/podcast', priority: 0.8 },
     { path: '/video-explainer', priority: 0.8 },
