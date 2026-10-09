@@ -46,7 +46,8 @@ export default function Showreel({ clips = [] }: { clips?: string[] }) {
       if (video) {
         ScrollTrigger.create({
           trigger: root,
-          start: 'top bottom',
+          /* mezzo schermo d'anticipo: il video comincia a caricare prima di vedersi */
+          start: 'top bottom+=50%',
           end: 'bottom top',
           onEnter: () => video.play().catch(() => {}),
           onEnterBack: () => video.play().catch(() => {}),
@@ -63,17 +64,19 @@ export default function Showreel({ clips = [] }: { clips?: string[] }) {
     <div ref={rootRef} className="relative overflow-hidden bg-[#f8f9fa] py-6 md:py-10">
       <div className="mx-auto flex min-h-[50vh] items-center justify-center md:min-h-[82vh]">
         <div ref={frameRef} className="relative aspect-video w-full max-w-[1600px] overflow-hidden bg-black will-change-transform">
-          {/* Sempre muto: niente controllo audio, nessuno lo alzerebbe. */}
+          {/* Sempre muto: niente controllo audio, nessuno lo alzerebbe.
+              Niente autoPlay: col autoPlay il browser scarica i 2.4 MB appena apre
+              la home, anche se nessuno scrolla fin qui. Lo fa partire lo
+              ScrollTrigger qui sopra quando la sezione entra in vista. */}
           {hasClips ? (
             <video
               ref={videoRef}
               src={clips[0]}
               className="absolute inset-0 h-full w-full object-cover"
-              autoPlay
               muted
               loop
               playsInline
-              preload="metadata"
+              preload="none"
             />
           ) : (
             <div

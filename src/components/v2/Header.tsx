@@ -224,7 +224,7 @@ export default function Header() {
             onClick={() => open && toggle(false)}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand/logo.png" alt="Gleeye" className="h-14 w-auto md:h-20" />
+            <img src="/brand/logo-480.png" alt="Gleeye" className="h-14 w-auto md:h-20" />
           </Link>
 
           <Magnetic className="pointer-events-auto">

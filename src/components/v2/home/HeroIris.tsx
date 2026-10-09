@@ -118,7 +118,14 @@ export default function HeroIris() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const gl = canvas.getContext('webgl', { antialias: false, alpha: false });
+    /* Prima chiede una scheda grafica vera. Se c'è solo il disegno «a mano» del
+       processore (telefoni deboli, e il telefono simulato di PageSpeed) l'iride
+       resta uguale ma si disegna a bassa risoluzione e a meno fotogrammi: a piena
+       risoluzione ogni fotogramma bloccava la pagina ~170 ms (20 s su 36 punti). */
+    const opts = { antialias: false, alpha: false };
+    const fast = canvas.getContext('webgl', { ...opts, failIfMajorPerformanceCaveat: true });
+    const software = !fast;
+    const gl = fast ?? (canvas.getContext('webgl', opts) as WebGLRenderingContext | null);
     if (!gl) return;
 
     const vs = createShader(gl, gl.VERTEX_SHADER, VERT);
@@ -144,7 +151,11 @@ export default function HeroIris() {
     const uIntro = gl.getUniformLocation(prog, 'u_intro');
     const uZoom = gl.getUniformLocation(prog, 'u_zoom');
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+    /* l'iride è tutta sfumata: sotto 1.25 sul telefono non si vede la differenza */
+    const touch = window.matchMedia('(pointer: coarse)').matches;
+    const dpr = software ? 0.35 : Math.min(window.devicePixelRatio || 1, touch ? 1.25 : 1.75);
+    const frameGap = software ? 1000 / 15 : 0;
+    let lastDraw = 0;
     const resize = () => {
       canvas.width = Math.round(canvas.clientWidth * dpr);
       canvas.height = Math.round(canvas.clientHeight * dpr);
@@ -167,8 +178,11 @@ export default function HeroIris() {
     let running = true;
     const start = performance.now();
 
-    const loop = () => {
+    const loop = (now: number) => {
       if (!running) return;
+      raf = requestAnimationFrame(loop);
+      if (frameGap && now - lastDraw < frameGap) return;
+      lastDraw = now;
       mouse.x += (mouse.tx - mouse.x) * 0.045;
       mouse.y += (mouse.ty - mouse.y) * 0.045;
       gl.uniform2f(uRes, canvas.width, canvas.height);
@@ -177,7 +191,6 @@ export default function HeroIris() {
       gl.uniform1f(uIntro, intro.v);
       gl.uniform1f(uZoom, zoomRef.current.v);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
-      raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
 
@@ -224,7 +237,10 @@ export default function HeroIris() {
     const ctx = gsap.context(() => {
       gsap.set('.hero-line-inner', { yPercent: 120, skewY: 6 });
       gsap.set('.comunica-letter', { opacity: 0 });
-      gsap.set('.hero-fade', { opacity: 0, y: 24 });
+      /* 0.01 e non 0: a occhio è lo stesso, ma il browser considera la frase
+         già disegnata. Con 0 Google la conta solo a fine animazione (~2 s, che
+         sul telefono simulato diventano 7) e la pagina risulta lenta. */
+      gsap.set('.hero-fade', { opacity: 0.01, y: 24 });
 
       const tl = gsap.timeline({ delay: 0.5 });
       /* Metodo / Visione: si "stampano" con lo slide-up */

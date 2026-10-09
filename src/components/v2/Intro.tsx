@@ -103,7 +103,7 @@ export default function Intro() {
       {/* marchio al centro, sopra il velo */}
       <div className="absolute inset-0 z-10 flex items-center justify-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/brand/logo.png" alt="" className="intro-mark w-[min(42vw,230px)] opacity-0" />
+        <img src="/brand/logo-480.png" alt="" className="intro-mark w-[min(42vw,230px)] opacity-0" />
       </div>
     </div>
   );

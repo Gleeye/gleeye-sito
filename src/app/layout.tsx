@@ -21,11 +21,15 @@ import SmoothScroll from "@/components/v2/SmoothScroll";
 import PageWidgetOverlay from "@/components/PageWidgetOverlay";
 import ReferralCapture from "@/components/ReferralCapture";
 
+/* preload: false su Newsreader e Plex Mono: non servono alla prima schermata
+   della home, e scaricati in anticipo (120 KB) rubavano banda al titolo e ai
+   caratteri che servono subito. Arrivano lo stesso, appena una pagina li usa. */
 const newsreader = Newsreader({
   variable: "--font-newsreader-next",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   style: ["italic", "normal"],
+  preload: false,
 });
 
 // Playfair Display: serif display ad alto contrasto, usato in corsivo per lo
@@ -41,6 +45,7 @@ const plexMono = IBM_Plex_Mono({
   variable: "--font-plex-mono",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  preload: false,
 });
 
 const jakarta = Plus_Jakarta_Sans({
