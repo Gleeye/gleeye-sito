@@ -160,12 +160,18 @@ export default function HeroIris() {
 
     /* l'iride è tutta sfumata: sotto 1.25 sul telefono non si vede la differenza */
     const touch = window.matchMedia('(pointer: coarse)').matches;
-    const dpr = software ? 0.35 : Math.min(window.devicePixelRatio || 1, touch ? 1.25 : 1.75);
+    const dpr = Math.min(window.devicePixelRatio || 1, touch ? 1.25 : 1.75);
     const frameGap = software ? 1000 / 15 : 0;
     let lastDraw = 0;
+    /* senza scheda grafica conta il numero di punti, non la scala: un tetto
+       fisso (~40 mila) costa uguale su un telefono e su uno schermo grande */
+    const SOFTWARE_PIXELS = 40000;
     const resize = () => {
-      canvas.width = Math.round(canvas.clientWidth * dpr);
-      canvas.height = Math.round(canvas.clientHeight * dpr);
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      const scale = software ? Math.min(0.35, Math.sqrt(SOFTWARE_PIXELS / Math.max(1, w * h))) : dpr;
+      canvas.width = Math.max(1, Math.round(w * scale));
+      canvas.height = Math.max(1, Math.round(h * scale));
       gl.viewport(0, 0, canvas.width, canvas.height);
     };
     resize();

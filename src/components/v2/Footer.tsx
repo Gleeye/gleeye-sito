@@ -151,7 +151,7 @@ export default function Footer() {
             <div className="mb-7 h-8 overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/brand/logo%20bianco.png"
+                src="/brand/logo-bianco-320.png"
                 alt="Gleeye"
                 className="w-[130px] max-w-none -translate-y-[50px]"
               />
