@@ -124,9 +124,16 @@ export default function HeroIris() {
        risoluzione ogni fotogramma bloccava la pagina ~170 ms (20 s su 36 punti). */
     const opts = { antialias: false, alpha: false };
     const fast = canvas.getContext('webgl', { ...opts, failIfMajorPerformanceCaveat: true });
-    const software = !fast;
     const gl = fast ?? (canvas.getContext('webgl', opts) as WebGLRenderingContext | null);
     if (!gl) return;
+    let renderer = '';
+    try {
+      const info = gl.getExtension('WEBGL_debug_renderer_info');
+      if (info) renderer = String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL));
+    } catch {
+      /* il browser non lo dice: ci si fida della prima domanda */
+    }
+    const software = !fast || /swiftshader|llvmpipe|software/i.test(renderer);
 
     const vs = createShader(gl, gl.VERTEX_SHADER, VERT);
     const fs = createShader(gl, gl.FRAGMENT_SHADER, FRAG);
