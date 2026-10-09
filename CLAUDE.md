@@ -93,6 +93,10 @@ contenerlo), description, **canonical**, openGraph e twitter card. Non scrivere 
   su old.gleeye.eu (è successo a `/portfolio`). Vale anche per le rotte generate da Next che non
   hanno un punto nel percorso: `/opengraph-image` finiva su old.gleeye.eu e le anteprime social
   restavano vuote. I file con l'estensione (`/sitemap.xml`, `/robots.txt`, `/icon.png`) passano già
+- Velocità su telefono (ott 2026, PageSpeed 36): PageSpeed simula un telefono SENZA scheda grafica, e uno
+  shader a schermo pieno lì blocca la pagina per 20 s. HeroIris chiede `failIfMajorPerformanceCaveat` e senza
+  GPU disegna a 0.35 di risoluzione e 15 fps. Testo dell'hero nascosto con opacity 0 = Google lo conta a fine
+  animazione: partire da 0.01. Niente `autoPlay` sui video sotto la piega
 - Niente `useSearchParams()` in un componente montato nel layout: obbliga a un `<Suspense>` e toglie
   la resa statica a tutte le pagine. Per leggere la query dopo il mount basta `window.location.search`
 
