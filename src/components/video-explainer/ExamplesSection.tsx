@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import VimeoFacade from '@/components/VimeoFacade';
 
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
@@ -57,13 +58,12 @@ export default function ExamplesSection() {
                     {/* Video Column (7/12) */}
                     <div className="lg:col-span-7">
                         <div className="relative aspect-video rounded-2xl overflow-hidden border border-black/[0.03] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)]">
-                            <iframe
-                                src="https://player.vimeo.com/video/1090117906?h=f1f0796f96&badge=0&autopause=0&player_id=0&app_id=58479"
-                                className="absolute inset-0 w-full h-full"
-                                frameBorder="0"
-                                allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+                            <VimeoFacade
+                                id="1090117906"
+                                hash="f1f0796f96"
+                                poster="/video-explainer/seac-anteprima.jpg"
                                 title="Seac Sub Explainer"
-                            ></iframe>
+                            />
                         </div>
                     </div>
                 </div>

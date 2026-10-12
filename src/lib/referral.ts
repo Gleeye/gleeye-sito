@@ -27,6 +27,9 @@
  * funzioni qui dentro restituiscono null e il sito si comporta come sempre.
  */
 
+// Il consenso è uno solo (lib/consent.ts), non se ne inventa un secondo.
+import { readStoredConsent } from "./consent";
+
 export type Referral = {
   /** Il codice pubblico dell'ambassador, così com'era nel link. */
   ref: string;
@@ -39,8 +42,6 @@ type StoredReferral = Referral & { at: number };
 const REF_PARAM = "ref";
 const SESSION_KEY = "gleeye_ref";
 const PERSIST_KEY = "gleeye_ref_90d";
-/** Stessa chiave di hooks/useConsent.ts: il consenso è uno solo, non se ne inventa un secondo. */
-const CONSENT_KEY = "gleeye_cookie_consent";
 const PERSIST_MS = 90 * 24 * 60 * 60 * 1000;
 
 /** Forma attesa del codice: lettere, cifre e trattini, max 64. Il resto si ignora in silenzio. */
@@ -101,13 +102,9 @@ function localStore(): Storage | null {
 
 /** Il consenso "marketing" del banner: senza, i 90 giorni non esistono. */
 function marketingGranted(): boolean {
-  try {
-    const raw = localStore()?.getItem(CONSENT_KEY);
-    if (!raw) return false;
-    return (JSON.parse(raw) as { marketing?: string })?.marketing === "granted";
-  } catch {
-    return false;
-  }
+  if (typeof window === "undefined") return false;
+  // consenso scaduto (6 mesi) o su informativa vecchia = non dato
+  return readStoredConsent()?.marketing === "granted";
 }
 
 function readPersistent(): StoredReferral | null {

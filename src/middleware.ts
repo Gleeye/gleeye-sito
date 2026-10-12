@@ -4,14 +4,15 @@ import { NextRequest, NextResponse } from 'next/server';
  * Tre responsabilità, in quest'ordine:
  * 1. auth dell'area /admin (com'era)
  * 2. 301 dagli URL del vecchio WordPress alle pagine nuove (mappa esplicita)
- * 3. catch-all: ogni percorso che non è una rotta del sito nuovo finisce
- *    sullo stesso percorso di old.gleeye.eu (il WordPress resta vivo lì)
+ * 3. catch-all: ogni percorso che non è una rotta del sito nuovo riceve la
+ *    404 del sito nuovo. NON si manda più nessuno su old.gleeye.eu: il vecchio
+ *    WordPress carica Google Tag Manager, Google Fonts e reCAPTCHA prima di
+ *    qualsiasi consenso (controllo privacy del 12/10/2026). Gli indirizzi
+ *    vecchi che servono ancora stanno tutti in WP_REDIRECTS.
  *
  * Le immagini /wp-content/* NON passano da qui: le serve il rewrite esterno
  * in next.config.ts, così gli URL restano identici a prima.
  */
-
-const OLD_HOST = 'https://old.gleeye.eu';
 
 /* Vecchio WordPress → sito nuovo. Chiavi SENZA slash finale (normalizzato prima
    del confronto). Le pagine con lo stesso percorso (es. /chi-siamo/) non servono
@@ -40,6 +41,8 @@ const WP_REDIRECTS: Record<string, string> = {
   '/servizi/sviluppo-siti-web-e-e-commerce': '/digital/web',
   '/servizi/servizi-di-manutenzione-siti-web-e-e-commerce': '/digital/web',
   '/servizi/web-marketing': '/digital',
+  '/servizi/media-relations': '/identity',
+  '/servizi/gestione-della-reputazione-e-media-relation': '/identity',
   '/servizi/digital-marketing': '/digital',
   // Identity
   '/servizi/logo-e-brand-guideline': '/identity/brand-guidelines',
@@ -49,6 +52,18 @@ const WP_REDIRECTS: Record<string, string> = {
   '/servizi/consulenze-strategiche': '/metodo',
   '/servizi/podcast-da-remoto-essential': '/podcast',
   '/servizi/comunicazione-e-marketing-per-eventi-aziendali': '/events',
+  '/modulo-di-contatto-eventi': '/events',
+  '/blog/eventi-aziendali': '/events',
+  // Pagine-modulo che i clienti possono avere ancora in una mail: la pagina
+  // nuova ha la prenotazione o il modulo assegnato dal gestionale
+  '/prenotazione-registrazione-da-remoto-podcast': '/podcast',
+  '/calendario-registrazioni-podcast-da-remoto-essential': '/podcast',
+  '/servizi/video-explainer-digitalizzazione/form-onboarding': '/video-explainer',
+  '/prenotazione-videomaker': '/factory/video',
+  '/company-profile-10pag': '/factory/grafica',
+  '/company-profile-10pag/form-company-profile-10pag': '/factory/grafica',
+  '/inserimento-dati-anagrafici-aziendali': '/contatti',
+  '/pannello-appuntamenti': '/contatti',
   '/servizi/servizi-di-comunicazione-e-marketing-per-eventi-aziendali': '/events',
   // Contatti — schede persona
   '/contatti/andrea-visentin': '/contatti',
@@ -65,11 +80,12 @@ const WP_REDIRECTS: Record<string, string> = {
   '/nuova-home': '/',
   '/thank-you': '/',
   '/servizi': '/',
+  '/i-nostri-lavori': '/',
 };
 
 /* Rotte del sito nuovo (pagine con page.tsx, senza slash finale).
    ⚠️ OGNI PAGINA NUOVA VA AGGIUNTA QUI: un percorso assente da questa lista
-   viene rimandato con 301 a old.gleeye.eu dal catch-all qui sotto. */
+   riceve la 404 dal catch-all qui sotto. */
 const ROUTES = new Set([
   '/',
   '/admin',
@@ -103,8 +119,8 @@ const ROUTES = new Set([
   '/metodo',
   '/mission-e-vision',
   /* L'immagine di anteprima generata da src/app/opengraph-image.tsx: non ha un
-     punto nel percorso, quindi senza questa riga il catch-all la spedisce su
-     old.gleeye.eu e ogni link condiviso resta senza figura. */
+     punto nel percorso, quindi senza questa riga il catch-all la manda alla
+     404 e ogni link condiviso resta senza figura. */
   '/opengraph-image',
   '/podcast',
   '/privacy-policy',
@@ -112,14 +128,16 @@ const ROUTES = new Set([
   '/video-explainer',
 ]);
 
-/* Sotto /blog il vecchio WordPress tiene, oltre agli articoli, le tassonomie e
-   la paginazione. Questi primi segmenti NON sono slug di articolo: vanno lasciati
-   a old.gleeye.eu (URL identici, restano indicizzati lì). */
-const BLOG_RESERVED_SEGMENTS = new Set(['category', 'tag', 'author', 'page']);
+/* Sotto /blog il vecchio WordPress tiene, oltre agli articoli, le tassonomie,
+   la paginazione e i tipi del vecchio portfolio. Questi primi segmenti NON sono
+   slug di articolo: il blog nuovo non ha archivi, quindi vanno all'indice. */
+const BLOG_RESERVED_SEGMENTS = new Set([
+  'category', 'tag', 'author', 'page', 'project-type', 'project-tag',
+]);
 
-/* Pagine WP isolate che vivono sotto /blog/<slug> ma NON sono articoli del blog
-   (stanno nel page-sitemap del vecchio WP). Restano su old.gleeye.eu. */
-const BLOG_OLD_PATHS = new Set(['/blog/eventi-aziendali']);
+/* Percorso che non esiste di sicuro: riscriverci sopra fa rispondere a Next
+   con la 404 del sito (not-found.tsx), senza cambiare l'indirizzo. */
+const NOT_FOUND_PATH = '/__pagina-inesistente';
 
 export function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
@@ -163,33 +181,24 @@ export function middleware(req: NextRequest) {
   }
 
   // ——— blog nativo ———
-  // L'indice /blog e i singoli articoli /blog/<slug> sono serviti dal Next
-  // (indice: /blog/page.tsx — già gestito da ROUTES qui sopra; articolo: rotta
-  // /blog/[slug]). MA il vecchio WordPress tiene sotto /blog anche le tassonomie
-  // e alcune pagine legacy, che devono restare su old.gleeye.eu invariate:
-  //   /blog/category/<slug>/  /blog/tag/<slug>/  /blog/author/<slug>/
-  //   /blog/page/<n>/  (paginazione)  + qualche pagina isolata (BLOG_OLD_PATHS)
-  // Quelle NON sono articoli: se le servissimo dalla rotta [slug] darebbero 404.
-  // Le lasciamo cadere nel catch-all (301 → old.gleeye.eu, stesso percorso).
+  // L'indice /blog è in ROUTES; gli articoli /blog/<slug> li serve la rotta
+  // /blog/[slug] (slug sconosciuto → 404 di Next). Tassonomie, paginazione e
+  // percorsi a più segmenti del vecchio WordPress → indice del blog.
   if (clean.startsWith('/blog/') && clean.length > '/blog/'.length) {
     const rest = clean.slice('/blog/'.length); // es. "mio-slug" o "category/x"
     const firstSeg = rest.split('/')[0];
-    const isTaxonomyOrPaged =
-      rest.includes('/') || BLOG_RESERVED_SEGMENTS.has(firstSeg);
-    const isLegacyPage = BLOG_OLD_PATHS.has(clean);
-
-    if (!isTaxonomyOrPaged && !isLegacyPage) {
-      // articolo nativo → Next (normalizzando l'eventuale slash finale con 301)
-      if (clean !== pathname) {
-        return NextResponse.redirect(new URL(clean + search, req.url), 301);
-      }
-      return NextResponse.next();
+    if (rest.includes('/') || BLOG_RESERVED_SEGMENTS.has(firstSeg)) {
+      return NextResponse.redirect(new URL('/blog', req.url), 301);
     }
-    // tassonomie / paginazione / pagine legacy → cadono nel catch-all (old WP)
+    // articolo nativo → Next (normalizzando l'eventuale slash finale con 301)
+    if (clean !== pathname) {
+      return NextResponse.redirect(new URL(clean + search, req.url), 301);
+    }
+    return NextResponse.next();
   }
 
-  // ——— 3. tutto il resto vive su old.gleeye.eu, stesso percorso ———
-  return NextResponse.redirect(new URL(pathname + search, OLD_HOST), 301);
+  // ——— 3. tutto il resto: 404 del sito nuovo ———
+  return NextResponse.rewrite(new URL(NOT_FOUND_PATH, req.url), { status: 404 });
 }
 
 export const config = {

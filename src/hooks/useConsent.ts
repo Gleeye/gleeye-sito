@@ -1,16 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import {
+  readStoredConsent,
+  writeStoredConsent,
+  POLICY_VERSION,
+  type CookieConsents,
+} from "@/lib/consent";
 
-export type ConsentStatus = "granted" | "denied" | "pending";
+export type { ConsentStatus, CookieConsents } from "@/lib/consent";
 
-export interface CookieConsents {
-  necessary: ConsentStatus; // Always granted
-  analytics: ConsentStatus;
-  marketing: ConsentStatus;
-}
-
-const CONSENT_KEY = "gleeye_cookie_consent";
 const CONSENT_ID_KEY = "gleeye_consent_id";
 
 function generateConsentId() {
@@ -23,9 +22,11 @@ export function useConsent() {
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(CONSENT_KEY);
+      // Scelta scaduta (6 mesi) o data su un'informativa vecchia = mai data:
+      // il banner si ripresenta. Vedi lib/consent.ts.
+      const stored = readStoredConsent();
       if (stored) {
-        setConsents(JSON.parse(stored) as CookieConsents);
+        setConsents(stored);
       } else {
         // Initial state before interaction
         setConsents({
@@ -59,7 +60,9 @@ export function useConsent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           consent_id: consentId,
-          preferences: newConsents,
+          // la versione dell'informativa resta nel registro, come prova di
+          // cosa la persona aveva davanti quando ha scelto
+          preferences: { ...newConsents, policy_version: POLICY_VERSION },
           event: isUpdate ? 'update_consent' : 'initial_consent'
         }),
       });
@@ -75,7 +78,7 @@ export function useConsent() {
     // localStorage LANCIA: senza try/catch l'eccezione uccideva l'handler e il
     // banner non si chiudeva più, qualunque pulsante si premesse.
     try {
-      localStorage.setItem(CONSENT_KEY, JSON.stringify(newConsents));
+      writeStoredConsent(newConsents);
     } catch {
       /* la scelta vale comunque per questa sessione */
     }

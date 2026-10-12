@@ -40,7 +40,7 @@ servizio non ancora rifatte. `Header.tsx` e `Footer.tsx` legacy sono re-export d
 - `/blog`, `/blog/[slug]` — blog nativo, articoli letti dal Supabase del sito (`lib/blog.ts`), ISR 1h
 - `/portfolio`, `/portfolio/[slug]` — case history dal Supabase del sito (`lib/portfolio.ts`). ⚠️ Le pagine
   esistono e si compilano, ma `/portfolio` NON è in `ROUTES` di `src/middleware.ts`: il catch-all la manda
-  su old.gleeye.eu, quindi oggi è irraggiungibile. Va aggiunta a ROUTES quando si decide di aprirla.
+  alla 404, quindi oggi è irraggiungibile. Va aggiunta a ROUTES quando si decide di aprirla.
 - `/proposte` — pagina proposte (IrisCanvas), `/admin/*` — area riservata (dashboard, copy, visuals)
 - Pagine istituzionali rifatte (lug 2026): `/chi-siamo` (hero "Piacere," a strisciata orizzontale + capitoli ghost), `/mission-e-vision` (concept "La rotta": percorso luminoso che consegna alla CTA footer), `/manifesto` (statement + corsivi gradiente), `/metodo` (concept "La linea": scarabocchio che si raddrizza scrollando e si parcheggia sotto la chiusura). Corsivi: SEMPRE Playfair italic con `w-fit` (mai gradienti inline custom) — su fondo scuro classe `.text-gradient` (fluo), su fondo chiaro `.text-gradient-deep` (blu/viola pieni: il fluo sul bianco risulta slavato)
 
@@ -81,6 +81,14 @@ contenerlo), description, **canonical**, openGraph e twitter card. Non scrivere 
 - Pagine `'use client'` (cookie-policy, proposte) non possono esportare `metadata`: il head
   sta nel loro `layout.tsx`
 
+### Privacy e cookie (controllo del 12/10/2026)
+- Nessun indirizzo porta più su old.gleeye.eu (il vecchio WP carica Google prima del consenso): i vecchi
+  indirizzi utili stanno in `WP_REDIRECTS` del middleware, tutto il resto riceve la 404 del sito
+- Video Vimeo SOLO con `components/VimeoFacade.tsx`: anteprima salvata in /public, il player si carica al
+  clic, con dnt=1. Mai un iframe di terzi diretto nella pagina
+- Il consenso cookie si legge solo da `lib/consent.ts`: vale 6 mesi e decade se cambia `POLICY_VERSION`.
+  Quando cambi privacy o cookie policy in modo sostanziale, aggiorna `POLICY_VERSION` (il banner si ripresenta)
+
 ### Lezioni tecniche apprese (NON ripetere questi errori)
 - Turbopack (Next 16) NON emette `@import url()` remoti nel CSS: font via `next/font` o `<link>` nel layout
 - MAI `::-webkit-scrollbar` custom sul root: forza scrolling main-thread e desincronizza il paint
@@ -89,9 +97,9 @@ contenerlo), description, **canonical**, openGraph e twitter card. Non scrivere 
 - Reveal robusti: `gsap.set` + `ScrollTrigger.create({onEnter})`, NON `gsap.from(..., {scrollTrigger})` (può non scattare)
 - Niente CSS `transition-all` su elementi animati da GSAP (conflitto sulle stesse proprietà)
 - Anchor cross-page (`/#sezione`) inaffidabili con sezioni pinnate: usare pagine dedicate (es. `/contatti`)
-- Ogni pagina nuova va aggiunta a `ROUTES` in `src/middleware.ts`, altrimenti il catch-all la manda
-  su old.gleeye.eu (è successo a `/portfolio`). Vale anche per le rotte generate da Next che non
-  hanno un punto nel percorso: `/opengraph-image` finiva su old.gleeye.eu e le anteprime social
+- Ogni pagina nuova va aggiunta a `ROUTES` in `src/middleware.ts`, altrimenti il catch-all le dà
+  la 404 (prima del 12/10/2026 la mandava su old.gleeye.eu: è successo a `/portfolio`). Vale anche per le rotte generate da Next che non
+  hanno un punto nel percorso: `/opengraph-image` finiva fuori dal sito e le anteprime social
   restavano vuote. I file con l'estensione (`/sitemap.xml`, `/robots.txt`, `/icon.png`) passano già
 - Velocità su telefono (ott 2026, PageSpeed 36): PageSpeed simula un telefono SENZA scheda grafica, e uno
   shader a schermo pieno lì blocca la pagina per 20 s. HeroIris chiede `failIfMajorPerformanceCaveat` e senza

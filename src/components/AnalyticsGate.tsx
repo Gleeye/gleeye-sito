@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { GoogleAnalytics } from '@next/third-parties/google';
-import type { CookieConsents } from '@/hooks/useConsent';
+import { readStoredConsent, type CookieConsents } from '@/lib/consent';
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
-const CONSENT_KEY = 'gleeye_cookie_consent';
 
 /**
  * Monta Google Analytics SOLO se l'utente ha acconsentito agli analytics nel
@@ -21,14 +20,8 @@ export default function AnalyticsGate() {
   const [granted, setGranted] = useState(false);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(CONSENT_KEY);
-      if (stored) {
-        setGranted((JSON.parse(stored) as CookieConsents).analytics === 'granted');
-      }
-    } catch {
-      /* consenso illeggibile = niente tracciamento */
-    }
+    // consenso assente, scaduto o illeggibile = niente tracciamento
+    setGranted(readStoredConsent()?.analytics === 'granted');
 
     const onConsent = (e: Event) => {
       const detail = (e as CustomEvent<CookieConsents>).detail;

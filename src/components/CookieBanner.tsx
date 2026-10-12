@@ -65,7 +65,7 @@ export default function CookieBanner() {
                             <h3 className="text-base font-bold font-satoshi">La tua privacy</h3>
                         </div>
                         <p className="text-[13px] leading-relaxed text-white/70">
-                            Cookie tecnici sempre attivi; analitici e di profilazione solo col tuo consenso.{' '}
+                            Cookie tecnici sempre attivi; statistiche e attribuzione solo se accetti. Puoi cambiare idea quando vuoi.{' '}
                             <a href="/privacy-policy" className="text-white/45 underline underline-offset-2 hover:text-white transition-colors">Privacy</a>
                             {' · '}
                             <a href="/cookie-policy" className="text-white/45 underline underline-offset-2 hover:text-white transition-colors">Cookie policy</a>
@@ -81,7 +81,7 @@ export default function CookieBanner() {
                                 onClick={rejectAll}
                                 className="flex-1 px-3 py-2.5 bg-white/5 border border-white/10 text-white font-bold text-[11px] tracking-widest uppercase rounded-full hover:bg-white/10 transition-colors duration-300 whitespace-nowrap"
                             >
-                                Necessari
+                                Rifiuta
                             </button>
                             <button
                                 onClick={() => setShowDetails(true)}
@@ -135,7 +135,7 @@ export default function CookieBanner() {
                                         Cookie Analitici
                                     </h4>
                                     <p className="text-xs text-white/60 leading-relaxed">
-                                        Ci permettono di contare le visite e le fonti di traffico, per misurare e migliorare le prestazioni del nostro sito.
+                                        Google Analytics: contiamo le visite e da dove arrivano, per capire cosa migliorare. Durata: 2 anni.
                                     </p>
                                 </div>
                                 <div className={`shrink-0 w-12 h-6 rounded-full transition-colors relative ${localConsents.analytics === "granted" ? "bg-emerald-500" : "bg-white/20"}`}>
@@ -153,10 +153,10 @@ export default function CookieBanner() {
                             >
                                 <div className="space-y-1 pr-6">
                                     <h4 className="font-bold flex items-center gap-2">
-                                        Cookie di Profilazione
+                                        Attribuzione (marketing)
                                     </h4>
                                     <p className="text-xs text-white/60 leading-relaxed">
-                                        Possono essere impostati tramite il nostro sito dai nostri partner pubblicitari per costruire un profilo dei tuoi interessi.
+                                        Se arrivi da un link di un nostro segnalatore, ricordiamo per 90 giorni chi ti ha mandato da noi. Nessun partner pubblicitario.
                                     </p>
                                 </div>
                                 <div className={`shrink-0 w-12 h-6 rounded-full transition-colors relative ${localConsents.marketing === "granted" ? "bg-emerald-500" : "bg-white/20"}`}>

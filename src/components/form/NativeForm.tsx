@@ -421,7 +421,24 @@ export default function NativeForm({ formId, sourcePage, onDone, onProtectedFall
             </div>
           )}
 
-          <div className="mt-8 flex items-center justify-between gap-3">
+          {/* Informativa breve accanto al modulo (art. 13 GDPR). Niente casella:
+              la base è la richiesta stessa, non un consenso. */}
+          {isLast && (
+            <p className="mt-6 font-jakarta text-xs leading-relaxed text-black/45">
+              Usiamo questi dati solo per gestire la tua richiesta.{' '}
+              <a
+                href="/privacy-policy"
+                target="_blank"
+                rel="noopener"
+                className="underline underline-offset-2 hover:text-black/70"
+              >
+                Leggi l&apos;informativa privacy
+              </a>
+              .
+            </p>
+          )}
+
+          <div className={`${isLast ? 'mt-4' : 'mt-8'} flex items-center justify-between gap-3`}>
             {step > 0 ? (
               <button type="button" onClick={goPrev} className={btnGhost}>
                 <ArrowLeft className="h-4 w-4" />

@@ -17,7 +17,12 @@ export default function CookiePolicy() {
                         Cookie Policy
                     </h1>
                     <p className="text-xl md:text-2xl font-newsreader italic text-black/60">
-                        Informativa sull'utilizzo dei cookie
+                        Ultimo aggiornamento: 12 ottobre 2026
+                    </p>
+                    <p className="font-jakarta text-base md:text-lg leading-relaxed text-black/60 max-w-2xl">
+                        Il sito è di <strong>GLEEYE S.R.L.</strong>, Piazza Brignole 2/3, 16122 Genova, P.IVA 02944020995 &mdash;{" "}
+                        <a href="mailto:info@gleeye.eu" className="underline font-bold">info@gleeye.eu</a>. Come trattiamo i dati in
+                        generale lo spiega la <a href="/privacy-policy" className="underline">Privacy Policy</a>.
                     </p>
                 </header>
 
@@ -51,7 +56,9 @@ export default function CookiePolicy() {
                             <p>
                                 Su questo sito la misurazione è affidata a <strong>Google Analytics 4</strong> (Google Ireland Ltd.), che viene caricato{" "}
                                 <strong>soltanto dopo il tuo consenso</strong>: prima di allora nessuno script di Google viene eseguito e nessun dato viene inviato.
-                                Cookie impostati: <code>_ga</code>, <code>_ga_*</code>. Maggiori informazioni:{" "}
+                                Cookie impostati: <code>_ga</code> e <code>_ga_*</code>, durata <strong>2 anni</strong>. Google è un&apos;azienda
+                                americana: i dati possono arrivare negli Stati Uniti, con le garanzie del Data Privacy Framework UE-USA.
+                                Maggiori informazioni:{" "}
                                 <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline">Privacy di Google</a>.
                             </p>
                         </div>
@@ -71,11 +78,26 @@ export default function CookiePolicy() {
                         </div>
 
                         <div className="space-y-4">
+                            <h3 className="text-xl font-bold font-satoshi">Video (Vimeo)</h3>
+                            <p>
+                                Alcune pagine mostrano video ospitati da <strong>Vimeo</strong> (Vimeo.com Inc., USA). Finché non premi
+                                play vedi solo un&apos;immagine servita da noi: il lettore di Vimeo non viene caricato e a Vimeo non arriva
+                                niente. Quando premi play il video si apre con l&apos;opzione &ldquo;do not track&rdquo;, che chiede a Vimeo di
+                                non registrare la tua visita; Vimeo riceve comunque il tuo indirizzo IP per mandarti il video.
+                                Dettagli nella{" "}
+                                <a href="https://vimeo.com/privacy" target="_blank" rel="noopener noreferrer" className="underline">privacy di Vimeo</a>.
+                            </p>
+                        </div>
+
+                        <div className="space-y-4">
                             <h3 className="text-xl font-bold font-satoshi">Strumenti tecnici utilizzati da questo sito</h3>
                             <p>
                                 Per il funzionamento del sito utilizziamo alcune memorizzazioni locali sul tuo browser (non trasmesse a terzi):{" "}
                                 <code>gleeye_cookie_consent</code> e <code>gleeye_consent_id</code> (salvano le tue scelte sulla privacy) e{" "}
-                                <code>gleeye-intro</code> (evita di rimostrarti l'animazione di apertura nella stessa sessione).
+                                <code>gleeye-intro</code> (evita di rimostrarti l'animazione di apertura nella stessa sessione) e{" "}
+                                <code>gleeye_ref</code> (il codice di un segnalatore, solo se arrivi da un suo link: dura la visita).
+                                La copia lunga, <code>gleeye_ref_90d</code>, esiste solo col tuo consenso al marketing e dura 90 giorni.
+                                La tua scelta sui cookie vale <strong>6 mesi</strong>: poi, o se cambiamo questa pagina, te la richiediamo.
                                 Le tue scelte di consenso vengono inoltre registrate in un archivio interno a fini di prova (con indirizzo IP{" "}
                                 <strong>anonimizzato</strong>), come richiesto dal principio di accountability del GDPR.
                             </p>
@@ -133,7 +155,7 @@ export default function CookiePolicy() {
                                     onClick={rejectAll}
                                     className="px-6 py-3 bg-white border border-black/10 text-black font-bold text-sm tracking-widest uppercase rounded-full hover:bg-black/5 transition-colors"
                                 >
-                                    Rifiuta (Solo Necessari)
+                                    Rifiuta
                                 </button>
                             </div>
                         </div>
